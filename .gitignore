@@ -1,3 +1,57 @@
-build
+# Ignore hidden files
+.*
+
+!.gitignore
+
+*.log
 *.out
-.clang-format
+
+# Ignore build directories
+dist/
+build/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+
+# Ignore C++ build files
+*.o
+*.obj
+*.exe
+*.out
+*.a
+*.lib
+*.so
+*.dll
+*.dylib
+
+# Ignore CMake build directories
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Ignore compiled dynamic libraries
+*.dylib
+
+# Ignore compiled static libraries
+*.lib
+*.a
+
+# Ignore compiled object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Ignore precompiled headers
+*.gch
+*.pch
+
+# Ignore Qt Creator specific files
+*.pro.user
+*.qmake.stash

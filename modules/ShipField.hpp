@@ -1,26 +1,34 @@
 #ifndef SHIPFIELD_HPP
 #define SHIPFIELD_HPP
 
+// #include "ShipManager.hpp"
 #include "Ship.hpp"
-#include "ShipManager.hpp"
+
+struct FieldElement {
+    enum VisibilityState { UNKNOWN, BLANK, SHIP };
+    VisibilityState state;
+    int x, y;
+    Ship *ship;
+    bool is_ship;
+    int ship_index;
+    int segment_index;
+};
 
 class ShipField {
    public:
     ShipField(int width, int height);
     ~ShipField();
-    void setManager(ShipManager *manager);
+    // void setManager(ShipManager *manager);
     bool placeShip(Ship *ship, int x, int y, Ship::Orientation orientation);
-    bool placeNewShip(int length, int x, int y, Ship::Orientation orientation);
     bool checkPlace(int x, int y);
-    void printField();
+    void printField(bool expose_ships = false);
     bool attackShip(int x, int y);
-    std::pair<int, int> getSizes();
 
    private:
     int width;
     int height;
-    Ship::Segment ***field;
-    ShipManager *manager;
+    FieldElement **field;
+    // ShipManager *manager;
 };
 
 #endif  // SHIPFIELD_HPP

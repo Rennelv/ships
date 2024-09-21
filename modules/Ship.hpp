@@ -1,29 +1,24 @@
 #ifndef SHIP_HPP
 #define SHIP_HPP
 
+class Ship; // Forward declaration
+
+struct Segment {
+    int hp;
+    Ship *belongsTo;
+};
+
 class Ship {
    public:
     enum Orientation { HORIZONTAL, VERTICAL };
 
-    class Segment {
-       public:
-        Segment();
-        Segment(Ship *belongsTo);
-        int getHp();
-        int damage(int damage);
-        Ship *getBelongsTo();
-
-       private:
-        int hp;
-        Ship *belongsTo;
-    };
-
     Ship();
-    Ship(int len);
+    Ship(int len, int index);
     ~Ship();
     int takeDamage(int segmentIndex, int damage);
-    Ship::Segment *getSegment(int index);
+    Segment *getSegment(int index);
     int getHealth();
+    int getShipIndex();
     int getLenght();
     bool isAlive();
 
@@ -31,6 +26,7 @@ class Ship {
     int len;
     int health;
     bool is_alive;
+    int ship_index;
     Segment *segments;
 };
 

@@ -10,9 +10,6 @@ class ShipManager {
     ShipManager();
     ShipManager(int count, int* lengths);
     ~ShipManager();
-    Ship* newShip(int len);
-    void addShip(Ship* ship);
-    Ship* addNewShip(int len);
     int getCount();
     Ship* getShip(int index);
 
