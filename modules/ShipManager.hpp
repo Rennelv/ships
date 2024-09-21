@@ -11,11 +11,12 @@ class ShipManager {
     ShipManager(int count, int* lengths);
     ~ShipManager();
     int getCount();
+    int getAliveCount();
     Ship* getShip(int index);
 
    private:
     std::vector<Ship*> ships;
-    int count;
+    int ships_count;
 };
 
 #endif  // SHIPMANAGER_HPP

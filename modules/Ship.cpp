@@ -1,13 +1,13 @@
 #include "Ship.hpp"
 
-Ship::Ship(int new_len, int index) {
-    len = new_len;
+Ship::Ship(int len, int index) {
+    length = len;
     health = len;
     is_alive = true;
     ship_index = index;
     segments = new Segment[len];
     for (int i = 0; i < len; i++) {
-        segments[i] = Segment{2, this};
+        segments[i] = Segment{2};
     }
 }
 
@@ -19,15 +19,15 @@ Segment *Ship::getSegment(int index) {
     return &segments[index];
 }
 
-int Ship::takeDamage(int segmentIndex, int damage) {
-    segments[segmentIndex].hp -= damage;
-    if (segments[segmentIndex].hp <= 0) {
+int Ship::takeDamage(int segment_index, int damage) {
+    segments[segment_index].hp -= damage;
+    if (segments[segment_index].hp <= 0) {
         health--;
     }
     if (health == 0) {
         is_alive = false;
     }
-    return segments[segmentIndex].hp;
+    return segments[segment_index].hp;
 }
 
 int Ship::getHealth() {
@@ -35,7 +35,7 @@ int Ship::getHealth() {
 }
 
 int Ship::getLenght() {
-    return len;
+    return length;
 }
 
 int Ship::getShipIndex() {

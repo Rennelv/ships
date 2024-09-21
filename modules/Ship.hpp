@@ -1,11 +1,10 @@
 #ifndef SHIP_HPP
 #define SHIP_HPP
 
-class Ship; // Forward declaration
+class Ship;
 
 struct Segment {
     int hp;
-    Ship *belongsTo;
 };
 
 class Ship {
@@ -15,7 +14,7 @@ class Ship {
     Ship();
     Ship(int len, int index);
     ~Ship();
-    int takeDamage(int segmentIndex, int damage);
+    int takeDamage(int segment_index, int damage);
     Segment *getSegment(int index);
     int getHealth();
     int getShipIndex();
@@ -23,7 +22,7 @@ class Ship {
     bool isAlive();
 
    private:
-    int len;
+    int length;
     int health;
     bool is_alive;
     int ship_index;

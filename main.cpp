@@ -90,7 +90,7 @@ int main() {
         }
     }
     field.printField(true);
-    while (true) {
+    while (manager.getAliveCount() > 0) {
         int x, y;
         std::cout << "Write x and y for attack: ";
         std::cin >> x >> y;

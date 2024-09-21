@@ -6,9 +6,9 @@
 
 #include "Ship.hpp"
 
-ShipField::ShipField(int new_width, int new_height) {
-    width = new_width;
-    height = new_height;
+ShipField::ShipField(int width, int height) {
+    this->width = width;
+    this->height = height;
     field = new FieldElement *[height];
     for (int i = 0; i < height; i++) {  // i for height and j for width
         field[i] = new FieldElement[width];
@@ -18,9 +18,6 @@ ShipField::ShipField(int new_width, int new_height) {
     }  // 0 0 is the bottom left corner
 }
 
-// void ShipField::setManager(ShipManager *new_manager) {
-//     manager = new_manager;
-// }
 
 ShipField::~ShipField() {
     for (int i = 0; i < height; i++) {
