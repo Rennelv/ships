@@ -20,7 +20,7 @@ ShipManager::~ShipManager() {
     }
 }
 
-int ShipManager::getCount() {
+int ShipManager::getShipCount() {
     return ships_count;
 }
 

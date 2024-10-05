@@ -5,8 +5,8 @@ CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++17
 
 # Directories
-SRC_DIR = .
-MODULES_DIR = modules
+SRC_DIR = src
+MODULES_DIR = src/modules
 BUILD_DIR = build
 
 # Source files

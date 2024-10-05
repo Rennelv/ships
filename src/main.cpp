@@ -31,71 +31,93 @@
 #include "modules/ShipField.hpp"
 #include "modules/ShipManager.hpp"
 
-int main() {
-    // ShipField field(10, 11);
-    // ShipManager manager(
-    //     10, new int[]{4, 3, 3, 2, 2, 3, 1, 1, 1, 1});
-    // // field.setManager(&manager);
-    // Ship::Orientation ori[] {Ship::HORIZONTAL, Ship::HORIZONTAL,
-    //                             Ship::VERTICAL, Ship::VERTICAL, Ship::VERTICAL,
-    //                             Ship::VERTICAL, Ship::VERTICAL, Ship::VERTICAL,
-    //                             Ship::VERTICAL, Ship::VERTICAL};
-    // for (int i = 0; i < 10; i++) {
-    //     field.placeShip(manager.getShip(i), i, i, ori[i]);
-    // }
-    // field.placeShip(4, 0, 0, Ship::HORIZONTAL);
-    // field.placeShip(3, 0, 1, Ship::VERTICAL);
-    // field.placeShip(3, 0, 2, Ship::VERTICAL);
-    // field.placeShip(2, 0, 3, Ship::VERTICAL);
-    // field.placeShip(2, 0, 4, Ship::VERTICAL);
-    // field.placeShip(3, 0, 5, Ship::VERTICAL);
-    // field.placeShip(1, 1, 6, Ship::VERTICAL);
-    // field.placeShip(1, 0, 7, Ship::VERTICAL);
-    // field.placeShip(1, 0, 8, Ship::VERTICAL);
-    // field.placeShip(1, 0, 9, Ship::VERTICAL);
-    // field.printField();
-    // while (true) {
-    //     int x, y;
-    //     std::cin >> x >> y;
-    //     field.attackShip(x, y);
-    //     field.printField();
-    // }
+void print_field(ShipField *field, bool expose_ships = false) {
+    int height = field->getHeight();
+    int width = field->getWidth();
+    for (int y = height - 1; y >= 0; y--) {
+        std::cout << y << " ";
+        for (int x = 0; x < width; x++) {
+            if (expose_ships) {
+                if (field->checkPlace(x, y)) {
+                    if (!field->getCell(x,y).ship->isAlive()) {
+                        std::cout << "X ";
+                    } else {
+                        std::cout << field->getCell(x,y).ship->getSegment(field->getCell(x, y).segment_index).hp << " ";
+                    }
+                } else {
+                    std::cout << ". ";
+                }
+            } else {
+                if (field->getCell(x,y).state == FieldElement::VisibilityState::UNKNOWN) {
+                    std::cout << ". ";
+                } else if (field->getCell(x,y).state == FieldElement::VisibilityState::BLANK) {
+                    std::cout << "O ";
+                } else {
+                    if (field->getCell(x,y).ship->getSegment(field->getCell(x,y).segment_index).hp == 0) {
+                        std::cout << "X ";
+                    } else {
+                        std::cout << "/ ";
+                    }
+                }
+            }
+        }
+        std::cout << std::endl;
+    }
+    std::cout << "  ";
+    for (int i = 0; i < width; i++) {
+        std::cout << i << " ";
+    }
+    std::cout << std::endl;
+}
 
+int main() {
     int lengths[] = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
-    ShipManager manager(sizeof(lengths)/sizeof(int), lengths);
+    ShipManager manager(sizeof(lengths) / sizeof(int), lengths);
 
     int width, height;
     std::cout << "Write field size (x,y): \n";
     std::cin >> width >> height;
 
     ShipField field(width, height);
-    std::cout << "Place ships on the field\n";
-    for (int i = 0; i < manager.getCount(); i++) {
-        int x, y;
-        std::cout << "Write x and y for ship " << i << " of lenght " << lengths[i] << " (bottom left corner): ";
-        std::cin >> x >> y;
-        Ship::Orientation orientation;
-        std::cout << "Write orientation for ship " << i << " (0 - HORIZONTAL, 1 - VERTICAL): ";
-        int ori;
-        std::cin >> ori;
-        if (ori == 0) {
-            orientation = Ship::HORIZONTAL;
-        } else {
-            orientation = Ship::VERTICAL;
-        }
-        bool ret = field.placeShip(manager.getShip(i), x, y, orientation);
-        if (!ret) {
-            std::cout << "Can't place ship on the field\n";
-            i--;
-        }
+    
+    // std::cout << "Place ships on the field\n";
+    // for (int i = 0; i < manager.getShipCount(); i++) {
+    //     int x, y;
+    //     std::cout << "Write x and y for ship " << i << " of lenght " << lengths[i] << " (bottom left corner): ";
+    //     std::cin >> x >> y;
+    //     Ship::Orientation orientation;
+    //     std::cout << "Write orientation for ship " << i << " (0 - HORIZONTAL, 1 - VERTICAL): ";
+    //     int ori;
+    //     std::cin >> ori;
+    //     if (ori == 0) {
+    //         orientation = Ship::HORIZONTAL;
+    //     } else {
+    //         orientation = Ship::VERTICAL;
+    //     }
+    //     bool ret = field.placeShip(manager.getShip(i), x, y, orientation);
+    //     if (!ret) {
+    //         std::cout << "Can't place ship on the field\n";
+    //         i--;
+    //     }
+    // }
+    Ship::Orientation ori[] {Ship::HORIZONTAL, Ship::HORIZONTAL,
+                                Ship::VERTICAL, Ship::VERTICAL, Ship::VERTICAL,
+                                Ship::VERTICAL, Ship::VERTICAL, Ship::VERTICAL,
+                                Ship::VERTICAL, Ship::VERTICAL};
+    for (int i = 0; i < 10; i++) {
+        field.placeShip(manager.getShip(i), i, i, ori[i]);
     }
-    field.printField(true);
+
+    // ShipField field2 = field;
+    // ShipField field3(field);
+
+    print_field(&field, true);
     while (manager.getAliveCount() > 0) {
         int x, y;
         std::cout << "Write x and y for attack: ";
         std::cin >> x >> y;
         field.attackShip(x, y);
-        field.printField();
+        print_field(&field);
     }
     return 0;
 }

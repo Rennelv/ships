@@ -3,6 +3,7 @@
 
 battleship
 test_input.txt
+compile_commands.json
 
 !.gitignore
 
@@ -16,3 +17,4 @@ build/
 # Ignore C++ build files
 *.o
 *.out
+

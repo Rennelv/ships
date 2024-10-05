@@ -1,0 +1,61 @@
+@startuml
+class "std::vector<Ship *>" as C_0007462257846685508834
+class C_0007462257846685508834 {
+__
+}
+class "Segment" as C_0004224949386065029667
+class C_0004224949386065029667 {
+__
++hp : int
+}
+class "Ship" as C_0014529657433315016423
+class C_0014529657433315016423 {
++Ship() : void
++Ship(int len, int index) : void
++Ship(const Ship & other) : void
++Ship(Ship && other) noexcept : void
++~Ship() : void
+..
++operator=(const Ship & other) : Ship &
++operator=(Ship && other) noexcept : Ship &
+..
++getHealth() : int
++getLenght() : int
++getSegment(int index) : Segment
++getShipIndex() : int
++isAlive() : bool
++takeDamage(int segment_index, int damage) : int
+__
+-health : int
+-is_alive : bool
+-length : int
+-segments : Segment *
+-ship_index : int
+}
+enum "Ship::Orientation" as C_0015200704647938469073
+enum C_0015200704647938469073 {
+HORIZONTAL
+VERTICAL
+}
+class "ShipManager" as C_0017499122254539489506
+class C_0017499122254539489506 {
++ShipManager() : void
++ShipManager(int count, int * lengths) : void
++~ShipManager() : void
+..
++getAliveCount() : int
++getCount() : int
++getShip(int index) : Ship *
+__
+-ships : std::vector<Ship *>
+-ships_count : int
+}
+C_0007462257846685508834 ..> C_0014529657433315016423
+C_0014529657433315016423 --> C_0004224949386065029667 : -segments
+C_0015200704647938469073 --+ C_0014529657433315016423
+C_0017499122254539489506 ..> C_0014529657433315016423
+C_0017499122254539489506 o-- C_0007462257846685508834 : -ships
+
+'Generated with clang-uml, version 0.5.5
+'LLVM version clang version 18.1.8
+@enduml

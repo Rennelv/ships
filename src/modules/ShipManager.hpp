@@ -6,17 +6,16 @@
 #include "Ship.hpp"
 
 class ShipManager {
+    std::vector<Ship*> ships;
+    int ships_count;
+
    public:
     ShipManager();
     ShipManager(int count, int* lengths);
     ~ShipManager();
-    int getCount();
+    int getShipCount();
     int getAliveCount();
     Ship* getShip(int index);
-
-   private:
-    std::vector<Ship*> ships;
-    int ships_count;
 };
 
 #endif  // SHIPMANAGER_HPP

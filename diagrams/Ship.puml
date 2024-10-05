@@ -1,0 +1,105 @@
+@startuml
+class "Segment" as C_0004224949386065029667
+class C_0004224949386065029667 {
+__
++hp : int
+}
+class "Ship" as C_0014529657433315016423
+class C_0014529657433315016423 {
++Ship() : void
++Ship(int len, int index) : void
++Ship(const Ship & other) : void
++Ship(Ship && other) noexcept : void
++~Ship() : void
+..
++operator=(const Ship & other) : Ship &
++operator=(Ship && other) noexcept : Ship &
+..
++getHealth() : int
++getLenght() : int
++getSegment(int index) : Segment
++getShipIndex() : int
++isAlive() : bool
++takeDamage(int segment_index, int damage) : int
+__
+-health : int
+-is_alive : bool
+-length : int
+-segments : Segment *
+-ship_index : int
+}
+enum "Ship::Orientation" as C_0015200704647938469073
+enum C_0015200704647938469073 {
+HORIZONTAL
+VERTICAL
+}
+class "FieldElement" as C_0001857836874925042506
+class C_0001857836874925042506 {
+__
++is_ship : bool
++segment_index : int
++ship : Ship *
++ship_index : int
++state : VisibilityState
++x : int
++y : int
+}
+enum "FieldElement::VisibilityState" as C_0016786167066212157050
+enum C_0016786167066212157050 {
+UNKNOWN
+BLANK
+SHIP
+}
+class "ShipField" as C_0003843296779074973901
+class C_0003843296779074973901 {
++ShipField(int width, int height) : void
++ShipField(const ShipField & other) : void
++ShipField(ShipField && other) noexcept : void
++~ShipField() : void
+..
++operator=(const ShipField & other) : ShipField &
++operator=(ShipField && other) noexcept : ShipField &
+..
++attackShip(int x, int y) : bool
++checkPlace(int x, int y) : bool
++get_cell(int x, int y) : FieldElement
++get_x() : int
++get_y() : int
++placeShip(Ship * ship, int x, int y, Ship::Orientation orientation) : bool
+__
+-field : FieldElement **
+-height : int
+-width : int
+}
+class "std::vector<Ship *>" as C_0007462257846685508834
+class C_0007462257846685508834 {
+__
+}
+class "ShipManager" as C_0017499122254539489506
+class C_0017499122254539489506 {
++ShipManager() : void
++ShipManager(int count, int * lengths) : void
++~ShipManager() : void
+..
++getAliveCount() : int
++getCount() : int
++getShip(int index) : Ship *
+__
+-ships : std::vector<Ship *>
+-ships_count : int
+}
+C_0014529657433315016423 --> C_0004224949386065029667 : -segments
+C_0015200704647938469073 --+ C_0014529657433315016423
+C_0001857836874925042506 o-- C_0016786167066212157050 : +state
+C_0001857836874925042506 --> C_0014529657433315016423 : +ship
+C_0016786167066212157050 --+ C_0001857836874925042506
+C_0003843296779074973901 ..> C_0014529657433315016423
+C_0003843296779074973901 ..> C_0015200704647938469073
+C_0003843296779074973901 --> C_0001857836874925042506 : -field
+C_0007462257846685508834 ..> C_0014529657433315016423
+C_0017499122254539489506 ..> C_0014529657433315016423
+C_0017499122254539489506 o-- C_0007462257846685508834 : -ships
+
+'Generated with clang-uml, version 0.5.5
+'LLVM version clang version 18.1.8
+@enduml

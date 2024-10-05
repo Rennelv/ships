@@ -2,8 +2,6 @@
 
 #include "ShipField.hpp"
 
-#include <iostream>
-
 #include "Ship.hpp"
 
 ShipField::ShipField(int width, int height) {
@@ -18,12 +16,73 @@ ShipField::ShipField(int width, int height) {
     }  // 0 0 is the bottom left corner
 }
 
-
 ShipField::~ShipField() {
     for (int i = 0; i < height; i++) {
         delete[] field[i];
     }
     delete[] field;
+}
+
+ShipField::ShipField(const ShipField &other) {
+    this->width = other.width;
+    this->height = other.height;
+    field = new FieldElement *[height];
+    for (int i = 0; i < height; i++) {
+        field[i] = new FieldElement[width];
+        for (int j = 0; j < width; j++) {
+            field[i][j] = other.field[i][j];
+            if (other.field[i][j].is_ship) {
+                field[i][j].ship = new Ship(*other.field[i][j].ship);
+            } else {
+                field[i][j].ship = nullptr;
+            }
+        }
+    }
+}
+
+ShipField::ShipField(ShipField &&other) noexcept {
+    this->width = other.width;
+    this->height = other.height;
+    field = other.field;
+    other.field = nullptr;
+}
+
+ShipField &ShipField::operator=(const ShipField &other) {
+    if (this != &other) {
+        for (int i = 0; i < height; i++) {
+            delete[] field[i];
+        }
+        delete[] field;
+        this->width = other.width;
+        this->height = other.height;
+        field = new FieldElement *[height];
+        for (int i = 0; i < height; i++) {
+            field[i] = new FieldElement[width];
+            for (int j = 0; j < width; j++) {
+                field[i][j] = other.field[i][j];
+                if (other.field[i][j].is_ship) {
+                    field[i][j].ship = new Ship(*other.field[i][j].ship);
+                } else {
+                    field[i][j].ship = nullptr;
+                }
+            }
+        }
+    }
+    return *this;
+}
+
+ShipField &ShipField::operator=(ShipField &&other) noexcept {
+    if (this != &other) {
+        for (int i = 0; i < height; i++) {
+            delete[] field[i];
+        }
+        delete[] field;
+        this->width = other.width;
+        this->height = other.height;
+        field = other.field;
+        other.field = nullptr;
+    }
+    return *this;
 }
 
 bool ShipField::placeShip(Ship *ship, int x, int y, Ship::Orientation orientation) {
@@ -85,42 +144,6 @@ bool ShipField::checkPlace(int x, int y) {
     return field[y][x].is_ship;
 }
 
-void ShipField::printField(bool expose_ships) {
-    for (int i = height - 1; i >= 0; i--) {
-        std::cout << i << " ";
-        for (int j = 0; j < width; j++) {
-            if (expose_ships) {
-                if (this->checkPlace(j, i)) {
-                    if (!field[i][j].ship->isAlive()) {
-                        std::cout << "X ";
-                    } else {
-                        std::cout << field[i][j].ship->getSegment(field[i][j].segment_index)->hp << " ";
-                    }
-                } else {
-                    std::cout << ". ";
-                }
-            } else {
-                if (field[i][j].state == FieldElement::VisibilityState::UNKNOWN) {
-                    std::cout << ". ";
-                } else if (field[i][j].state == FieldElement::VisibilityState::BLANK) {
-                    std::cout << "O ";
-                } else {
-                    if (field[i][j].ship->getSegment(field[i][j].segment_index)->hp == 0) {
-                        std::cout << "X ";
-                    } else {
-                        std::cout << "/ ";
-                    }
-                }
-            }
-        }
-        std::cout << std::endl;
-    }
-    std::cout << "  ";
-    for (int i = 0; i < width; i++) {
-        std::cout << i << " ";
-    }
-    std::cout << std::endl;
-}
 
 bool ShipField::attackShip(int x, int y) {
     if (x < 0 || x >= width || y < 0 || y >= height) {
@@ -132,10 +155,23 @@ bool ShipField::attackShip(int x, int y) {
         return false;
     }
     Ship *current = field[y][x].ship;
-    if (current->getSegment(field[y][x].segment_index)->hp <= 0) {
+    if (current->getSegment(field[y][x].segment_index).hp <= 0) {
         return false;
     }
     field[y][x].state = FieldElement::VisibilityState::SHIP;
     current->takeDamage(field[y][x].segment_index, 1);
     return true;
+}
+
+
+int ShipField::getWidth() {
+    return width;
+}
+
+int ShipField::getHeight() {
+    return height;
+}
+
+FieldElement ShipField::getCell(int x, int y) {
+    return field[y][x];
 }
