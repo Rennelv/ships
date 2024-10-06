@@ -2,9 +2,6 @@
 
 #include "Ship.hpp"
 
-ShipManager::ShipManager() : ships_count(0) {
-}
-
 ShipManager::ShipManager(size_t count, size_t* lengths) {
     ships.reserve(count);
     ships_count = count;
@@ -39,7 +36,7 @@ size_t ShipManager::getAliveCount() {
 
 Ship* ShipManager::getShip(int index) {
     if (index < 0) {
-        index = ships_count - index;
+        index = ships_count + index;
     }
     if (static_cast<size_t>(index) >= ships_count) {
         return nullptr;

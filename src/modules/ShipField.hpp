@@ -32,8 +32,6 @@ class ShipField {
 
     size_t getWidth() const;
     size_t getHeight() const;
-    // FieldElement getCell(int x, int y) const;
-    // FieldElement& getCell(int x, int y) const;
     CellVisibilityState getCellVisibilityState(int x, int y) const;
     bool getIsShip(int x, int y) const;
     size_t getShipIndex(int x, int y) const;
