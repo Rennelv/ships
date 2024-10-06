@@ -1,21 +1,24 @@
 #ifndef SHIPFIELD_HPP
 #define SHIPFIELD_HPP
 
+#include <cstddef>
+
 #include "Ship.hpp"
 
-struct FieldElement {
-    enum VisibilityState { UNKNOWN, BLANK, SHIP };
-    VisibilityState state;
-    int x, y;
-    Ship* ship;
-    bool is_ship;
-    int ship_index;
-    int segment_index;
-};
-
 class ShipField {
-    int width;
-    int height;
+   public:
+    enum CellVisibilityState { UNKNOWN, BLANK, SHIP };
+
+   private:
+    struct FieldElement {
+        CellVisibilityState state;
+        Ship* ship;
+        bool is_ship;
+        size_t ship_index;
+        size_t ship_segment_index;
+    };
+    size_t width;
+    size_t height;
     FieldElement** field;
 
    public:
@@ -27,12 +30,19 @@ class ShipField {
     ShipField& operator=(const ShipField& other);      // Copy assignment operator
     ShipField& operator=(ShipField&& other) noexcept;  // Move assignment operator
 
-    int getWidth();
-    int getHeight();
-    FieldElement getCell(int x, int y);
+    size_t getWidth() const;
+    size_t getHeight() const;
+    // FieldElement getCell(int x, int y) const;
+    // FieldElement& getCell(int x, int y) const;
+    CellVisibilityState getCellVisibilityState(int x, int y) const;
+    bool getIsShip(int x, int y) const;
+    size_t getShipIndex(int x, int y) const;
+    size_t getShipSegmentIndex(int x, int y) const;
+    int getShipSegmentHP(int x, int y) const;
+    Ship::SegmentState getShipSegmentState(int x, int y) const;
     bool placeShip(Ship* ship, int x, int y, Ship::Orientation orientation);
-    bool checkPlace(int x, int y);
     bool attackShip(int x, int y);
+    void clearField();
 };
 
 #endif  // SHIPFIELD_HPP

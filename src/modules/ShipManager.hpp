@@ -7,14 +7,14 @@
 
 class ShipManager {
     std::vector<Ship*> ships;
-    int ships_count;
+    size_t ships_count;
 
    public:
     ShipManager();
-    ShipManager(int count, int* lengths);
+    ShipManager(size_t count, size_t* lengths);
     ~ShipManager();
-    int getShipCount();
-    int getAliveCount();
+    size_t getShipCount();
+    size_t getAliveCount();
     Ship* getShip(int index);
 };
 

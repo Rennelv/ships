@@ -5,28 +5,31 @@
 ShipManager::ShipManager() : ships_count(0) {
 }
 
-ShipManager::ShipManager(int count, int* lengths) {
+ShipManager::ShipManager(size_t count, size_t* lengths) {
     ships.reserve(count);
     ships_count = count;
-    for (int i = 0; i < ships_count; i++) {
-        Ship* newShip = new Ship(lengths[i], ships.size());
-        ships.push_back(newShip);
+    for (size_t i = 0; i < ships_count; i++) {
+        // Ship* newShip = new Ship(lengths[i], ships.size());
+        // ships.push_back(newShip);
+        ships.emplace_back(new Ship(lengths[i], ships.size()));
     }
 }
 
 ShipManager::~ShipManager() {
-    for (int i = 0; i < ships_count; i++) {
+    for (size_t i = 0; i < ships_count; i++) {
         delete ships[i];
     }
+    ships.clear();
+
 }
 
-int ShipManager::getShipCount() {
+size_t ShipManager::getShipCount() {
     return ships_count;
 }
 
-int ShipManager::getAliveCount() {
-    int alive = 0;
-    for (int i = 0; i < ships_count; i++) {
+size_t ShipManager::getAliveCount() {
+    size_t alive = 0;
+    for (size_t i = 0; i < ships_count; i++) {
         if (ships[i]->isAlive()) {
             alive++;
         }
@@ -35,10 +38,10 @@ int ShipManager::getAliveCount() {
 }
 
 Ship* ShipManager::getShip(int index) {
-    if (index == -1) {
-        return ships.back();
+    if (index < 0) {
+        index = ships_count - index;
     }
-    if (index < 0 || index >= ships_count) {
+    if (static_cast<size_t>(index) >= ships_count) {
         return nullptr;
     }
 

@@ -1,54 +1,43 @@
 @startuml
-class "Segment" as C_0004224949386065029667
-class C_0004224949386065029667 {
-__
-+hp : int
-}
 class "Ship" as C_0014529657433315016423
 class C_0014529657433315016423 {
-+Ship() : void
-+Ship(int len, int index) : void
++Ship(size_t len, size_t index) : void
 +Ship(const Ship & other) : void
-+Ship(Ship && other) noexcept : void
++Ship(Ship && other) = deleted : void
 +~Ship() : void
 ..
 +operator=(const Ship & other) : Ship &
-+operator=(Ship && other) noexcept : Ship &
++operator=(Ship && other) = deleted : Ship &
 ..
-+getHealth() : int
-+getLenght() : int
-+getSegment(int index) : Segment
-+getShipIndex() : int
-+isAlive() : bool
-+takeDamage(int segment_index, int damage) : int
++getHealth() const : int
++getLenght() const : size_t
++getSegment(size_t index) const : Segment
++getShipIndex() const : size_t
++isAlive() const : bool
++takeDamage(size_t segment_index, int damage) : int
 __
 -health : int
 -is_alive : bool
--length : int
+-length : size_t
 -segments : Segment *
--ship_index : int
+-ship_index : size_t
+}
+enum "Ship::SegmentState" as C_0016593760204207859148
+enum C_0016593760204207859148 {
+ALIVE
+DAMAGED
+DESTROYED
+}
+class "Ship::Segment" as C_0000674658759292391449
+class C_0000674658759292391449 {
+__
++hp : int
++state : SegmentState
 }
 enum "Ship::Orientation" as C_0015200704647938469073
 enum C_0015200704647938469073 {
 HORIZONTAL
 VERTICAL
-}
-class "FieldElement" as C_0001857836874925042506
-class C_0001857836874925042506 {
-__
-+is_ship : bool
-+segment_index : int
-+ship : Ship *
-+ship_index : int
-+state : VisibilityState
-+x : int
-+y : int
-}
-enum "FieldElement::VisibilityState" as C_0016786167066212157050
-enum C_0016786167066212157050 {
-UNKNOWN
-BLANK
-SHIP
 }
 class "ShipField" as C_0003843296779074973901
 class C_0003843296779074973901 {
@@ -61,24 +50,50 @@ class C_0003843296779074973901 {
 +operator=(ShipField && other) noexcept : ShipField &
 ..
 +attackShip(int x, int y) : bool
-+checkPlace(int x, int y) : bool
-+get_cell(int x, int y) : FieldElement
-+get_x() : int
-+get_y() : int
++clearField() : void
++getCellVisibilityState(int x, int y) const : CellVisibilityState
++getHeight() const : size_t
++getIsShip(int x, int y) const : bool
++getShipIndex(int x, int y) const : size_t
++getShipSegmentHP(int x, int y) const : int
++getShipSegmentIndex(int x, int y) const : size_t
++getShipSegmentState(int x, int y) const : Ship::SegmentState
++getWidth() const : size_t
 +placeShip(Ship * ship, int x, int y, Ship::Orientation orientation) : bool
 __
 -field : FieldElement **
--height : int
--width : int
+-height : size_t
+-width : size_t
 }
-C_0014529657433315016423 --> C_0004224949386065029667 : -segments
+enum "ShipField::CellVisibilityState" as C_0014337503322603405869
+enum C_0014337503322603405869 {
+UNKNOWN
+BLANK
+SHIP
+}
+class "ShipField::FieldElement" as C_0000316359785794417378
+class C_0000316359785794417378 {
+__
++is_ship : bool
++ship : Ship *
++ship_index : size_t
++ship_segment_index : size_t
++state : CellVisibilityState
+}
+C_0014529657433315016423 --> C_0000674658759292391449 : -segments
+C_0016593760204207859148 --+ C_0014529657433315016423
+C_0000674658759292391449 --+ C_0014529657433315016423
+C_0000674658759292391449 o-- C_0016593760204207859148 : +state
 C_0015200704647938469073 --+ C_0014529657433315016423
-C_0001857836874925042506 o-- C_0016786167066212157050 : +state
-C_0001857836874925042506 --> C_0014529657433315016423 : +ship
-C_0016786167066212157050 --+ C_0001857836874925042506
+C_0003843296779074973901 ..> C_0014337503322603405869
+C_0003843296779074973901 ..> C_0016593760204207859148
 C_0003843296779074973901 ..> C_0014529657433315016423
 C_0003843296779074973901 ..> C_0015200704647938469073
-C_0003843296779074973901 --> C_0001857836874925042506 : -field
+C_0003843296779074973901 --> C_0000316359785794417378 : -field
+C_0014337503322603405869 --+ C_0003843296779074973901
+C_0000316359785794417378 --+ C_0003843296779074973901
+C_0000316359785794417378 o-- C_0014337503322603405869 : +state
+C_0000316359785794417378 --> C_0014529657433315016423 : +ship
 
 'Generated with clang-uml, version 0.5.5
 'LLVM version clang version 18.1.8

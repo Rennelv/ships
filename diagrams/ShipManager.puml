@@ -3,34 +3,40 @@ class "std::vector<Ship *>" as C_0007462257846685508834
 class C_0007462257846685508834 {
 __
 }
-class "Segment" as C_0004224949386065029667
-class C_0004224949386065029667 {
-__
-+hp : int
-}
 class "Ship" as C_0014529657433315016423
 class C_0014529657433315016423 {
-+Ship() : void
-+Ship(int len, int index) : void
++Ship(size_t len, size_t index) : void
 +Ship(const Ship & other) : void
-+Ship(Ship && other) noexcept : void
++Ship(Ship && other) = deleted : void
 +~Ship() : void
 ..
 +operator=(const Ship & other) : Ship &
-+operator=(Ship && other) noexcept : Ship &
++operator=(Ship && other) = deleted : Ship &
 ..
-+getHealth() : int
-+getLenght() : int
-+getSegment(int index) : Segment
-+getShipIndex() : int
-+isAlive() : bool
-+takeDamage(int segment_index, int damage) : int
++getHealth() const : int
++getLenght() const : size_t
++getSegment(size_t index) const : Segment
++getShipIndex() const : size_t
++isAlive() const : bool
++takeDamage(size_t segment_index, int damage) : int
 __
 -health : int
 -is_alive : bool
--length : int
+-length : size_t
 -segments : Segment *
--ship_index : int
+-ship_index : size_t
+}
+enum "Ship::SegmentState" as C_0016593760204207859148
+enum C_0016593760204207859148 {
+ALIVE
+DAMAGED
+DESTROYED
+}
+class "Ship::Segment" as C_0000674658759292391449
+class C_0000674658759292391449 {
+__
++hp : int
++state : SegmentState
 }
 enum "Ship::Orientation" as C_0015200704647938469073
 enum C_0015200704647938469073 {
@@ -40,18 +46,21 @@ VERTICAL
 class "ShipManager" as C_0017499122254539489506
 class C_0017499122254539489506 {
 +ShipManager() : void
-+ShipManager(int count, int * lengths) : void
++ShipManager(size_t count, size_t * lengths) : void
 +~ShipManager() : void
 ..
-+getAliveCount() : int
-+getCount() : int
++getAliveCount() : size_t
 +getShip(int index) : Ship *
++getShipCount() : size_t
 __
 -ships : std::vector<Ship *>
--ships_count : int
+-ships_count : size_t
 }
 C_0007462257846685508834 ..> C_0014529657433315016423
-C_0014529657433315016423 --> C_0004224949386065029667 : -segments
+C_0014529657433315016423 --> C_0000674658759292391449 : -segments
+C_0016593760204207859148 --+ C_0014529657433315016423
+C_0000674658759292391449 --+ C_0014529657433315016423
+C_0000674658759292391449 o-- C_0016593760204207859148 : +state
 C_0015200704647938469073 --+ C_0014529657433315016423
 C_0017499122254539489506 ..> C_0014529657433315016423
 C_0017499122254539489506 o-- C_0007462257846685508834 : -ships
