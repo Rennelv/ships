@@ -54,10 +54,10 @@ class C_0003843296779074973901 {
 +operator=(const ShipField & other) : ShipField &
 +operator=(ShipField && other) noexcept : ShipField &
 ..
-+attackShip(int x, int y) : bool
--checkShipCollision(Ship * ship, size_t x, size_t y, Ship::Orientation orientation) const : bool
++attackShip(int x, int y, int damage = 1) : void
+-checkShipCollision(Ship * ship, int x, int y, Ship::Orientation orientation) const : bool
 +clearField() : void
--exposeSurroundingShipCells(Ship * ship, size_t x, size_t y) : void
+-exposeSurroundingShipCells(Ship * ship, int x, int y) : void
 +getCellVisibilityState(int x, int y) const : CellVisibilityState
 +getHeight() const : size_t
 +getIsShip(int x, int y) const : bool
@@ -102,12 +102,21 @@ class C_0017470460303031448044 {
 +Game() : void
 +~Game() : void
 ..
--printField(const ShipField * field) : void
--printFieldExposed(const ShipField * field, bool show_hp = false) : void
 +run() : void
 __
 -field : ShipField *
 -manager : ShipManager *
+}
+class "CliInterface" as C_0005047295129698031663
+class C_0005047295129698031663 {
++attackShip(ShipField *& field) : void
++createField(ShipField *& field) : void
++createShips(ShipManager *& manager) : void
++placeShips(ShipField *& field, ShipManager *& manager) : void
++printAliveShips(ShipManager *& manager) : void
++printField(const ShipField * field) const : void
++printFieldExposed(const ShipField * field, bool show_hp = false) const : void
+__
 }
 C_0007462257846685508834 ..> C_0014529657433315016423
 C_0014529657433315016423 ..> C_0016593760204207859148
@@ -130,6 +139,8 @@ C_0017499122254539489506 ..> C_0014529657433315016423
 C_0017499122254539489506 o-- C_0007462257846685508834 : -ships
 C_0017470460303031448044 --> C_0003843296779074973901 : -field
 C_0017470460303031448044 --> C_0017499122254539489506 : -manager
+C_0005047295129698031663 ..> C_0003843296779074973901
+C_0005047295129698031663 ..> C_0017499122254539489506
 
 'Generated with clang-uml, version 0.5.5
 'LLVM version clang version 18.1.8

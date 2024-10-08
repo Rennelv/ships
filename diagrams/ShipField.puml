@@ -46,10 +46,10 @@ class C_0003843296779074973901 {
 +operator=(const ShipField & other) : ShipField &
 +operator=(ShipField && other) noexcept : ShipField &
 ..
-+attackShip(int x, int y) : bool
--checkShipCollision(Ship * ship, size_t x, size_t y, Ship::Orientation orientation) const : bool
++attackShip(int x, int y, int damage = 1) : void
+-checkShipCollision(Ship * ship, int x, int y, Ship::Orientation orientation) const : bool
 +clearField() : void
--exposeSurroundingShipCells(Ship * ship, size_t x, size_t y) : void
+-exposeSurroundingShipCells(Ship * ship, int x, int y) : void
 +getCellVisibilityState(int x, int y) const : CellVisibilityState
 +getHeight() const : size_t
 +getIsShip(int x, int y) const : bool
