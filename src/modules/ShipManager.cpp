@@ -1,4 +1,5 @@
 #include "ShipManager.hpp"
+#include <stdexcept>
 
 #include "Ship.hpp"
 
@@ -6,9 +7,7 @@ ShipManager::ShipManager(size_t count, size_t* lengths) {
     ships.reserve(count);
     ships_count = count;
     for (size_t i = 0; i < ships_count; i++) {
-        // Ship* newShip = new Ship(lengths[i], ships.size());
-        // ships.push_back(newShip);
-        ships.emplace_back(new Ship(lengths[i], ships.size()));
+        ships.emplace_back(new Ship(lengths[i]));
     }
 }
 
@@ -17,14 +16,13 @@ ShipManager::~ShipManager() {
         delete ships[i];
     }
     ships.clear();
-
 }
 
-size_t ShipManager::getShipCount() {
+size_t ShipManager::getShipCount() const {
     return ships_count;
 }
 
-size_t ShipManager::getAliveCount() {
+size_t ShipManager::getAliveCount() const {
     size_t alive = 0;
     for (size_t i = 0; i < ships_count; i++) {
         if (ships[i]->isAlive()) {
@@ -34,12 +32,12 @@ size_t ShipManager::getAliveCount() {
     return alive;
 }
 
-Ship* ShipManager::getShip(int index) {
+Ship* ShipManager::getShip(int index) const {
     if (index < 0) {
         index = ships_count + index;
     }
     if (static_cast<size_t>(index) >= ships_count) {
-        return nullptr;
+        throw std::out_of_range("Index out of range");
     }
 
     return ships[index];

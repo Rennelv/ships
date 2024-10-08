@@ -13,9 +13,9 @@ class ShipManager {
     ShipManager(size_t count, size_t* lengths);
     ShipManager(size_t count, std::vector<size_t> lengths) : ShipManager(count, lengths.data()){};
     ~ShipManager();
-    size_t getShipCount();
-    size_t getAliveCount();
-    Ship* getShip(int index);
+    size_t getShipCount() const;
+    size_t getAliveCount() const;
+    Ship* getShip(int index) const;
 };
 
 #endif  // SHIPMANAGER_HPP

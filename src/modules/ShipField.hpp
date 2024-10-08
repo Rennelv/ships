@@ -11,15 +11,16 @@ class ShipField {
 
    private:
     struct FieldElement {
-        CellVisibilityState state;
-        Ship* ship;
-        bool is_ship;
-        size_t ship_index;
-        size_t ship_segment_index;
+        CellVisibilityState state = CellVisibilityState::UNKNOWN;
+        Ship* ship = nullptr;
+        bool is_ship = false;
+        size_t ship_segment_index = 0;
     };
     size_t width;
     size_t height;
     FieldElement** field;
+    bool checkShipCollision(Ship* ship, size_t x, size_t y, Ship::Orientation orientation) const;  // returns true if ship collides with another ship
+    void exposeSurroundingShipCells(Ship* ship, size_t x, size_t y);                               // exposes cells around ship
 
    public:
     ShipField(int width, int height);
@@ -30,17 +31,15 @@ class ShipField {
     ShipField& operator=(const ShipField& other);      // Copy assignment operator
     ShipField& operator=(ShipField&& other) noexcept;  // Move assignment operator
 
-    size_t getWidth() const;
-    size_t getHeight() const;
-    CellVisibilityState getCellVisibilityState(int x, int y) const;
-    bool getIsShip(int x, int y) const;
-    size_t getShipIndex(int x, int y) const;
-    size_t getShipSegmentIndex(int x, int y) const;
-    int getShipSegmentHP(int x, int y) const;
-    Ship::SegmentState getShipSegmentState(int x, int y) const;
-    bool placeShip(Ship* ship, int x, int y, Ship::Orientation orientation);
-    bool attackShip(int x, int y);
-    void clearField();
+    size_t getWidth() const;                                                  // returns width of field
+    size_t getHeight() const;                                                 // returns height of field
+    CellVisibilityState getCellVisibilityState(int x, int y) const;           // returns state of cell
+    bool getIsShip(int x, int y) const;                                       // returns true if cell contains ship
+    int getShipSegmentHP(int x, int y) const;                                 // returns hp of segment in ship
+    Ship::SegmentState getShipSegmentState(int x, int y) const;               // returns state of segment in ship
+    void placeShip(Ship* ship, int x, int y, Ship::Orientation orientation);  // places ship on field
+    bool attackShip(int x, int y);                                            // attacks ship on field
+    void clearField();                                                        // clears field
 };
 
 #endif  // SHIPFIELD_HPP

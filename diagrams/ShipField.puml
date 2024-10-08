@@ -1,43 +1,35 @@
 @startuml
 class "Ship" as C_0014529657433315016423
 class C_0014529657433315016423 {
-+Ship(size_t len, size_t index) : void
-+Ship(const Ship & other) : void
-+Ship(Ship && other) = deleted : void
++Ship(size_t len) : void
 +~Ship() : void
 ..
-+operator=(const Ship & other) : Ship &
-+operator=(Ship && other) = deleted : Ship &
-..
-+getHealth() const : int
 +getLenght() const : size_t
-+getSegment(size_t index) const : Segment
-+getShipIndex() const : size_t
++getSegmentHP(size_t index) const : int
++getSegmentState(size_t index) const : SegmentState
 +isAlive() const : bool
 +takeDamage(size_t segment_index, int damage) : int
 __
 -health : int
--is_alive : bool
 -length : size_t
 -segments : Segment *
--ship_index : size_t
 }
 enum "Ship::SegmentState" as C_0016593760204207859148
 enum C_0016593760204207859148 {
-ALIVE
+INTACT
 DAMAGED
 DESTROYED
+}
+enum "Ship::Orientation" as C_0015200704647938469073
+enum C_0015200704647938469073 {
+HORIZONTAL
+VERTICAL
 }
 class "Ship::Segment" as C_0000674658759292391449
 class C_0000674658759292391449 {
 __
 +hp : int
 +state : SegmentState
-}
-enum "Ship::Orientation" as C_0015200704647938469073
-enum C_0015200704647938469073 {
-HORIZONTAL
-VERTICAL
 }
 class "ShipField" as C_0003843296779074973901
 class C_0003843296779074973901 {
@@ -50,16 +42,16 @@ class C_0003843296779074973901 {
 +operator=(ShipField && other) noexcept : ShipField &
 ..
 +attackShip(int x, int y) : bool
+-checkShipCollision(Ship * ship, size_t x, size_t y, Ship::Orientation orientation) const : bool
 +clearField() : void
+-exposeSurroundingShipCells(Ship * ship, size_t x, size_t y) : void
 +getCellVisibilityState(int x, int y) const : CellVisibilityState
 +getHeight() const : size_t
 +getIsShip(int x, int y) const : bool
-+getShipIndex(int x, int y) const : size_t
 +getShipSegmentHP(int x, int y) const : int
-+getShipSegmentIndex(int x, int y) const : size_t
 +getShipSegmentState(int x, int y) const : Ship::SegmentState
 +getWidth() const : size_t
-+placeShip(Ship * ship, int x, int y, Ship::Orientation orientation) : bool
++placeShip(Ship * ship, int x, int y, Ship::Orientation orientation) : void
 __
 -field : FieldElement **
 -height : size_t
@@ -76,19 +68,19 @@ class C_0000316359785794417378 {
 __
 +is_ship : bool
 +ship : Ship *
-+ship_index : size_t
 +ship_segment_index : size_t
 +state : CellVisibilityState
 }
+C_0014529657433315016423 ..> C_0016593760204207859148
 C_0014529657433315016423 --> C_0000674658759292391449 : -segments
 C_0016593760204207859148 --+ C_0014529657433315016423
+C_0015200704647938469073 --+ C_0014529657433315016423
 C_0000674658759292391449 --+ C_0014529657433315016423
 C_0000674658759292391449 o-- C_0016593760204207859148 : +state
-C_0015200704647938469073 --+ C_0014529657433315016423
-C_0003843296779074973901 ..> C_0014337503322603405869
-C_0003843296779074973901 ..> C_0016593760204207859148
 C_0003843296779074973901 ..> C_0014529657433315016423
 C_0003843296779074973901 ..> C_0015200704647938469073
+C_0003843296779074973901 ..> C_0014337503322603405869
+C_0003843296779074973901 ..> C_0016593760204207859148
 C_0003843296779074973901 --> C_0000316359785794417378 : -field
 C_0014337503322603405869 --+ C_0003843296779074973901
 C_0000316359785794417378 --+ C_0003843296779074973901

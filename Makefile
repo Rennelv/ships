@@ -11,9 +11,7 @@ BUILD_DIR = build
 
 # Source files
 SRCS = $(SRC_DIR)/main.cpp \
-	   $(MODULES_DIR)/Ship.cpp \
-	   $(MODULES_DIR)/ShipField.cpp \
-	   $(MODULES_DIR)/ShipManager.cpp
+	   $(wildcard $(MODULES_DIR)/*.cpp)
 
 # Object files
 OBJS = $(SRCS:%.cpp=$(BUILD_DIR)/%.o)

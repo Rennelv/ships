@@ -5,6 +5,8 @@ battleship
 test_input.txt
 compile_commands.json
 *.txt
+*.odt
+*.docx
 
 !.gitignore
 
