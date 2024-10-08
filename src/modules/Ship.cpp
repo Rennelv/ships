@@ -21,7 +21,7 @@ Ship::SegmentState Ship::getSegmentState(size_t index) const {
     return segments[index].state;
 }
 
-int Ship::takeDamage(size_t segment_index, int damage) {
+void Ship::takeDamage(size_t segment_index, int damage) {
     segments[segment_index].hp -= damage;
     if (segments[segment_index].hp <= 0) {
         health--;
@@ -29,7 +29,6 @@ int Ship::takeDamage(size_t segment_index, int damage) {
     } else {
         segments[segment_index].state = SegmentState::DAMAGED;
     }
-    return segments[segment_index].hp;
 }
 
 size_t Ship::getLenght() const {

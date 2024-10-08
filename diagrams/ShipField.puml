@@ -2,13 +2,18 @@
 class "Ship" as C_0014529657433315016423
 class C_0014529657433315016423 {
 +Ship(size_t len) : void
++Ship(const Ship & other) = deleted : void
++Ship(Ship && other) noexcept = deleted : void
 +~Ship() : void
+..
++operator=(const Ship & other) = deleted : Ship &
++operator=(Ship && other) noexcept = deleted : Ship &
 ..
 +getLenght() const : size_t
 +getSegmentHP(size_t index) const : int
 +getSegmentState(size_t index) const : SegmentState
 +isAlive() const : bool
-+takeDamage(size_t segment_index, int damage) : int
++takeDamage(size_t segment_index, int damage) : void
 __
 -health : int
 -length : size_t

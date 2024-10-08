@@ -20,13 +20,17 @@ class Ship {
 
    public:
     Ship(size_t len);
+    Ship(const Ship& other) = delete;
+    Ship(Ship&& other) noexcept = delete;
+    Ship& operator=(const Ship& other) = delete;
+    Ship& operator=(Ship&& other) noexcept = delete;
     ~Ship();
 
-    int takeDamage(size_t segment_index, int damage);  // returns current hp of segment
-    int getSegmentHP(size_t index) const;              // returns hp of segment by index
-    SegmentState getSegmentState(size_t index) const;  // returns state of segment by index
-    size_t getLenght() const;                          // returns length of ship
-    bool isAlive() const;                              // returns true if ship is alive
+    void takeDamage(size_t segment_index, int damage);  // returns current hp of segment
+    int getSegmentHP(size_t index) const;               // returns hp of segment by index
+    SegmentState getSegmentState(size_t index) const;   // returns state of segment by index
+    size_t getLenght() const;                           // returns length of ship
+    bool isAlive() const;                               // returns true if ship is alive
 };
 
 #endif  // SHIP_HPP
