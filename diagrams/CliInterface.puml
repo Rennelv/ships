@@ -1,8 +1,4 @@
 @startuml
-class "std::vector<size_t>" as C_0009048762651940375792
-class C_0009048762651940375792 {
-__
-}
 class "std::vector<Ship *>" as C_0007462257846685508834
 class C_0007462257846685508834 {
 __
@@ -10,12 +6,7 @@ __
 class "Ship" as C_0014529657433315016423
 class C_0014529657433315016423 {
 +Ship(size_t len) : void
-+Ship(const Ship & other) = deleted : void
-+Ship(Ship && other) noexcept = deleted : void
 +~Ship() : void
-..
-+operator=(const Ship & other) = deleted : Ship &
-+operator=(Ship && other) noexcept = deleted : Ship &
 ..
 +getLenght() const : size_t
 +getSegmentHP(size_t index) const : int
@@ -87,7 +78,6 @@ __
 class "ShipManager" as C_0017499122254539489506
 class C_0017499122254539489506 {
 +ShipManager(size_t count, size_t * lengths) : void
-+ShipManager(size_t count, std::vector<size_t> lengths) : void
 +~ShipManager() : void
 ..
 +getAliveCount() const : size_t
@@ -103,9 +93,9 @@ class C_0005047295129698031663 {
 +createField(ShipField *& field) : void
 +createShips(ShipManager *& manager) : void
 +placeShips(ShipField *& field, ShipManager *& manager) : void
-+printAliveShips(ShipManager *& manager) : void
-+printField(const ShipField * field) const : void
-+printFieldExposed(const ShipField * field, bool show_hp = false) const : void
++printAliveShips(ShipManager *& manager) const : void
++printField(const ShipField & field) const : void
++printFieldExposed(const ShipField & field, bool show_hp = false) const : void
 __
 }
 C_0007462257846685508834 ..> C_0014529657433315016423
@@ -124,7 +114,6 @@ C_0014337503322603405869 --+ C_0003843296779074973901
 C_0000316359785794417378 --+ C_0003843296779074973901
 C_0000316359785794417378 o-- C_0014337503322603405869 : +state
 C_0000316359785794417378 --> C_0014529657433315016423 : +ship
-C_0017499122254539489506 ..> C_0009048762651940375792
 C_0017499122254539489506 ..> C_0014529657433315016423
 C_0017499122254539489506 o-- C_0007462257846685508834 : -ships
 C_0005047295129698031663 ..> C_0003843296779074973901

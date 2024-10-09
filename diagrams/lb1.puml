@@ -87,27 +87,6 @@ __
 -ships : std::vector<Ship *>
 -ships_count : size_t
 }
-class "Game" as C_0017470460303031448044
-class C_0017470460303031448044 {
-+Game() : void
-+~Game() : void
-..
-+run() : void
-__
--field : ShipField *
--manager : ShipManager *
-}
-class "CliInterface" as C_0005047295129698031663
-class C_0005047295129698031663 {
-+attackShip(ShipField *& field) : void
-+createField(ShipField *& field) : void
-+createShips(ShipManager *& manager) : void
-+placeShips(ShipField *& field, ShipManager *& manager) : void
-+printAliveShips(ShipManager *& manager) const : void
-+printField(const ShipField & field) const : void
-+printFieldExposed(const ShipField & field, bool show_hp = false) const : void
-__
-}
 C_0007462257846685508834 ..> C_0014529657433315016423
 C_0014529657433315016423 ..> C_0016593760204207859148
 C_0014529657433315016423 --> C_0000674658759292391449 : -segments
@@ -126,10 +105,6 @@ C_0000316359785794417378 o-- C_0014337503322603405869 : +state
 C_0000316359785794417378 --> C_0014529657433315016423 : +ship
 C_0017499122254539489506 ..> C_0014529657433315016423
 C_0017499122254539489506 o-- C_0007462257846685508834 : -ships
-C_0017470460303031448044 --> C_0003843296779074973901 : -field
-C_0017470460303031448044 --> C_0017499122254539489506 : -manager
-C_0005047295129698031663 ..> C_0003843296779074973901
-C_0005047295129698031663 ..> C_0017499122254539489506
 
 'Generated with clang-uml, version 0.5.5
 'LLVM version clang version 18.1.8
