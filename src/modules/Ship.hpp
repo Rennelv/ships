@@ -20,10 +20,6 @@ class Ship {
 
    public:
     Ship(size_t len);
-    Ship(const Ship& other) = delete;
-    Ship(Ship&& other) noexcept = delete;
-    Ship& operator=(const Ship& other) = delete;
-    Ship& operator=(Ship&& other) noexcept = delete;
     ~Ship();
 
     void takeDamage(size_t segment_index, int damage);  // returns current hp of segment

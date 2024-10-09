@@ -1,6 +1,7 @@
 #include "CliInterface.hpp"
 
 #include <iostream>
+#include <limits>
 
 void CliInterface::printField(const ShipField &field) const {
     const size_t height = field.getHeight();
@@ -57,12 +58,18 @@ void CliInterface::createField(ShipField *&field) {
     while (field == nullptr) {
         std::cout << "Write field size (x,y): \n";
         std::cin >> width >> height;
+        if (std::cin.fail()) {
+            std::cin.clear();                                                    // Clear the error state
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // Ignore invalid input
+            std::cout << "Invalid input. Please enter integers for width and height.\n";
+            continue;
+        }
         try {
             field = new ShipField(width, height);
         } catch (std::exception &e) {
             std::cout << e.what() << '\n';
             std::cout << "Try again \n";
-        };
+        }
     }
 }
 
@@ -73,12 +80,19 @@ void CliInterface::createShips(ShipManager *&manager) {
         std::cout << "Write how many ships of length " << i << " you want: ";
         int count;
         std::cin >> count;
+        if (std::cin.fail() || count < 0) {
+            std::cin.clear();                                                    // Clear the error state
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // Ignore invalid input
+            std::cout << "Invalid input. Please enter a non-negative integer.\n";
+            i++;  // Retry the current length
+            continue;
+        }
         for (int j = 0; j < count; j++) {
             lengths.push_back(i);
         }
     }
 
-    manager = new ShipManager(lengths.size(), lengths);
+    manager = new ShipManager(lengths.size(), lengths.data());
 }
 
 void CliInterface::placeShips(ShipField *&field, ShipManager *&manager) {
@@ -88,6 +102,13 @@ void CliInterface::placeShips(ShipField *&field, ShipManager *&manager) {
         int x, y;
         std::cout << "Write x and y for ship " << i << " of length " << ship_length << " (bottom left corner): ";
         std::cin >> x >> y;
+        if (std::cin.fail() || x < 0 || y < 0) {
+            std::cin.clear();                                                    // Clear the error state
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // Ignore invalid input
+            std::cout << "Invalid input. Please enter non-negative integers for coordinates.\n";
+            i--;  // Retry the current ship
+            continue;
+        }
         Ship::Orientation orientation;
         if (ship_length == 1) {
             orientation = Ship::Orientation::HORIZONTAL;
@@ -95,11 +116,14 @@ void CliInterface::placeShips(ShipField *&field, ShipManager *&manager) {
             std::cout << "Write orientation for ship " << i << " (0 - HORIZONTAL, 1 - VERTICAL): ";
             int ori;
             std::cin >> ori;
-            if (ori == 0) {
-                orientation = Ship::Orientation::HORIZONTAL;
-            } else {
-                orientation = Ship::Orientation::VERTICAL;
+            if (std::cin.fail() || (ori != 0 && ori != 1)) {
+                std::cin.clear();                                                    // Clear the error state
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // Ignore invalid input
+                std::cout << "Invalid input. Please enter 0 for HORIZONTAL or 1 for VERTICAL.\n";
+                i--;  // Retry the current ship
+                continue;
             }
+            orientation = (ori == 0) ? Ship::Orientation::HORIZONTAL : Ship::Orientation::VERTICAL;
         }
         try {
             field->placeShip(manager->getShip(i), x, y, orientation);
@@ -116,9 +140,15 @@ void CliInterface::attackShip(ShipField *&field) {
     int x, y;
     std::cout << "Write x and y for attack: \n";
     std::cin >> x >> y;
+    if (std::cin.fail() || x < 0 || y < 0) {
+        std::cin.clear();                                                    // Clear the error state
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');  // Ignore invalid input
+        std::cout << "Invalid input. Please enter non-negative integers for coordinates.\n";
+        return;  // Exit the function to allow the user to try again
+    }
     field->attackShip(x, y);
 }
 
-void CliInterface::printAliveShips(ShipManager *&manager) const{
+void CliInterface::printAliveShips(ShipManager *&manager) const {
     std::cout << "Alive ships: " << manager->getAliveCount() << '\n';
 }

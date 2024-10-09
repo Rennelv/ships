@@ -71,6 +71,8 @@ ShipField::ShipField(ShipField &&other) noexcept {
     this->height = other.height;
     field = other.field;
     other.field = nullptr;
+    other.width = 0;
+    other.height = 0;
 }
 
 ShipField &ShipField::operator=(ShipField &&other) noexcept {
@@ -83,6 +85,8 @@ ShipField &ShipField::operator=(ShipField &&other) noexcept {
         this->height = other.height;
         field = other.field;
         other.field = nullptr;
+        other.width = 0;
+        other.height = 0;
     }
     return *this;
 }
