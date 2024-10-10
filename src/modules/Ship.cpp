@@ -1,5 +1,7 @@
 #include "Ship.hpp"
 
+#include "Enums.hpp"
+
 Ship::Ship(size_t len) {
     length = len;
     health = len;
@@ -17,7 +19,7 @@ int Ship::getSegmentHP(size_t index) const {
     return segments[index].hp;
 }
 
-Ship::SegmentState Ship::getSegmentState(size_t index) const {
+ShipSegmentState Ship::getSegmentState(size_t index) const {
     return segments[index].state;
 }
 
@@ -25,9 +27,9 @@ void Ship::takeDamage(size_t segment_index, int damage) {
     segments[segment_index].hp -= damage;
     if (segments[segment_index].hp <= 0) {
         health--;
-        segments[segment_index].state = SegmentState::DESTROYED;
+        segments[segment_index].state = ShipSegmentState::DESTROYED;
     } else {
-        segments[segment_index].state = SegmentState::DAMAGED;
+        segments[segment_index].state = ShipSegmentState::DAMAGED;
     }
 }
 

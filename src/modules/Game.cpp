@@ -1,6 +1,6 @@
 #include "Game.hpp"
 
-#include "CliInterface.hpp"
+#include "Cli.hpp"
 
 Game::Game() {
     field = nullptr;
@@ -13,7 +13,7 @@ Game::~Game() {
 }
 
 void Game::run() {
-    CliInterface cli = CliInterface();
+    Cli cli = Cli();
 
     cli.createField(field);
 

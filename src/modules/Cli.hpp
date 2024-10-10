@@ -1,10 +1,10 @@
-#ifndef CLIINTERFACE_HPP
-#define CLIINTERFACE_HPP
+#ifndef CLI_HPP
+#define CLI_HPP
 
 #include "ShipField.hpp"
 #include "ShipManager.hpp"
 
-class CliInterface {
+class Cli {
    public:
     void printField(const ShipField &field) const;
     void printFieldExposed(const ShipField &field, bool show_hp = false) const;
@@ -18,4 +18,4 @@ class CliInterface {
 
 
 
-#endif  // CLIINTERFACE_HPP
+#endif  // CLI_HPP

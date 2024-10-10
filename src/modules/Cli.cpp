@@ -1,21 +1,23 @@
-#include "CliInterface.hpp"
+#include "Cli.hpp"
 
 #include <iostream>
 #include <limits>
 
-void CliInterface::printField(const ShipField &field) const {
+#include "Enums.hpp"
+
+void Cli::printField(const ShipField &field) const {
     const size_t height = field.getHeight();
     const size_t width = field.getWidth();
     for (int y = height - 1; y >= 0; y--) {
         std::cout << y << (height <= 10 ? " " : ((y < 10) ? "  " : " "));
         for (size_t x = 0; x < width; x++) {
-            if (field.getCellVisibilityState(x, y) == ShipField::CellVisibilityState::UNKNOWN) {
+            if (field.getCellVisibilityState(x, y) == CellVisibilityState::UNKNOWN) {
                 std::cout << ((width > 10) ? ".  " : ". ");
-            } else if (field.getCellVisibilityState(x, y) == ShipField::CellVisibilityState::BLANK) {
+            } else if (field.getCellVisibilityState(x, y) == CellVisibilityState::BLANK) {
                 std::cout << ((width > 10) ? "O  " : "O ");
             } else {
-                const Ship::SegmentState &segment_state = field.getShipSegmentState(x, y);
-                if (segment_state == Ship::SegmentState::DESTROYED) {
+                const ShipSegmentState &segment_state = field.getShipSegmentState(x, y);
+                if (segment_state == ShipSegmentState::DESTROYED) {
                     std::cout << ((width > 10) ? "X  " : "X ");
                 } else {
                     std::cout << ((width > 10) ? "/  " : "/ ");
@@ -31,7 +33,7 @@ void CliInterface::printField(const ShipField &field) const {
     std::cout << std::endl;
 }
 
-void CliInterface::printFieldExposed(const ShipField &field, bool show_hp) const {
+void Cli::printFieldExposed(const ShipField &field, bool show_hp) const {
     const size_t height = field.getHeight();
     const size_t width = field.getWidth();
     for (int y = height - 1; y >= 0; y--) {
@@ -53,7 +55,7 @@ void CliInterface::printFieldExposed(const ShipField &field, bool show_hp) const
     std::cout << std::endl;
 }
 
-void CliInterface::createField(ShipField *&field) {
+void Cli::createField(ShipField *&field) {
     int width, height;
     while (field == nullptr) {
         std::cout << "Write field size (x,y): \n";
@@ -73,7 +75,7 @@ void CliInterface::createField(ShipField *&field) {
     }
 }
 
-void CliInterface::createShips(ShipManager *&manager) {
+void Cli::createShips(ShipManager *&manager) {
     std::vector<size_t> lengths;
     lengths.reserve(10);
     for (size_t i = 4; i > 0; i--) {
@@ -95,7 +97,7 @@ void CliInterface::createShips(ShipManager *&manager) {
     manager = new ShipManager(lengths.size(), lengths.data());
 }
 
-void CliInterface::placeShips(ShipField *&field, ShipManager *&manager) {
+void Cli::placeShips(ShipField *&field, ShipManager *&manager) {
     std::cout << "Place ships on the field\n";
     for (size_t i = 0; i < manager->getShipCount(); i++) {
         const size_t ship_length = manager->getShip(i)->getLenght();
@@ -109,9 +111,9 @@ void CliInterface::placeShips(ShipField *&field, ShipManager *&manager) {
             i--;  // Retry the current ship
             continue;
         }
-        Ship::Orientation orientation;
+        ShipOrientation orientation;
         if (ship_length == 1) {
-            orientation = Ship::Orientation::HORIZONTAL;
+            orientation = ShipOrientation::HORIZONTAL;
         } else {
             std::cout << "Write orientation for ship " << i << " (0 - HORIZONTAL, 1 - VERTICAL): ";
             int ori;
@@ -123,7 +125,7 @@ void CliInterface::placeShips(ShipField *&field, ShipManager *&manager) {
                 i--;  // Retry the current ship
                 continue;
             }
-            orientation = (ori == 0) ? Ship::Orientation::HORIZONTAL : Ship::Orientation::VERTICAL;
+            orientation = (ori == 0) ? ShipOrientation::HORIZONTAL : ShipOrientation::VERTICAL;
         }
         try {
             field->placeShip(manager->getShip(i), x, y, orientation);
@@ -136,7 +138,7 @@ void CliInterface::placeShips(ShipField *&field, ShipManager *&manager) {
     }
 }
 
-void CliInterface::attackShip(ShipField *&field) {
+void Cli::attackShip(ShipField *&field) {
     int x, y;
     std::cout << "Write x and y for attack: \n";
     std::cin >> x >> y;
@@ -149,6 +151,6 @@ void CliInterface::attackShip(ShipField *&field) {
     field->attackShip(x, y);
 }
 
-void CliInterface::printAliveShips(ShipManager *&manager) const {
+void Cli::printAliveShips(ShipManager *&manager) const {
     std::cout << "Alive ships: " << manager->getAliveCount() << '\n';
 }

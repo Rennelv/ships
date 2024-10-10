@@ -2,14 +2,10 @@
 #define SHIPFIELD_HPP
 
 #include <cstddef>
-
+#include "Enums.hpp"
 #include "Ship.hpp"
 
 class ShipField {
-   public:
-    enum CellVisibilityState { UNKNOWN, BLANK, SHIP };
-
-   private:
     struct FieldElement {
         CellVisibilityState state = CellVisibilityState::UNKNOWN;
         Ship* ship = nullptr;
@@ -19,7 +15,7 @@ class ShipField {
     size_t width;
     size_t height;
     FieldElement** field;
-    bool checkShipCollision(Ship* ship, int x, int y, Ship::Orientation orientation) const;  // returns true if ship collides with another ship
+    bool checkShipCollision(Ship* ship, int x, int y, ShipOrientation orientation) const;  // returns true if ship collides with another ship
     void exposeSurroundingShipCells(Ship* ship, int x, int y);                               // exposes cells around ship
 
    public:
@@ -36,8 +32,8 @@ class ShipField {
     CellVisibilityState getCellVisibilityState(int x, int y) const;           // returns state of cell
     bool getIsShip(int x, int y) const;                                       // returns true if cell contains ship
     int getShipSegmentHP(int x, int y) const;                                 // returns hp of segment in ship
-    Ship::SegmentState getShipSegmentState(int x, int y) const;               // returns state of segment in ship
-    void placeShip(Ship* ship, int x, int y, Ship::Orientation orientation);  // places ship on field
+    ShipSegmentState getShipSegmentState(int x, int y) const;               // returns state of segment in ship
+    void placeShip(Ship* ship, int x, int y, ShipOrientation orientation);  // places ship on field
     void attackShip(int x, int y, int damage = 1);                            // attacks ship on field
     void clearField();                                                        // clears field
 };
