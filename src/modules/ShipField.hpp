@@ -16,8 +16,8 @@ class ShipField {
     size_t width;
     size_t height;
     FieldElement** field;
-    bool checkShipCollision(Ship* ship, int x, int y, ShipOrientation orientation) const;  // returns true if ship collides with another ship
-    void exposeSurroundingShipCells(int ship_length, int x, int y);                        // exposes cells around ship
+    bool checkShipCollision(int ship_length, int x, int y, ShipOrientation orientation) const;  // returns true if ship collides with another ship
+    void exposeSurroundingShipCells(int ship_length, int x, int y);                             // exposes cells around ship
 
    public:
     ShipField(int width, int height);

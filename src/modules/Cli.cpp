@@ -97,6 +97,11 @@ void Cli::createShips(ShipManager *&manager) {
             i++;  // Retry the current length
             continue;
         }
+        if (count > 10) {
+            std::cout << "You can't have more than 10 ships of the same length\n";
+            i++;  // Retry the current length
+            continue;
+        }
         for (int j = 0; j < count; j++) {
             lengths.push_back(i);
         }

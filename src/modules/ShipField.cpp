@@ -89,9 +89,7 @@ ShipField &ShipField::operator=(ShipField &&other) noexcept {
     return *this;
 }
 
-bool ShipField::checkShipCollision(Ship *ship, int head_x, int head_y, ShipOrientation orientation) const {
-    const int ship_length = ship->getLength();
-
+bool ShipField::checkShipCollision(int ship_length, int head_x, int head_y, ShipOrientation orientation) const {
     if (orientation == ShipOrientation::HORIZONTAL) {
         if (head_x + ship_length > static_cast<int>(width)) {
             return true;
@@ -176,6 +174,7 @@ void ShipField::exposeSurroundingShipCells(int ship_length, int x, int y) {
 
 void ShipField::placeShip(Ship *ship, int x, int y, ShipOrientation orientation) {
     const size_t ship_length = ship->getLength();
+
     if (x < 0 || y < 0) {  // 0 0 is the bottom left corner
         throw std::invalid_argument("Coordinates must be non-negative");
     }
@@ -187,7 +186,7 @@ void ShipField::placeShip(Ship *ship, int x, int y, ShipOrientation orientation)
         throw std::invalid_argument("Coordinates are out of field bounds");
     }
 
-    if (checkShipCollision(ship, x_size, y_size, orientation)) {
+    if (checkShipCollision(ship_length, x_size, y_size, orientation)) {
         throw std::invalid_argument("Ship collides with another ship or borders");
     }
 
