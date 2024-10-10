@@ -4,13 +4,13 @@
 #include "ShipManager.hpp"
 
 class Game {
-    public:
-        Game();
-        ~Game();
-        void run();
-    private:
-        ShipField *field;
-        ShipManager *manager;
+    ShipField *field;
+    ShipManager *manager;
+
+   public:
+    Game();
+    ~Game();
+    void run();
 };
 
 #endif  // GAME_HPP

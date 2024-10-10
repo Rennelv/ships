@@ -8,7 +8,7 @@ class C_0014529657433315016423 {
 +Ship(size_t len) : void
 +~Ship() : void
 ..
-+getLenght() const : size_t
++getLength() const : size_t
 +getSegmentHP(size_t index) const : int
 +getSegmentState(size_t index) const : SegmentState
 +isAlive() const : bool

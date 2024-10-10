@@ -17,7 +17,7 @@ SRCS = $(SRC_DIR)/main.cpp \
 OBJS = $(SRCS:%.cpp=$(BUILD_DIR)/%.o)
 
 # Executable
-TARGET = battleship
+TARGET = seabattle
 
 # Default target
 all: $(BUILD_DIR) $(TARGET)

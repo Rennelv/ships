@@ -12,9 +12,6 @@ ShipField::ShipField(int new_width, int new_height) {
     if (new_width <= 0 || new_height <= 0) {
         throw std::invalid_argument("Width and height must be greater than 0");
     }
-    if (new_width > 100 || new_height > 100) {
-        throw std::invalid_argument("Width and height must be less than 100");
-    }
     width = static_cast<size_t>(new_width);
     height = static_cast<size_t>(new_height);
     field = new FieldElement *[height];
@@ -37,8 +34,8 @@ ShipField::~ShipField() {
 }
 
 ShipField::ShipField(const ShipField &other) {
-    this->width = other.width;
-    this->height = other.height;
+    width = other.width;
+    height = other.height;
     field = new FieldElement *[height];
     for (size_t i = 0; i < height; i++) {
         field[i] = new FieldElement[width];
@@ -54,8 +51,8 @@ ShipField &ShipField::operator=(const ShipField &other) {
             delete[] field[i];
         }
         delete[] field;
-        this->width = other.width;
-        this->height = other.height;
+        width = other.width;
+        height = other.height;
         field = new FieldElement *[height];
         for (size_t i = 0; i < height; i++) {
             field[i] = new FieldElement[width];
@@ -68,8 +65,8 @@ ShipField &ShipField::operator=(const ShipField &other) {
 }
 
 ShipField::ShipField(ShipField &&other) noexcept {
-    this->width = other.width;
-    this->height = other.height;
+    width = other.width;
+    height = other.height;
     field = other.field;
     other.field = nullptr;
     other.width = 0;
@@ -82,8 +79,8 @@ ShipField &ShipField::operator=(ShipField &&other) noexcept {
             delete[] field[i];
         }
         delete[] field;
-        this->width = other.width;
-        this->height = other.height;
+        width = other.width;
+        height = other.height;
         field = other.field;
         other.field = nullptr;
         other.width = 0;
@@ -93,7 +90,7 @@ ShipField &ShipField::operator=(ShipField &&other) noexcept {
 }
 
 bool ShipField::checkShipCollision(Ship *ship, int head_x, int head_y, ShipOrientation orientation) const {
-    const int ship_length = ship->getLenght();
+    const int ship_length = ship->getLength();
 
     if (orientation == ShipOrientation::HORIZONTAL) {
         if (head_x + ship_length > static_cast<int>(width)) {
@@ -127,9 +124,8 @@ bool ShipField::checkShipCollision(Ship *ship, int head_x, int head_y, ShipOrien
     return false;
 }
 
-void ShipField::exposeSurroundingShipCells(Ship *ship, int x, int y) {
+void ShipField::exposeSurroundingShipCells(int ship_length, int x, int y) {
     ShipOrientation orientation;
-    const int ship_length = ship->getLenght();
 
     // calculate orientation of the ship
     if (getIsShip(x, y - 1) || getIsShip(x, y + 1)) {
@@ -139,22 +135,19 @@ void ShipField::exposeSurroundingShipCells(Ship *ship, int x, int y) {
     }
 
     // calculate head of the ship
-    int head_x = x;
-    int head_y = y;
-
     if (orientation == ShipOrientation::HORIZONTAL) {
-        while (getIsShip(head_x - 1, head_y)) {
-            head_x--;
+        while (getIsShip(x - 1, y)) {
+            x--;
         }
     } else {
-        while (getIsShip(head_x, head_y - 1)) {
-            head_y--;
+        while (getIsShip(x, y - 1)) {
+            y--;
         }
     }
 
     if (orientation == ShipOrientation::HORIZONTAL) {
-        for (int i = head_x - 1; i < head_x + ship_length + 1; i++) {
-            for (int j = head_y - 1; j < head_y + 2; j++) {
+        for (int i = x - 1; i < x + ship_length + 1; i++) {
+            for (int j = y - 1; j < y + 2; j++) {
                 if (i >= static_cast<int>(width) || j >= static_cast<int>(height) || i < 0 || j < 0) {
                     continue;
                 }
@@ -166,8 +159,8 @@ void ShipField::exposeSurroundingShipCells(Ship *ship, int x, int y) {
             }
         }
     } else {
-        for (int i = head_x - 1; i < head_x + 2; i++) {
-            for (int j = head_y - 1; j < head_y + ship_length + 1; j++) {
+        for (int i = x - 1; i < x + 2; i++) {
+            for (int j = y - 1; j < y + ship_length + 1; j++) {
                 if (i >= static_cast<int>(width) || j >= static_cast<int>(height) || i < 0 || j < 0) {
                     continue;
                 }
@@ -182,7 +175,7 @@ void ShipField::exposeSurroundingShipCells(Ship *ship, int x, int y) {
 }
 
 void ShipField::placeShip(Ship *ship, int x, int y, ShipOrientation orientation) {
-    const size_t ship_length = ship->getLenght();
+    const size_t ship_length = ship->getLength();
     if (x < 0 || y < 0) {  // 0 0 is the bottom left corner
         throw std::invalid_argument("Coordinates must be non-negative");
     }
@@ -214,32 +207,26 @@ void ShipField::placeShip(Ship *ship, int x, int y, ShipOrientation orientation)
 }
 
 void ShipField::attackShip(int x, int y, int damage) {
-    if (x < 0 || y < 0) {
-        return;
-    }
-    const size_t x_size = static_cast<size_t>(x);
-    const size_t y_size = static_cast<size_t>(y);
-
-    if (x_size >= width || y_size >= height) {
-        return;
+    if (x < 0 || y < 0 || static_cast<size_t>(x) >= width || static_cast<size_t>(y) >= height) {
+        throw std::invalid_argument("Coordinates are out of field bounds");
     }
 
-    if (getIsShip(x_size, y_size) == false) {
-        field[y_size][x_size].state = CellVisibilityState::BLANK;
+    if (getIsShip(x, y) == false) {
+        field[y][x].state = CellVisibilityState::BLANK;
         return;
     }
 
-    Ship *current = field[y_size][x_size].ship;
-    const size_t ship_segment_index = field[y_size][x_size].ship_segment_index;
-    
+    Ship *current = field[y][x].ship;
+    const size_t ship_segment_index = field[y][x].ship_segment_index;
+
     if (current->getSegmentHP(ship_segment_index) <= 0) {
         return;
     }
 
-    field[y_size][x_size].state = CellVisibilityState::SHIP;
+    field[y][x].state = CellVisibilityState::SHIP;
     current->takeDamage(ship_segment_index, damage);
     if (current->isAlive() == false) {
-        exposeSurroundingShipCells(current, x_size, y_size);
+        exposeSurroundingShipCells(current->getLength(), x, y);
     }
 }
 

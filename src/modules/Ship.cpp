@@ -2,11 +2,9 @@
 
 #include "Enums.hpp"
 
-Ship::Ship(size_t len) {
-    length = len;
-    health = len;
+Ship::Ship(size_t length) : length(length), health(length) {
     segments = new Segment[length];
-    for (size_t i = 0; i < len; i++) {
+    for (size_t i = 0; i < length; i++) {
         segments[i] = Segment{};
     }
 }
@@ -33,7 +31,7 @@ void Ship::takeDamage(size_t segment_index, int damage) {
     }
 }
 
-size_t Ship::getLenght() const {
+size_t Ship::getLength() const {
     return length;
 }
 

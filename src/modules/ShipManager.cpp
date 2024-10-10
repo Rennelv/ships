@@ -1,4 +1,5 @@
 #include "ShipManager.hpp"
+
 #include <stdexcept>
 
 #include "Ship.hpp"

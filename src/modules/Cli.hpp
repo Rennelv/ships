@@ -13,9 +13,6 @@ class Cli {
     void placeShips(ShipField *&field, ShipManager *&manager);
     void attackShip(ShipField *&field);
     void printAliveShips(ShipManager *&manager) const;
-
 };
-
-
 
 #endif  // CLI_HPP
