@@ -1,3 +1,25 @@
-build
+# Ignore hidden files
+.*
+
+battleship
+seabattle
+test_input.txt
+compile_commands.json
+*.txt
+*.odt
+*.docx
+*.pdf
+
+!.gitignore
+
+# Ignore build directories
+build/
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+
+# Ignore C++ build files
+*.o
 *.out
-.clang-format
+

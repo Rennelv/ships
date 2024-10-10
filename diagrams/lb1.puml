@@ -1,0 +1,108 @@
+@startuml
+class "std::vector<Ship *>" as C_0007462257846685508834
+class C_0007462257846685508834 {
+__
+}
+enum "ShipSegmentState" as C_0014256742677139282670
+enum C_0014256742677139282670 {
+INTACT
+DAMAGED
+DESTROYED
+}
+enum "ShipOrientation" as C_0002579181642537833876
+enum C_0002579181642537833876 {
+HORIZONTAL
+VERTICAL
+}
+enum "CellVisibilityState" as C_0003333043679234439357
+enum C_0003333043679234439357 {
+UNKNOWN
+BLANK
+SHIP
+}
+class "Ship" as C_0014529657433315016423
+class C_0014529657433315016423 {
++Ship(size_t length) : void
++~Ship() : void
+..
++getLength() const : size_t
++getSegmentHP(size_t index) const : int
++getSegmentState(size_t index) const : ShipSegmentState
++isAlive() const : bool
++takeDamage(size_t segment_index, int damage) : void
+__
+-health : int
+-length : size_t
+-segments : Segment *
+}
+class "Ship::Segment" as C_0000674658759292391449
+class C_0000674658759292391449 {
+__
++hp : int
++state : ShipSegmentState
+}
+class "ShipField" as C_0003843296779074973901
+class C_0003843296779074973901 {
++ShipField(int width, int height) : void
++ShipField(const ShipField & other) : void
++ShipField(ShipField && other) noexcept : void
++~ShipField() : void
+..
++operator=(const ShipField & other) : ShipField &
++operator=(ShipField && other) noexcept : ShipField &
+..
++attackShip(int x, int y, int damage = 1) : void
+-checkShipCollision(Ship * ship, int x, int y, ShipOrientation orientation) const : bool
++clearField() : void
+-exposeSurroundingShipCells(int ship_length, int x, int y) : void
++getCellVisibilityState(int x, int y) const : CellVisibilityState
++getHeight() const : size_t
++getIsShip(int x, int y) const : bool
++getShipSegmentHP(int x, int y) const : int
++getShipSegmentState(int x, int y) const : ShipSegmentState
++getWidth() const : size_t
++placeShip(Ship * ship, int x, int y, ShipOrientation orientation) : void
+__
+-field : FieldElement **
+-height : size_t
+-width : size_t
+}
+class "ShipField::FieldElement" as C_0000316359785794417378
+class C_0000316359785794417378 {
+__
++is_ship : bool
++ship : Ship *
++ship_segment_index : size_t
++state : CellVisibilityState
+}
+class "ShipManager" as C_0017499122254539489506
+class C_0017499122254539489506 {
++ShipManager(size_t count, size_t * lengths) : void
++~ShipManager() : void
+..
++getAliveCount() const : size_t
++getShip(int index) const : Ship *
++getShipCount() const : size_t
+__
+-ships : std::vector<Ship *>
+-ships_count : size_t
+}
+C_0007462257846685508834 ..> C_0014529657433315016423
+C_0014529657433315016423 ..> C_0014256742677139282670
+C_0014529657433315016423 --> C_0000674658759292391449 : -segments
+C_0000674658759292391449 --+ C_0014529657433315016423
+C_0000674658759292391449 o-- C_0014256742677139282670 : +state
+C_0003843296779074973901 ..> C_0014529657433315016423
+C_0003843296779074973901 ..> C_0002579181642537833876
+C_0003843296779074973901 ..> C_0003333043679234439357
+C_0003843296779074973901 ..> C_0014256742677139282670
+C_0003843296779074973901 --> C_0000316359785794417378 : -field
+C_0000316359785794417378 --+ C_0003843296779074973901
+C_0000316359785794417378 o-- C_0003333043679234439357 : +state
+C_0000316359785794417378 --> C_0014529657433315016423 : +ship
+C_0017499122254539489506 ..> C_0014529657433315016423
+C_0017499122254539489506 o-- C_0007462257846685508834 : -ships
+
+'Generated with clang-uml, version 0.5.5
+'LLVM version clang version 18.1.8
+@enduml
