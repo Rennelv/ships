@@ -22,6 +22,9 @@ ShipSegmentState Ship::getSegmentState(size_t index) const {
 }
 
 void Ship::takeDamage(size_t segment_index, int damage) {
+    if (segments[segment_index].state == ShipSegmentState::DESTROYED) {
+        return;
+    }
     segments[segment_index].hp -= damage;
     if (segments[segment_index].hp <= 0) {
         health--;

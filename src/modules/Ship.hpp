@@ -12,7 +12,7 @@ class Ship {
     };
 
     size_t length;
-    int health;
+    size_t health;
     Segment* segments;
 
    public:
