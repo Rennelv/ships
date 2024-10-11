@@ -12,9 +12,6 @@ ShipManager::ShipManager(size_t count, size_t* lengths) {
     }
 }
 
-ShipManager::~ShipManager() {
-}
-
 size_t ShipManager::getShipCount() const {
     return ships_count;
 }
