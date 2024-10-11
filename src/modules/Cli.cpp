@@ -42,7 +42,7 @@ void Cli::printFieldExposed(const ShipField &field, bool show_hp) const {
         for (size_t x = 0; x < width; x++) {
             if (field.getIsShip(x, y)) {
                 // const int &segment_hp = field.getShipSegmentHP(x, y);
-                const int segment_hp = 5;  // ЪЪЪ
+                const int segment_hp = 0;  // ЪЪЪ
                 std::cout << (show_hp ? std::to_string(segment_hp) : "P") << ((width > 10) ? "  " : " ");
             } else {
                 std::cout << "." << ((width > 10) ? "  " : " ");
