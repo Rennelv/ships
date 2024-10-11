@@ -18,7 +18,7 @@ SHIP
 }
 class "Ship" as C_0014529657433315016423
 class C_0014529657433315016423 {
-+Ship(size_t length) : void
++Ship(int length) : void
 +~Ship() : void
 ..
 +getLength() const : size_t
@@ -27,7 +27,7 @@ class C_0014529657433315016423 {
 +isAlive() const : bool
 +takeDamage(size_t segment_index, int damage) : void
 __
--health : int
+-health : size_t
 -length : size_t
 -segments : Segment *
 }
@@ -48,16 +48,15 @@ class C_0003843296779074973901 {
 +operator=(ShipField && other) noexcept : ShipField &
 ..
 +attackShip(int x, int y, int damage = 1) : void
--checkShipCollision(Ship * ship, int x, int y, ShipOrientation orientation) const : bool
+-checkShipCollision(int ship_length, int x, int y, ShipOrientation orientation) const : bool
 +clearField() : void
 -exposeSurroundingShipCells(int ship_length, int x, int y) : void
 +getCellVisibilityState(int x, int y) const : CellVisibilityState
 +getHeight() const : size_t
 +getIsShip(int x, int y) const : bool
-+getShipSegmentHP(int x, int y) const : int
 +getShipSegmentState(int x, int y) const : ShipSegmentState
 +getWidth() const : size_t
-+placeShip(Ship * ship, int x, int y, ShipOrientation orientation) : void
++placeShip(Ship & ship, int x, int y, ShipOrientation orientation) : void
 __
 -field : FieldElement **
 -height : size_t
@@ -75,10 +74,10 @@ C_0014529657433315016423 ..> C_0014256742677139282670
 C_0014529657433315016423 --> C_0000674658759292391449 : -segments
 C_0000674658759292391449 --+ C_0014529657433315016423
 C_0000674658759292391449 o-- C_0014256742677139282670 : +state
-C_0003843296779074973901 ..> C_0014529657433315016423
 C_0003843296779074973901 ..> C_0002579181642537833876
 C_0003843296779074973901 ..> C_0003333043679234439357
 C_0003843296779074973901 ..> C_0014256742677139282670
+C_0003843296779074973901 ..> C_0014529657433315016423
 C_0003843296779074973901 --> C_0000316359785794417378 : -field
 C_0000316359785794417378 --+ C_0003843296779074973901
 C_0000316359785794417378 o-- C_0003333043679234439357 : +state

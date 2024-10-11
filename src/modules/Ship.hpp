@@ -16,7 +16,7 @@ class Ship {
     Segment* segments;
 
    public:
-    Ship(size_t length);
+    Ship(int length);
     ~Ship();
 
     void takeDamage(size_t segment_index, int damage);     // deals damage to segment by index

@@ -172,8 +172,8 @@ void ShipField::exposeSurroundingShipCells(int ship_length, int x, int y) {
     }
 }
 
-void ShipField::placeShip(Ship *ship, int x, int y, ShipOrientation orientation) {
-    const size_t ship_length = ship->getLength();
+void ShipField::placeShip(Ship &ship, int x, int y, ShipOrientation orientation) {
+    const size_t ship_length = ship.getLength();
 
     if (x < 0 || y < 0) {  // 0 0 is the bottom left corner
         throw std::invalid_argument("Coordinates must be non-negative");
@@ -192,13 +192,13 @@ void ShipField::placeShip(Ship *ship, int x, int y, ShipOrientation orientation)
 
     if (orientation == ShipOrientation::HORIZONTAL) {  // horizontal placement of the ship on the field
         for (size_t i = x_size; i < x_size + ship_length; i++) {
-            field[y_size][i].ship = ship;
+            field[y_size][i].ship = &ship;
             field[y_size][i].ship_segment_index = i - x_size;
             field[y_size][i].is_ship = true;
         }
     } else {  // vertical placement of the ship on the field
         for (size_t i = y_size; i < y_size + ship_length; i++) {
-            field[i][x_size].ship = ship;
+            field[i][x_size].ship = &ship;
             field[i][x_size].ship_segment_index = i - y_size;
             field[i][x_size].is_ship = true;
         }
@@ -265,18 +265,18 @@ CellVisibilityState ShipField::getCellVisibilityState(int x, int y) const {
     return field[y][x].state;
 }
 
-int ShipField::getShipSegmentHP(int x, int y) const {
-    if (x < 0 || y < 0) {
-        throw std::invalid_argument("Coordinates must be non-negative");
-    }
-    if (static_cast<size_t>(x) >= width || static_cast<size_t>(y) >= height) {
-        throw std::invalid_argument("Coordinates are out of field bounds");
-    }
-    if (getIsShip(x, y) == false) {
-        throw std::logic_error("No ship at the given coordinates");
-    }
-    return field[y][x].ship->getSegmentHP(field[y][x].ship_segment_index);
-}
+// int ShipField::getShipSegmentHP(int x, int y) const {
+//     if (x < 0 || y < 0) {
+//         throw std::invalid_argument("Coordinates must be non-negative");
+//     }
+//     if (static_cast<size_t>(x) >= width || static_cast<size_t>(y) >= height) {
+//         throw std::invalid_argument("Coordinates are out of field bounds");
+//     }
+//     if (getIsShip(x, y) == false) {
+//         throw std::logic_error("No ship at the given coordinates");
+//     }
+//     return field[y][x].ship->getSegmentHP(field[y][x].ship_segment_index);
+// }
 
 ShipSegmentState ShipField::getShipSegmentState(int x, int y) const {
     if (x < 0 || y < 0) {

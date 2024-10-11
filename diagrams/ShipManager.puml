@@ -1,6 +1,6 @@
 @startuml
-class "std::vector<Ship *>" as C_0007462257846685508834
-class C_0007462257846685508834 {
+class "std::vector<Ship>" as C_0010668212532447068380
+class C_0010668212532447068380 {
 __
 }
 enum "ShipSegmentState" as C_0014256742677139282670
@@ -22,7 +22,7 @@ SHIP
 }
 class "Ship" as C_0014529657433315016423
 class C_0014529657433315016423 {
-+Ship(size_t length) : void
++Ship(int length) : void
 +~Ship() : void
 ..
 +getLength() const : size_t
@@ -31,7 +31,7 @@ class C_0014529657433315016423 {
 +isAlive() const : bool
 +takeDamage(size_t segment_index, int damage) : void
 __
--health : int
+-health : size_t
 -length : size_t
 -segments : Segment *
 }
@@ -47,19 +47,19 @@ class C_0017499122254539489506 {
 +~ShipManager() : void
 ..
 +getAliveCount() const : size_t
-+getShip(int index) const : Ship *
++getShip(int index) : Ship &
 +getShipCount() const : size_t
 __
--ships : std::vector<Ship *>
+-ships : std::vector<Ship>
 -ships_count : size_t
 }
-C_0007462257846685508834 ..> C_0014529657433315016423
+C_0010668212532447068380 ..> C_0014529657433315016423
 C_0014529657433315016423 ..> C_0014256742677139282670
 C_0014529657433315016423 --> C_0000674658759292391449 : -segments
 C_0000674658759292391449 --+ C_0014529657433315016423
 C_0000674658759292391449 o-- C_0014256742677139282670 : +state
 C_0017499122254539489506 ..> C_0014529657433315016423
-C_0017499122254539489506 o-- C_0007462257846685508834 : -ships
+C_0017499122254539489506 o-- C_0010668212532447068380 : -ships
 
 'Generated with clang-uml, version 0.5.5
 'LLVM version clang version 18.1.8
