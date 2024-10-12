@@ -77,7 +77,7 @@ __
 class "ShipManager" as C_0017499122254539489506
 class C_0017499122254539489506 {
 +ShipManager(size_t count, size_t * lengths) : void
-+~ShipManager() : void
++~ShipManager() = default : void
 ..
 +getAliveCount() const : size_t
 +getShip(int index) : Ship &
