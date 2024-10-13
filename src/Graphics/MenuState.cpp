@@ -71,9 +71,6 @@ GameState MenuState::changeState() {
 void MenuState::selectItem() {
     switch (selectedItemIndex) {
         case 0:
-            // Change to PlacingShips state
-            // Assuming you have a way to change the state in your Gui class
-            // gui.changeState(GameState::PlacingShips);
             nextState = GameState::CreateField;
             break;
         case 1:

@@ -15,6 +15,7 @@ class CreateFieldState : public State {
     sf::Font font;
     sf::Text fieldSizeText;
     sf::RectangleShape fieldRepresentation;
+    void drawField(sf::RenderWindow &window);
 
    public:
     CreateFieldState(ShipField *&field);

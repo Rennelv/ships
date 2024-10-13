@@ -18,6 +18,7 @@ class AttackingShipsState : public State {
     sf::RectangleShape selectionBox;
     int currentX;
     int currentY;
+    void drawField(sf::RenderWindow &window);
 
    public:
     AttackingShipsState(ShipField &field, ShipManager &manager);

@@ -17,7 +17,7 @@ Game::~Game() {
     delete manager;
 }
 
-void Game::runCli() {
+void Game::run() {
     Cli cli = Cli();
 
     cli.createField(field);

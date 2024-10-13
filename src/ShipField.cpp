@@ -96,7 +96,7 @@ bool ShipField::checkShipCollision(int ship_length, int head_x, int head_y, Ship
         }
         for (int i = head_x - 1; i < head_x + ship_length + 1; i++) {
             for (int j = head_y - 1; j < head_y + 2; j++) {
-                if (i >= static_cast<int>(width) || j >= static_cast<int>(height) || i < 0 || j <= 0) {
+                if (i >= static_cast<int>(width) || j >= static_cast<int>(height) || i < 0 || j < 0) {
                     continue;
                 }
                 if (getIsShip(i, j)) {
@@ -108,8 +108,8 @@ bool ShipField::checkShipCollision(int ship_length, int head_x, int head_y, Ship
         if (head_y + ship_length > static_cast<int>(height)) {
             return true;
         }
-        for (int i = head_x; i < head_x + 2; i++) {
-            for (int j = head_y; j < head_y + ship_length + 1; j++) {
+        for (int i = head_x - 1; i < head_x + 2; i++) {
+            for (int j = head_y - 1; j < head_y + ship_length + 1; j++) {
                 if (i >= static_cast<int>(width) || j >= static_cast<int>(height) || i < 0 || j < 0) {
                     continue;
                 }

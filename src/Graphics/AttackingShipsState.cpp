@@ -1,6 +1,7 @@
 #include "AttackingShipsState.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 
 #include "Enums.hpp"
@@ -48,7 +49,7 @@ void AttackingShipsState::handleInput(sf::Event &event) {
 }
 
 void AttackingShipsState::update() {
-    selectionBox.setPosition(currentX * 20, currentY * 20);
+    selectionBox.setPosition(10 + currentX * 20, 50 + currentY * 20);
 }
 
 void AttackingShipsState::render(sf::RenderWindow &window) {
@@ -57,27 +58,7 @@ void AttackingShipsState::render(sf::RenderWindow &window) {
     window.draw(resultText);
 
     // Draw the field
-    for (int y = 0; y < field.getHeight(); y++) {
-        for (int x = 0; x < field.getWidth(); x++) {
-            sf::RectangleShape cell(sf::Vector2f(20, 20));
-            cell.setPosition(x * 20, y * 20);
-            if (field.getCellVisibilityState(x, y) == CellVisibilityState::UNKNOWN) {
-                cell.setFillColor(sf::Color::White);
-            } else if (field.getCellVisibilityState(x, y) == CellVisibilityState::BLANK) {
-                cell.setFillColor(sf::Color::Blue);
-            } else {
-                if (field.getShipSegmentState(x, y) == ShipSegmentState::DESTROYED) {
-                    cell.setFillColor(sf::Color::Red);
-                } else if (field.getShipSegmentState(x, y) == ShipSegmentState::DAMAGED) {
-                    cell.setFillColor(sf::Color::Yellow);
-                } else
-                    cell.setFillColor(sf::Color::Green);
-            }
-            cell.setOutlineColor(sf::Color::White);
-            cell.setOutlineThickness(1);
-            window.draw(cell);
-        }
-    }
+    drawField(window);
 
     // Draw the selection box
     window.draw(selectionBox);
@@ -91,4 +72,42 @@ void AttackingShipsState::render(sf::RenderWindow &window) {
 
 GameState AttackingShipsState::changeState() {
     return nextState;
+}
+
+void AttackingShipsState::drawField(sf::RenderWindow &window) {
+    sf::RectangleShape cellShape;
+    cellShape.setSize(sf::Vector2f(20.f, 20.f));  // Set the size of each cell
+    cellShape.setOutlineColor(sf::Color::Black);
+    cellShape.setOutlineThickness(1.f);
+    for (int y = 0; y < field.getHeight(); ++y) {
+        for (int x = 0; x < field.getWidth(); ++x) {
+            CellVisibilityState cellState = field.getCellVisibilityState(x, y);
+            switch (cellState) {
+                case CellVisibilityState::UNKNOWN:
+                    cellShape.setFillColor(sf::Color::Cyan);
+                    break;
+                case CellVisibilityState::BLANK:
+                    cellShape.setFillColor(sf::Color::White);
+                    break;
+                case CellVisibilityState::SHIP:
+                    switch (field.getShipSegmentState(x, y)) {
+                        case ShipSegmentState::INTACT:
+                            cellShape.setFillColor(sf::Color::Blue);
+                            break;
+                        case ShipSegmentState::DAMAGED:
+                            cellShape.setFillColor(sf::Color::Yellow);
+                            break;
+                        case ShipSegmentState::DESTROYED:
+                            cellShape.setFillColor(sf::Color::Red);
+                            break;
+                    }
+                    break;
+                default:
+                    cellShape.setFillColor(sf::Color::Black);
+                    break;
+            }
+            cellShape.setPosition(10 + x * cellShape.getSize().x, 50 + y * cellShape.getSize().y);
+            window.draw(cellShape);
+        }
+    }
 }

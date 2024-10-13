@@ -1,5 +1,8 @@
 #include "CreateFieldState.hpp"
 
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/Shape.hpp>
+
 #include "ShipField.hpp"
 
 CreateFieldState::CreateFieldState(ShipField *&field) : field(field) {
@@ -26,8 +29,8 @@ void CreateFieldState::handleInput(sf::Event &event) {
         } else if (event.key.code == sf::Keyboard::Left) {
             fieldWidth = std::max(1, fieldWidth - 1);
         } else if (event.key.code == sf::Keyboard::Enter) {
-            field = new ShipField(fieldWidth, fieldHeight);  // Swap the field with a new one
-            nextState = GameState::PlacingShips;             // Change to the next state
+            field = new ShipField(fieldWidth, fieldHeight);
+            nextState = GameState::PlacingShips;  // Change to the next state
         }
     }
 }
@@ -40,10 +43,25 @@ void CreateFieldState::update() {
 void CreateFieldState::render(sf::RenderWindow &window) {
     window.clear();
     window.draw(fieldSizeText);
-    window.draw(fieldRepresentation);
+    drawField(window);
     window.display();
 }
 
 GameState CreateFieldState::changeState() {
     return nextState;
+}
+
+void CreateFieldState::drawField(sf::RenderWindow &window) {
+    sf::RectangleShape cellShape;
+    cellShape.setSize(sf::Vector2f(30.f, 30.f));  // Set the size of each cell
+    cellShape.setOutlineColor(sf::Color::Black);
+    cellShape.setOutlineThickness(1.f);
+    for (int y = 0; y < fieldHeight; ++y) {
+        for (int x = 0; x < fieldWidth; ++x) {
+            cellShape.setFillColor(sf::Color::Cyan);
+
+            cellShape.setPosition(10 + x * 30.f, 50 + y * 30.f);
+            window.draw(cellShape);
+        }
+    }
 }

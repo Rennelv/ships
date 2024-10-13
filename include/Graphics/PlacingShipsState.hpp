@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 
 #include "ShipField.hpp"
@@ -20,6 +21,8 @@ class PlacingShipsState : public State {
     sf::RectangleShape shipRepresentation;
     int currentX = 0;
     int currentY = 0;
+    sf::Vector2f cell_size = {20, 20};
+    void drawField(sf::RenderWindow& window);
 
    public:
     PlacingShipsState(ShipField& field, ShipManager& manager);
