@@ -16,6 +16,12 @@ UNKNOWN
 BLANK
 SHIP
 }
+enum "MenuResult" as C_0000336692914646176741
+enum C_0000336692914646176741 {
+Nothing
+Exit
+Play
+}
 class "Ship" as C_0014529657433315016423
 class C_0014529657433315016423 {
 +Ship(int length) : void
@@ -48,7 +54,7 @@ class C_0003843296779074973901 {
 +operator=(ShipField && other) noexcept : ShipField &
 ..
 +attackShip(int x, int y, int damage = 1) : void
--checkShipCollision(int ship_length, int x, int y, ShipOrientation orientation) const : bool
++checkShipCollision(int ship_length, int x, int y, ShipOrientation orientation) const : bool
 +clearField() : void
 -exposeSurroundingShipCells(int ship_length, int x, int y) : void
 +getCellVisibilityState(int x, int y) const : CellVisibilityState

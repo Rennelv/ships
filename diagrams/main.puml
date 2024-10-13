@@ -3,6 +3,10 @@ class "std::vector<Ship>" as C_0010668212532447068380
 class C_0010668212532447068380 {
 __
 }
+class "std::unique_ptr<State>" as C_0003593355595461115184
+class C_0003593355595461115184 {
+__
+}
 enum "ShipSegmentState" as C_0014256742677139282670
 enum C_0014256742677139282670 {
 INTACT
@@ -19,6 +23,12 @@ enum C_0003333043679234439357 {
 UNKNOWN
 BLANK
 SHIP
+}
+enum "MenuResult" as C_0000336692914646176741
+enum C_0000336692914646176741 {
+Nothing
+Exit
+Play
 }
 class "Ship" as C_0014529657433315016423
 class C_0014529657433315016423 {
@@ -52,7 +62,7 @@ class C_0003843296779074973901 {
 +operator=(ShipField && other) noexcept : ShipField &
 ..
 +attackShip(int x, int y, int damage = 1) : void
--checkShipCollision(int ship_length, int x, int y, ShipOrientation orientation) const : bool
++checkShipCollision(int ship_length, int x, int y, ShipOrientation orientation) const : bool
 +clearField() : void
 -exposeSurroundingShipCells(int ship_length, int x, int y) : void
 +getCellVisibilityState(int x, int y) const : CellVisibilityState
@@ -86,17 +96,46 @@ __
 -ships : std::vector<Ship>
 -ships_count : size_t
 }
-class "Game" as C_0017470460303031448044
-class C_0017470460303031448044 {
-+Game() : void
-+~Game() : void
+enum "GameState" as C_0004356735495323104445
+enum C_0004356735495323104445 {
+Menu
+CreateField
+PlacingShips
+AttackingShips
+Exit
+}
+abstract "State" as C_0001914138303902600425
+abstract C_0001914138303902600425 {
++~State() = default : void
 ..
-+run() : void
+{abstract} +changeState() = 0 : GameState
+{abstract} +handleInput(sf::Event & event) = 0 : void
+{abstract} +render(sf::RenderWindow & window) = 0 : void
+{abstract} +update() = 0 : void
 __
--field : ShipField *
--manager : ShipManager *
+}
+class "GameGui" as C_0007395642151187698177
+class C_0007395642151187698177 {
++GameGui() : void
++~GameGui() : void
+..
+-changeState(GameState newState) : void
++drawField(ShipField & field, int x_offset, int y_offset, bool show_ships) : void
++mainLoop() : void
+-pollEvents() : void
+-render() : void
++run() : void
+-update() : void
+__
+-currentState : GameState
+-event : sf::Event
+-shipField : ShipField *
+-shipManager : ShipManager *
+-state : std::unique_ptr<State>
+-window : sf::RenderWindow
 }
 C_0010668212532447068380 ..> C_0014529657433315016423
+C_0003593355595461115184 ..> C_0001914138303902600425
 C_0014529657433315016423 ..> C_0014256742677139282670
 C_0014529657433315016423 --> C_0000674658759292391449 : -segments
 C_0000674658759292391449 --+ C_0014529657433315016423
@@ -111,8 +150,11 @@ C_0000316359785794417378 o-- C_0003333043679234439357 : +state
 C_0000316359785794417378 --> C_0014529657433315016423 : +ship
 C_0017499122254539489506 ..> C_0014529657433315016423
 C_0017499122254539489506 o-- C_0010668212532447068380 : -ships
-C_0017470460303031448044 --> C_0003843296779074973901 : -field
-C_0017470460303031448044 --> C_0017499122254539489506 : -manager
+C_0001914138303902600425 ..> C_0004356735495323104445
+C_0007395642151187698177 --> C_0003843296779074973901 : -shipField
+C_0007395642151187698177 --> C_0017499122254539489506 : -shipManager
+C_0007395642151187698177 o-- C_0004356735495323104445 : -currentState
+C_0007395642151187698177 o-- C_0003593355595461115184 : -state
 
 'Generated with clang-uml, version 0.5.5
 'LLVM version clang version 18.1.8
