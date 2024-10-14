@@ -94,12 +94,12 @@ bool ShipField::checkShipCollision(int ship_length, int head_x, int head_y, Ship
         if (head_x + ship_length > static_cast<int>(width)) {
             return true;
         }
-        for (int i = head_x - 1; i < head_x + ship_length + 1; i++) {
-            for (int j = head_y - 1; j < head_y + 2; j++) {
-                if (i >= static_cast<int>(width) || j >= static_cast<int>(height) || i < 0 || j < 0) {
+        for (int x = head_x - 1; x < head_x + ship_length + 1; x++) {
+            for (int y = head_y - 1; y < head_y + 2; y++) {
+                if (x < 0 || y < 0 || x >= static_cast<int>(width) || y >= static_cast<int>(height)) {
                     continue;
                 }
-                if (getIsShip(i, j)) {
+                if (getIsShip(x, y)) {
                     return true;  // cant place ship
                 }
             }
@@ -108,12 +108,12 @@ bool ShipField::checkShipCollision(int ship_length, int head_x, int head_y, Ship
         if (head_y + ship_length > static_cast<int>(height)) {
             return true;
         }
-        for (int i = head_x - 1; i < head_x + 2; i++) {
-            for (int j = head_y - 1; j < head_y + ship_length + 1; j++) {
-                if (i >= static_cast<int>(width) || j >= static_cast<int>(height) || i < 0 || j < 0) {
+        for (int x = head_x - 1; x < head_x + 2; x++) {
+            for (int y = head_y - 1; y < head_y + ship_length + 1; y++) {
+                if (x < 0 || y < 0 || x >= static_cast<int>(width) || y >= static_cast<int>(height)) {
                     continue;
                 }
-                if (getIsShip(i, j)) {
+                if (getIsShip(x, y)) {
                     return true;  // cant place ship
                 }
             }
@@ -122,11 +122,11 @@ bool ShipField::checkShipCollision(int ship_length, int head_x, int head_y, Ship
     return false;
 }
 
-void ShipField::exposeSurroundingShipCells(int ship_length, int x, int y) {
+void ShipField::exposeSurroundingShipCells(int ship_length, int head_x, int head_y) {
     ShipOrientation orientation;
 
     // calculate orientation of the ship
-    if (getIsShip(x, y - 1) || getIsShip(x, y + 1)) {
+    if (getIsShip(head_x, head_y - 1) || getIsShip(head_x, head_y + 1)) {
         orientation = ShipOrientation::VERTICAL;
     } else {
         orientation = ShipOrientation::HORIZONTAL;
@@ -134,38 +134,38 @@ void ShipField::exposeSurroundingShipCells(int ship_length, int x, int y) {
 
     // calculate head of the ship
     if (orientation == ShipOrientation::HORIZONTAL) {
-        while (getIsShip(x - 1, y)) {
-            x--;
+        while (getIsShip(head_x - 1, head_y)) {
+            head_x--;
         }
     } else {
-        while (getIsShip(x, y - 1)) {
-            y--;
+        while (getIsShip(head_x, head_y - 1)) {
+            head_y--;
         }
     }
 
     if (orientation == ShipOrientation::HORIZONTAL) {
-        for (int i = x - 1; i < x + ship_length + 1; i++) {
-            for (int j = y - 1; j < y + 2; j++) {
-                if (i >= static_cast<int>(width) || j >= static_cast<int>(height) || i < 0 || j < 0) {
+        for (int x = head_x - 1; x < head_x + ship_length + 1; x++) {
+            for (int y = head_y - 1; y < head_y + 2; y++) {
+                if (x < 0 || y < 0 || x >= static_cast<int>(width) || y >= static_cast<int>(height)) {
                     continue;
                 }
-                if (getIsShip(i, j)) {
+                if (getIsShip(x, y)) {
                     continue;
                 } else {
-                    field[j][i].state = CellVisibilityState::BLANK;
+                    field[y][x].state = CellVisibilityState::BLANK;
                 }
             }
         }
     } else {
-        for (int i = x - 1; i < x + 2; i++) {
-            for (int j = y - 1; j < y + ship_length + 1; j++) {
-                if (i >= static_cast<int>(width) || j >= static_cast<int>(height) || i < 0 || j < 0) {
+        for (int x = head_x - 1; x < head_x + 2; x++) {
+            for (int y = head_y - 1; y < head_y + ship_length + 1; y++) {
+                if (x < 0 || y < 0 || x >= static_cast<int>(width) || y >= static_cast<int>(height)) {
                     continue;
                 }
-                if (getIsShip(i, j)) {
+                if (getIsShip(x, y)) {
                     continue;
                 } else {
-                    field[j][i].state = CellVisibilityState::BLANK;
+                    field[y][x].state = CellVisibilityState::BLANK;
                 }
             }
         }
