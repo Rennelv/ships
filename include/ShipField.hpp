@@ -16,9 +16,9 @@ class ShipField {
     size_t width;
     size_t height;
     FieldElement** field;
-    void exposeSurroundingShipCells(int ship_length, int x, int y);  // exposes cells around ship
 
    public:
+    ShipField();
     ShipField(int width, int height);
     ~ShipField();
 
@@ -29,14 +29,15 @@ class ShipField {
 
     size_t getWidth() const;                                                                    // returns width of field
     size_t getHeight() const;                                                                   // returns height of field
+    void exposeSurroundingShipCells(int ship_length, int x, int y);                             // exposes cells around ship
     bool checkShipCollision(int ship_length, int x, int y, ShipOrientation orientation) const;  // returns true if ship collides with another ship
     CellVisibilityState getCellVisibilityState(int x, int y) const;                             // returns state of cell
     bool getIsShip(int x, int y) const;                                                         // returns true if cell contains ship
     // int getShipSegmentHP(int x, int y) const;                               // returns hp of segment in ship
-    ShipSegmentState getShipSegmentState(int x, int y) const;               // returns state of segment in ship
-    void placeShip(Ship& ship, int x, int y, ShipOrientation orientation);  // places ship on field
-    void attackShip(int x, int y, int damage = 1);                          // attacks ship on field
-    void clearField();                                                      // clears field
+    ShipSegmentState getShipSegmentState(int x, int y) const;                // returns state of segment in ship
+    void placeShip(Ship& ship, int x, int y, ShipOrientation orientation);   // places ship on field
+    void attackShip(int x, int y, bool expose_cell = true, int damage = 1);  // attacks ship on field
+    void clearField();                                                       // clears field
 };
 
 #endif  // SHIPFIELD_HPP

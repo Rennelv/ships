@@ -26,7 +26,8 @@ FetchContent_MakeAvailable(SFML)
 
 # Add include directories
 include_directories(${PROJECT_SOURCE_DIR}/include)
-include_directories(${PROJECT_SOURCE_DIR}/include/Graphics)
+# include_directories(${PROJECT_SOURCE_DIR}/include/GuiStates)
+# include_directories(${PROJECT_SOURCE_DIR}/include/Abilities)
 
 # Add source files
 file(GLOB_RECURSE SOURCES

@@ -1,21 +1,22 @@
-#include "CreateFieldState.hpp"
+#include "GuiStates/CreateFieldState.hpp"
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Shape.hpp>
+#include <memory>
 
 #include "ShipField.hpp"
 
-CreateFieldState::CreateFieldState(ShipField *&field) : field(field) {
+CreateFieldState::CreateFieldState(std::unique_ptr<ShipField> &field) : field(field) {
     font.loadFromFile("assets/fonts/font.ttf");
     fieldSizeText.setFont(font);
     fieldSizeText.setCharacterSize(24);
     fieldSizeText.setFillColor(sf::Color::White);
     fieldSizeText.setPosition(10, 10);
 
-    fieldRepresentation.setFillColor(sf::Color::Green);
-    fieldRepresentation.setOutlineColor(sf::Color::White);
-    fieldRepresentation.setOutlineThickness(1);
-    fieldRepresentation.setPosition(10, 50);
+    // fieldRepresentation.setFillColor(sf::Color::Green);
+    // fieldRepresentation.setOutlineColor(sf::Color::White);
+    // fieldRepresentation.setOutlineThickness(1);
+    // fieldRepresentation.setPosition(10, 50);
 }
 
 void CreateFieldState::handleInput(sf::Event &event) {
@@ -29,7 +30,7 @@ void CreateFieldState::handleInput(sf::Event &event) {
         } else if (event.key.code == sf::Keyboard::Left) {
             fieldWidth = std::max(1, fieldWidth - 1);
         } else if (event.key.code == sf::Keyboard::Enter) {
-            field = new ShipField(fieldWidth, fieldHeight);
+            field = std::make_unique<ShipField>(fieldWidth, fieldHeight);
             nextState = GameState::PlacingShips;  // Change to the next state
         }
     }
@@ -37,7 +38,6 @@ void CreateFieldState::handleInput(sf::Event &event) {
 
 void CreateFieldState::update() {
     fieldSizeText.setString("Field Size: " + std::to_string(fieldWidth) + " x " + std::to_string(fieldHeight));
-    fieldRepresentation.setSize(sf::Vector2f(fieldWidth * 20, fieldHeight * 20));  // Adjust size for visual representation
 }
 
 void CreateFieldState::render(sf::RenderWindow &window) {

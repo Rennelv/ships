@@ -3,19 +3,20 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include "GuiStates/State.hpp"
 #include "ShipField.hpp"
 #include "ShipManager.hpp"
-#include "state.hpp"
 
 class PlacingShipsState : public State {
     GameState nextState = GameState::PlacingShips;
     ShipField& field;
     ShipManager& manager;
     int currentShipIndex;
-    bool isVertical;
+    ShipOrientation orientation = ShipOrientation::VERTICAL;
     sf::Font font;
     sf::Text instructionText;
     sf::RectangleShape shipRepresentation;

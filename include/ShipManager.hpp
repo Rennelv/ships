@@ -10,6 +10,7 @@ class ShipManager {
     size_t ships_count;
 
    public:
+    ShipManager();
     ShipManager(size_t count, size_t* lengths);
     ~ShipManager() = default;
     size_t getShipCount() const;

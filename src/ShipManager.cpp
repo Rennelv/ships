@@ -4,6 +4,10 @@
 
 #include "Ship.hpp"
 
+ShipManager::ShipManager() {
+    ships_count = 0;
+}
+
 ShipManager::ShipManager(size_t count, size_t* lengths) {
     ships.reserve(count);
     ships_count = count;

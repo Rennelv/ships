@@ -1,4 +1,4 @@
-#include "MenuState.hpp"
+#include "GuiStates/MenuState.hpp"
 
 #include <SFML/Window/Event.hpp>
 

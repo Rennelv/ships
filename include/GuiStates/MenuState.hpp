@@ -5,7 +5,7 @@
 #include <SFML/Window/Event.hpp>
 #include <vector>
 
-#include "state.hpp"
+#include "GuiStates/State.hpp"
 
 class MenuState : public State {
    public:

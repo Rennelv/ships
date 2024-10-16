@@ -8,6 +8,12 @@
 #include "Enums.hpp"
 #include "Ship.hpp"
 
+ShipField::ShipField() {
+    width = 0;
+    height = 0;
+    field = nullptr;
+}
+
 ShipField::ShipField(int new_width, int new_height) {
     if (new_width <= 0 || new_height <= 0) {
         throw std::invalid_argument("Width and height must be greater than 0");
@@ -150,7 +156,7 @@ void ShipField::exposeSurroundingShipCells(int ship_length, int head_x, int head
                     continue;
                 }
                 if (getIsShip(x, y)) {
-                    continue;
+                    field[y][x].state = CellVisibilityState::SHIP;
                 } else {
                     field[y][x].state = CellVisibilityState::BLANK;
                 }
@@ -163,7 +169,7 @@ void ShipField::exposeSurroundingShipCells(int ship_length, int head_x, int head
                     continue;
                 }
                 if (getIsShip(x, y)) {
-                    continue;
+                    field[y][x].state = CellVisibilityState::SHIP;
                 } else {
                     field[y][x].state = CellVisibilityState::BLANK;
                 }
@@ -205,24 +211,25 @@ void ShipField::placeShip(Ship &ship, int x, int y, ShipOrientation orientation)
     }
 }
 
-void ShipField::attackShip(int x, int y, int damage) {
+void ShipField::attackShip(int x, int y, bool expose_cell, int damage) {
     if (x < 0 || y < 0 || static_cast<size_t>(x) >= width || static_cast<size_t>(y) >= height) {
         throw std::invalid_argument("Coordinates are out of field bounds");
     }
 
     if (getIsShip(x, y) == false) {
-        field[y][x].state = CellVisibilityState::BLANK;
+        if (expose_cell) field[y][x].state = CellVisibilityState::BLANK;
         return;
     }
 
     Ship *current = field[y][x].ship;
     const size_t ship_segment_index = field[y][x].ship_segment_index;
 
+    if (expose_cell) field[y][x].state = CellVisibilityState::SHIP;
+
     if (current->getSegmentHP(ship_segment_index) <= 0) {
         return;
     }
 
-    field[y][x].state = CellVisibilityState::SHIP;
     current->takeDamage(ship_segment_index, damage);
     if (current->isAlive() == false) {
         exposeSurroundingShipCells(current->getLength(), x, y);

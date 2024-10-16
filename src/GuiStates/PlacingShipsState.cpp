@@ -1,11 +1,12 @@
-#include "PlacingShipsState.hpp"
+#include "GuiStates/PlacingShipsState.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/Event.hpp>
 
 #include "Enums.hpp"
 
-PlacingShipsState::PlacingShipsState(ShipField& field, ShipManager& manager) : field(field), manager(manager), currentShipIndex(0), isVertical(true) {
+PlacingShipsState::PlacingShipsState(ShipField& field, ShipManager& manager)
+    : field(field), manager(manager), currentShipIndex(0), orientation(ShipOrientation::VERTICAL) {
     font.loadFromFile("assets/fonts/font.ttf");
     instructionText.setFont(font);
     instructionText.setCharacterSize(24);
@@ -29,11 +30,15 @@ void PlacingShipsState::handleInput(sf::Event& event) {
         } else if (event.key.code == sf::Keyboard::Right) {
             if (currentX < field.getWidth() - 1) currentX++;
         } else if (event.key.code == sf::Keyboard::R) {
-            isVertical = !isVertical;
+            if (orientation == ShipOrientation::VERTICAL) {
+                orientation = ShipOrientation::HORIZONTAL;
+            } else {
+                orientation = ShipOrientation::VERTICAL;
+            }
         } else if (event.key.code == sf::Keyboard::Enter) {
             Ship& ship = manager.getShip(currentShipIndex);
             try {
-                field.placeShip(ship, currentX, currentY, isVertical ? ShipOrientation::VERTICAL : ShipOrientation::HORIZONTAL);
+                field.placeShip(ship, currentX, currentY, orientation);
             } catch (const std::exception& e) {
                 currentShipIndex--;
             }
@@ -43,23 +48,17 @@ void PlacingShipsState::handleInput(sf::Event& event) {
             }
         }
     }
-    // if (manager.placeShip(currentShipIndex, currentX, currentY, isVertical)) {
-    //     currentShipIndex++;
-    //     if (currentShipIndex >= manager.getShipCount()) {
-    //         nextState = GameState::AttackingShips;  // Change to the next state
-    //     }
-    // }
 }
 
 void PlacingShipsState::update() {
     if (currentShipIndex < manager.getShipCount()) {
         int shipLength = manager.getShip(currentShipIndex).getLength();
-        if (isVertical) {
+        if (orientation == ShipOrientation::VERTICAL) {
             shipRepresentation.setSize(sf::Vector2f(20, shipLength * 20));
         } else {
             shipRepresentation.setSize(sf::Vector2f(shipLength * 20, 20));
         }
-        shipRepresentation.setPosition(currentX * 20, currentY * 20);
+        shipRepresentation.setPosition(10 + currentX * 20, 50 + currentY * 20);
     }
 }
 
@@ -68,16 +67,7 @@ void PlacingShipsState::render(sf::RenderWindow& window) {
     window.draw(instructionText);
 
     // Draw the field
-    for (int y = 0; y < field.getHeight(); y++) {
-        for (int x = 0; x < field.getWidth(); x++) {
-            sf::RectangleShape cell(sf::Vector2f(20, 20));
-            cell.setPosition(x * 20, y * 20);
-            cell.setFillColor(field.getIsShip(x, y) ? sf::Color::Red : sf::Color::Green);
-            cell.setOutlineColor(sf::Color::White);
-            cell.setOutlineThickness(1);
-            window.draw(cell);
-        }
-    }
+    drawField(window);
 
     // Draw the current ship
     if (currentShipIndex < manager.getShipCount()) {
@@ -89,4 +79,21 @@ void PlacingShipsState::render(sf::RenderWindow& window) {
 
 GameState PlacingShipsState::changeState() {
     return nextState;
+}
+
+void PlacingShipsState::drawField(sf::RenderWindow& window) {
+    sf::RectangleShape cellShape;
+    cellShape.setSize(sf::Vector2f(30.f, 30.f));  // Set the size of each cell
+    cellShape.setOutlineColor(sf::Color::Black);
+    cellShape.setOutlineThickness(1.f);
+    for (int y = 0; y < field.getHeight(); y++) {
+        for (int x = 0; x < field.getWidth(); x++) {
+            sf::RectangleShape cell(sf::Vector2f(20, 20));
+            cell.setPosition(10 + x * 20, 50 + y * 20);
+            cell.setFillColor(field.getIsShip(x, y) ? sf::Color::Red : sf::Color::Green);
+            cell.setOutlineColor(sf::Color::White);
+            cell.setOutlineThickness(1);
+            window.draw(cell);
+        }
+    }
 }

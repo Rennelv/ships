@@ -4,21 +4,23 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
+#include "Abilities/AbilityManager.hpp"
+#include "GuiStates/State.hpp"  // Include the base state class and derived state classes
 #include "ShipField.hpp"
 #include "ShipManager.hpp"
-#include "state.hpp"  // Include the base state class and derived state classes
 
 class GameGui {
    public:
     GameGui();
-    ~GameGui();
+    ~GameGui() = default;
     void run();
     void mainLoop();
-    void drawField(ShipField& field, int x_offset, int y_offset, bool show_ships);
+    // void drawField(ShipField& field, int x_offset, int y_offset, bool show_ships);
 
    private:
-    ShipField* shipField;
-    ShipManager* shipManager;
+    std::unique_ptr<ShipField> shipField;
+    std::unique_ptr<ShipManager> shipManager;
+    std::unique_ptr<AbilityManager> abilityManager;
     void update();
     void render();
     void pollEvents();
