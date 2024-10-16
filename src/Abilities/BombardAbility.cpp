@@ -1,7 +1,7 @@
 #include "Abilities/BombardAbility.hpp"
 
+#include <cstddef>
 #include <random>
-#include <stdexcept>
 
 #include "ShipField.hpp"
 
@@ -17,9 +17,9 @@ void BombardAbility::use(ShipField& field, int, int, AbilityResults& ret) {
 
     // Check if there are any ships on the field
     bool shipFound = false;
-    for (int i = 0; i < field.getWidth(); ++i) {
-        for (int j = 0; j < field.getHeight(); ++j) {
-            if (field.getIsShip(i, j)) {
+    for (size_t i = 0; i < field.getWidth(); ++i) {
+        for (size_t j = 0; j < field.getHeight(); ++j) {
+            if (field.getIsShip(i, j) && field.getShipSegmentState(i, j) != ShipSegmentState::DESTROYED) {
                 shipFound = true;
                 break;
             }
@@ -28,13 +28,12 @@ void BombardAbility::use(ShipField& field, int, int, AbilityResults& ret) {
     }
 
     if (!shipFound) {
-        throw std::runtime_error("No ships on the field");
         ret.bombardDamageDealt = false;
         return;
     }
 
     // Find a random segment that contains a ship
-    while (!field.getIsShip(x, y)) {
+    while (!(field.getIsShip(x, y) && field.getShipSegmentState(x, y) != ShipSegmentState::DESTROYED)) {
         x = disX(gen);
         y = disY(gen);
     }

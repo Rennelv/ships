@@ -37,80 +37,80 @@ void Game::run() {
     }
 }
 
-void Game::runGui() {
-    Cli cli = Cli();
+// void Game::runGui() {
+//     Cli cli = Cli();
 
-    cli.createField(field);
+//     cli.createField(field);
 
-    cli.createShips(manager);
-    cli.placeShips(field, manager);
+//     cli.createShips(manager);
+//     cli.placeShips(field, manager);
 
-    const int windowWidth = 1600;
-    const int windowHeight = 1200;
-    const int cellSize = 20;  // Size of each grid cell
+//     const int windowWidth = 1600;
+//     const int windowHeight = 1200;
+//     const int cellSize = 20;  // Size of each grid cell
 
-    // Create a window
-    sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Sea Battle", sf::Style::Default);
-    sf::ContextSettings settings;
-    settings.antialiasingLevel = 8;
-    window.setFramerateLimit(60);
+//     // Create a window
+//     sf::RenderWindow window(sf::VideoMode(windowWidth, windowHeight), "Sea Battle", sf::Style::Default);
+//     sf::ContextSettings settings;
+//     settings.antialiasingLevel = 8;
+//     window.setFramerateLimit(60);
 
-    sf::Texture cellTexture;
-    cellTexture.loadFromFile("assets/sprites/chisato.jpg");
+//     sf::Texture cellTexture;
+//     cellTexture.loadFromFile("assets/sprites/chisato.jpg");
 
-    // Main game loop
-    while (window.isOpen()) {
-        // Event handling
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            }
+//     // Main game loop
+//     while (window.isOpen()) {
+//         // Event handling
+//         sf::Event event;
+//         while (window.pollEvent(event)) {
+//             if (event.type == sf::Event::Closed) {
+//                 window.close();
+//             }
 
-            // Mouse click handling
-            if (event.type == sf::Event::MouseButtonPressed) {
-                if (event.mouseButton.button == sf::Mouse::Left) {
-                    int x = event.mouseButton.x / cellSize;
-                    int y = event.mouseButton.y / cellSize;
-                    try {
-                        field->attackShip(x, y);
-                    } catch (std::invalid_argument &e) {
-                        // Handle invalid attack
-                    }
-                }
-            }
-        }
+//             // Mouse click handling
+//             if (event.type == sf::Event::MouseButtonPressed) {
+//                 if (event.mouseButton.button == sf::Mouse::Left) {
+//                     int x = event.mouseButton.x / cellSize;
+//                     int y = event.mouseButton.y / cellSize;
+//                     try {
+//                         field->attackShip(x, y);
+//                     } catch (std::invalid_argument &e) {
+//                         // Handle invalid attack
+//                     }
+//                 }
+//             }
+//         }
 
-        // Clear the window
-        window.clear();
+//         // Clear the window
+//         window.clear();
 
-        // Draw the game grid
-        for (int i = 0; i < field->getWidth(); ++i) {
-            for (int j = 0; j < field->getHeight(); ++j) {
-                sf::Sprite cell(cellTexture);
-                cell.setScale(static_cast<float>(cellSize) / cellTexture.getSize().x, static_cast<float>(cellSize) / cellTexture.getSize().y);
+//         // Draw the game grid
+//         for (int i = 0; i < field->getWidth(); ++i) {
+//             for (int j = 0; j < field->getHeight(); ++j) {
+//                 sf::Sprite cell(cellTexture);
+//                 cell.setScale(static_cast<float>(cellSize) / cellTexture.getSize().x, static_cast<float>(cellSize) / cellTexture.getSize().y);
 
-                cell.setPosition(i * cellSize, j * cellSize);
+//                 cell.setPosition(i * cellSize, j * cellSize);
 
-                // Set cell color based on its state
-                if (field->getCellVisibilityState(i, j) == CellVisibilityState::UNKNOWN) {
-                    cell.setColor(sf::Color::Blue);  // Hidden cells
-                } else if (field->getCellVisibilityState(i, j) == CellVisibilityState::BLANK) {
-                    cell.setColor(sf::Color::White);  // Empty cells
-                } else {
-                    const ShipSegmentState &segment_state = field->getShipSegmentState(i, j);
-                    if (segment_state == ShipSegmentState::DESTROYED) {
-                        cell.setColor(sf::Color::Red);  // Destroyed ship
-                    } else {
-                        cell.setColor(sf::Color::Green);  // Ship segment
-                    }
-                }
+//                 // Set cell color based on its state
+//                 if (field->getCellVisibilityState(i, j) == CellVisibilityState::UNKNOWN) {
+//                     cell.setColor(sf::Color::Blue);  // Hidden cells
+//                 } else if (field->getCellVisibilityState(i, j) == CellVisibilityState::BLANK) {
+//                     cell.setColor(sf::Color::White);  // Empty cells
+//                 } else {
+//                     const ShipSegmentState &segment_state = field->getShipSegmentState(i, j);
+//                     if (segment_state == ShipSegmentState::DESTROYED) {
+//                         cell.setColor(sf::Color::Red);  // Destroyed ship
+//                     } else {
+//                         cell.setColor(sf::Color::Green);  // Ship segment
+//                     }
+//                 }
 
-                window.draw(cell);
-            }
-        }
+//                 window.draw(cell);
+//             }
+//         }
 
-        // Display the contents
-        window.display();
-    }
-}
+//         // Display the contents
+//         window.display();
+//     }
+// }

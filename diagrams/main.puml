@@ -1,4 +1,12 @@
 @startuml
+class "std::unique_ptr<Ability>" as C_0002593715388203665760
+class C_0002593715388203665760 {
+__
+}
+class "std::queue<std::unique_ptr<Ability>>" as C_0006911030825501507270
+class C_0006911030825501507270 {
+__
+}
 class "std::vector<Ship>" as C_0010668212532447068380
 class C_0010668212532447068380 {
 __
@@ -6,6 +14,32 @@ __
 class "std::unique_ptr<State>" as C_0003593355595461115184
 class C_0003593355595461115184 {
 __
+}
+enum "GameState" as C_0004356735495323104445
+enum C_0004356735495323104445 {
+Menu
+CreateField
+PlacingShips
+AttackingShips
+Exit
+}
+abstract "State" as C_0001914138303902600425
+abstract C_0001914138303902600425 {
++~State() = default : void
+..
+{abstract} +changeState() = 0 : GameState
+{abstract} +handleInput(sf::Event & event) = 0 : void
+{abstract} +render(sf::RenderWindow & window) = 0 : void
+{abstract} +update() = 0 : void
+__
+}
+class "AbilityResults" as C_0005219465313958275113
+class C_0005219465313958275113 {
+__
++bombardDamageDealt : bool
++doubleDamageIsActive : bool
++scannerIsActive : bool
++scannerShipFound : bool
 }
 enum "ShipSegmentState" as C_0014256742677139282670
 enum C_0014256742677139282670 {
@@ -23,12 +57,6 @@ enum C_0003333043679234439357 {
 UNKNOWN
 BLANK
 SHIP
-}
-enum "MenuResult" as C_0000336692914646176741
-enum C_0000336692914646176741 {
-Nothing
-Exit
-Play
 }
 class "Ship" as C_0014529657433315016423
 class C_0014529657433315016423 {
@@ -53,6 +81,7 @@ __
 }
 class "ShipField" as C_0003843296779074973901
 class C_0003843296779074973901 {
++ShipField() : void
 +ShipField(int width, int height) : void
 +ShipField(const ShipField & other) : void
 +ShipField(ShipField && other) noexcept : void
@@ -61,10 +90,10 @@ class C_0003843296779074973901 {
 +operator=(const ShipField & other) : ShipField &
 +operator=(ShipField && other) noexcept : ShipField &
 ..
-+attackShip(int x, int y, int damage = 1) : void
++attackShip(int x, int y, bool expose_cell = true, int damage = 1) : bool
 +checkShipCollision(int ship_length, int x, int y, ShipOrientation orientation) const : bool
 +clearField() : void
--exposeSurroundingShipCells(int ship_length, int x, int y) : void
++exposeSurroundingShipCells(int ship_length, int x, int y) : void
 +getCellVisibilityState(int x, int y) const : CellVisibilityState
 +getHeight() const : size_t
 +getIsShip(int x, int y) const : bool
@@ -84,8 +113,36 @@ __
 +ship_segment_index : size_t
 +state : CellVisibilityState
 }
+enum "AbilityType" as C_0006740456236575953687
+enum C_0006740456236575953687 {
+DoubleDamage
+Scanner
+Bombard
+}
+abstract "Ability" as C_0017635961848386255115
+abstract C_0017635961848386255115 {
++~Ability() = default : void
+..
+{abstract} +getResult() = 0 : bool
+{abstract} +getType() = 0 : AbilityType
+{abstract} +use(ShipField & field, int x, int y, AbilityResults & ret) = 0 : void
+__
+}
+class "AbilityManager" as C_0002235219345516323367
+class C_0002235219345516323367 {
++AbilityManager() : void
+..
++addRandomAbility() : void
++getPendingAbilityType() const : AbilityType
+-getRandomAbility() : std::unique_ptr<Ability>
++useAbility(ShipField & field, int x, int y, AbilityResults & abilityResults) : void
+__
+-abilities : std::queue<std::unique_ptr<Ability>>
+-abilityResults : AbilityResults
+}
 class "ShipManager" as C_0017499122254539489506
 class C_0017499122254539489506 {
++ShipManager() : void
 +ShipManager(size_t count, size_t * lengths) : void
 +~ShipManager() = default : void
 ..
@@ -96,31 +153,33 @@ __
 -ships : std::vector<Ship>
 -ships_count : size_t
 }
-enum "GameState" as C_0004356735495323104445
-enum C_0004356735495323104445 {
-Menu
-CreateField
-PlacingShips
-AttackingShips
-Exit
-}
-abstract "State" as C_0001914138303902600425
-abstract C_0001914138303902600425 {
-+~State() = default : void
+class "Player" as C_0003605716991605700936
+class C_0003605716991605700936 {
++Player() : void
++~Player() : void
 ..
-{abstract} +changeState() = 0 : GameState
-{abstract} +handleInput(sf::Event & event) = 0 : void
-{abstract} +render(sf::RenderWindow & window) = 0 : void
-{abstract} +update() = 0 : void
++attackShip(int x, int y, bool exposeCell = true, int damage = 1) : void
++createField(int width, int height) : void
++createShipManager(size_t count, size_t * lengths) : void
++getAbilityManager() const : const AbilityManager &
++getAbilityStatus() : AbilityResults &
++getField() const : const ShipField &
++getShipManager() const : ShipManager &
++placeShip(Ship & ship, int x, int y, ShipOrientation orientation) : void
++placeShipByIndex(int index, int x, int y, ShipOrientation orientation) : void
++useAbility(int x, int y) : void
 __
+-abilityManager : AbilityManager *
+-abilityResults : AbilityResults
+-field : ShipField *
+-shipManager : ShipManager *
 }
 class "GameGui" as C_0007395642151187698177
 class C_0007395642151187698177 {
 +GameGui() : void
-+~GameGui() : void
++~GameGui() = default : void
 ..
 -changeState(GameState newState) : void
-+drawField(ShipField & field, int x_offset, int y_offset, bool show_ships) : void
 +mainLoop() : void
 -pollEvents() : void
 -render() : void
@@ -129,13 +188,15 @@ class C_0007395642151187698177 {
 __
 -currentState : GameState
 -event : sf::Event
--shipField : ShipField *
--shipManager : ShipManager *
+-player : Player
 -state : std::unique_ptr<State>
 -window : sf::RenderWindow
 }
+C_0002593715388203665760 ..> C_0017635961848386255115
+C_0006911030825501507270 ..> C_0002593715388203665760
 C_0010668212532447068380 ..> C_0014529657433315016423
 C_0003593355595461115184 ..> C_0001914138303902600425
+C_0001914138303902600425 ..> C_0004356735495323104445
 C_0014529657433315016423 ..> C_0014256742677139282670
 C_0014529657433315016423 --> C_0000674658759292391449 : -segments
 C_0000674658759292391449 --+ C_0014529657433315016423
@@ -148,11 +209,24 @@ C_0003843296779074973901 --> C_0000316359785794417378 : -field
 C_0000316359785794417378 --+ C_0003843296779074973901
 C_0000316359785794417378 o-- C_0003333043679234439357 : +state
 C_0000316359785794417378 --> C_0014529657433315016423 : +ship
+C_0017635961848386255115 ..> C_0003843296779074973901
+C_0017635961848386255115 ..> C_0005219465313958275113
+C_0017635961848386255115 ..> C_0006740456236575953687
+C_0002235219345516323367 ..> C_0002593715388203665760
+C_0002235219345516323367 ..> C_0017635961848386255115
+C_0002235219345516323367 ..> C_0003843296779074973901
+C_0002235219345516323367 ..> C_0006740456236575953687
+C_0002235219345516323367 o-- C_0005219465313958275113 : -abilityResults
+C_0002235219345516323367 o-- C_0006911030825501507270 : -abilities
 C_0017499122254539489506 ..> C_0014529657433315016423
 C_0017499122254539489506 o-- C_0010668212532447068380 : -ships
-C_0001914138303902600425 ..> C_0004356735495323104445
-C_0007395642151187698177 --> C_0003843296779074973901 : -shipField
-C_0007395642151187698177 --> C_0017499122254539489506 : -shipManager
+C_0003605716991605700936 ..> C_0014529657433315016423
+C_0003605716991605700936 ..> C_0002579181642537833876
+C_0003605716991605700936 --> C_0017499122254539489506 : -shipManager
+C_0003605716991605700936 --> C_0003843296779074973901 : -field
+C_0003605716991605700936 --> C_0002235219345516323367 : -abilityManager
+C_0003605716991605700936 o-- C_0005219465313958275113 : -abilityResults
+C_0007395642151187698177 o-- C_0003605716991605700936 : -player
 C_0007395642151187698177 o-- C_0004356735495323104445 : -currentState
 C_0007395642151187698177 o-- C_0003593355595461115184 : -state
 

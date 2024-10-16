@@ -2,7 +2,7 @@
 
 #include "ShipField.hpp"
 
-void DoubleDamageAbility::use(ShipField& field, int, int, AbilityResults& ret) {
+void DoubleDamageAbility::use([[maybe_unused]] ShipField& field, int, int, AbilityResults& ret) {
     ret.doubleDamageIsActive = true;
 }
 

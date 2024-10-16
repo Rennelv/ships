@@ -44,7 +44,7 @@ target_link_libraries(SeaBattle PRIVATE sfml-graphics sfml-window sfml-system sf
 target_compile_features(SeaBattle PRIVATE cxx_std_17)
 
 # Add debug-specific compiler flags
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -Wall -Wextra -pedantic")
 
 # Windows-specific command to copy OpenAL DLL
 if(WIN32)

@@ -211,14 +211,14 @@ void ShipField::placeShip(Ship &ship, int x, int y, ShipOrientation orientation)
     }
 }
 
-void ShipField::attackShip(int x, int y, bool expose_cell, int damage) {
+bool ShipField::attackShip(int x, int y, bool expose_cell, int damage) {
     if (x < 0 || y < 0 || static_cast<size_t>(x) >= width || static_cast<size_t>(y) >= height) {
         throw std::invalid_argument("Coordinates are out of field bounds");
     }
 
     if (getIsShip(x, y) == false) {
         if (expose_cell) field[y][x].state = CellVisibilityState::BLANK;
-        return;
+        return false;
     }
 
     Ship *current = field[y][x].ship;
@@ -227,13 +227,15 @@ void ShipField::attackShip(int x, int y, bool expose_cell, int damage) {
     if (expose_cell) field[y][x].state = CellVisibilityState::SHIP;
 
     if (current->getSegmentHP(ship_segment_index) <= 0) {
-        return;
+        return false;
     }
 
     current->takeDamage(ship_segment_index, damage);
     if (current->isAlive() == false) {
         exposeSurroundingShipCells(current->getLength(), x, y);
+        return true;
     }
+    return false;
 }
 
 size_t ShipField::getWidth() const {

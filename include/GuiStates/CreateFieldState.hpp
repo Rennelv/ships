@@ -3,22 +3,23 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/Event.hpp>
-#include <memory>
 
 #include "GuiStates/State.hpp"
-#include "ShipField.hpp"
+#include "Player.hpp"
 
 class CreateFieldState : public State {
     GameState nextState = GameState::CreateField;
-    std::unique_ptr<ShipField> &field;
+    Player &player;
     int fieldWidth = 10;
     int fieldHeight = 10;
     sf::Font font;
     sf::Text fieldSizeText;
+    sf::Vector2f drawOffset;
+    sf::Vector2f cellSize;
     void drawField(sf::RenderWindow &window);
 
    public:
-    CreateFieldState(std::unique_ptr<ShipField> &field);
+    CreateFieldState(Player &player);
     void handleInput(sf::Event &event) override;
     void update() override;
     void render(sf::RenderWindow &window) override;

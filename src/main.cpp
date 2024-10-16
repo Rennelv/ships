@@ -1,4 +1,3 @@
-#include "Game.hpp"
 #include "GameGui.hpp"
 
 int main() {

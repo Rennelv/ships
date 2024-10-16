@@ -17,7 +17,7 @@ class MenuState : public State {
 
    private:
     std::vector<sf::Text> menuItems;
-    int selectedItemIndex;
+    size_t selectedItemIndex;
     sf::Font font;
     GameState nextState = GameState::Menu;
 

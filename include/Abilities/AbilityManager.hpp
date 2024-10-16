@@ -16,10 +16,9 @@ class AbilityManager {
 
    public:
     AbilityManager();
-    void useAbility(ShipField& field, int x, int y);
+    void useAbility(ShipField& field, int x, int y, AbilityResults& abilityResults);
     void addRandomAbility();
-    AbilityType getAbilityType();
-    AbilityResults& getAbilityStatus();
+    AbilityType getPendingAbilityType() const;
 };
 
 #endif  // ABILITYMANAGER_HPP

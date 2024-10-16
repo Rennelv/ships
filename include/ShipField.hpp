@@ -36,7 +36,7 @@ class ShipField {
     // int getShipSegmentHP(int x, int y) const;                               // returns hp of segment in ship
     ShipSegmentState getShipSegmentState(int x, int y) const;                // returns state of segment in ship
     void placeShip(Ship& ship, int x, int y, ShipOrientation orientation);   // places ship on field
-    void attackShip(int x, int y, bool expose_cell = true, int damage = 1);  // attacks ship on field
+    bool attackShip(int x, int y, bool expose_cell = true, int damage = 1);  // attacks ship on field
     void clearField();                                                       // clears field
 };
 

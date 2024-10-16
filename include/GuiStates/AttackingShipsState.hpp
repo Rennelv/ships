@@ -5,31 +5,27 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 
-#include "Abilities/AbilityManager.hpp"
 #include "GuiStates/State.hpp"
-#include "ShipField.hpp"
-#include "ShipManager.hpp"
+#include "Player.hpp"
 
 class AttackingShipsState : public State {
     GameState nextState = GameState::AttackingShips;
-    ShipField &field;
-    ShipManager &shipManager;
-    AbilityManager &abilityManager;
+    Player &player;
     sf::Font font;
     sf::Text instructionText;
     sf::Text resultText;
     sf::RectangleShape selectionBox;
     sf::Vector2f drawOffset;
     sf::Vector2f cellSize;
-    int drawOffsetX;
-    int drawOffsetY;
-    int currentX;
-    int currentY;
+    size_t currentX;
+    size_t currentY;
     int dealDamage;
     void drawField(sf::RenderWindow &window);
+    void useAbilityHelper();
+    void attackShipHelper();
 
    public:
-    AttackingShipsState(ShipField &field, ShipManager &shipManager, AbilityManager &abilityManager);
+    AttackingShipsState(Player &player);
     void handleInput(sf::Event &event) override;
     void update() override;
     void render(sf::RenderWindow &window) override;

@@ -8,12 +8,10 @@
 #include "GuiStates/PlacingShipsState.hpp"
 
 GameGui::GameGui() {
-    size_t lengths[] = {4, 3, 2, 2, 1, 1};
-    shipManager = std::make_unique<ShipManager>(6, lengths);
-    abilityManager = std::make_unique<AbilityManager>();
-
     window.create(sf::VideoMode(800, 600), "Battlefield 0");
     window.setFramerateLimit(60);
+    // sf::ContextSettings settings;
+    // settings.antialiasingLevel = 8;
     changeState(GameState::Menu);
 }
 
@@ -25,15 +23,15 @@ void GameGui::changeState(GameState newState) {
             break;
         case GameState::PlacingShips:
             currentState = newState;
-            state = std::make_unique<PlacingShipsState>(*shipField, *shipManager);
+            state = std::make_unique<PlacingShipsState>(player);
             break;
         case GameState::AttackingShips:
             currentState = newState;
-            state = std::make_unique<AttackingShipsState>(*shipField, *shipManager, *abilityManager);
+            state = std::make_unique<AttackingShipsState>(player);
             break;
         case GameState::CreateField:
             currentState = newState;
-            state = std::make_unique<CreateFieldState>(shipField);
+            state = std::make_unique<CreateFieldState>(player);
             break;
         case GameState::Exit:
             window.close();
@@ -73,40 +71,3 @@ void GameGui::mainLoop() {
 void GameGui::run() {
     mainLoop();
 }
-
-// void GameGui::drawField(ShipField& field, int x_offset, int y_offset, bool show_ships) {
-//     window.clear();
-//     sf::RectangleShape cellShape;
-//     for (int y = 0; y < field.getHeight(); ++y) {
-//         for (int x = 0; x < field.getWidth(); ++x) {
-//             CellVisibilityState cellState = field.getCellVisibilityState(x, y);
-//             if (show_ships) {
-//                 cellState = field.getIsShip(x, y) ? CellVisibilityState::SHIP : CellVisibilityState::BLANK;
-//             }
-//             switch (cellState) {
-//                 case CellVisibilityState::UNKNOWN:
-//                     cellShape.setFillColor(sf::Color::Cyan);
-//                     break;
-//                 case CellVisibilityState::BLANK:
-//                     cellShape.setFillColor(sf::Color::White);
-//                     break;
-//                 case CellVisibilityState::SHIP:
-//                     switch (field.getShipSegmentState(x, y)) {
-//                         case ShipSegmentState::INTACT:
-//                             cellShape.setFillColor(sf::Color::Blue);
-//                         case ShipSegmentState::DAMAGED:
-//                             cellShape.setFillColor(sf::Color::Yellow);
-//                         case ShipSegmentState::DESTROYED:
-//                             cellShape.setFillColor(sf::Color::Red);
-//                     }
-//                     break;
-//                 default:
-//                     cellShape.setFillColor(sf::Color::Black);
-//                     break;
-//             }
-
-//             cellShape.setPosition(x_offset + x * 30.f, y_offset + y * 30.f);
-//             window.draw(cellShape);
-//         }
-//     }
-// }

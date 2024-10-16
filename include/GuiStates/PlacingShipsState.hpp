@@ -8,25 +8,26 @@
 #include <SFML/Window/Event.hpp>
 
 #include "GuiStates/State.hpp"
-#include "ShipField.hpp"
-#include "ShipManager.hpp"
+#include "Player.hpp"
 
 class PlacingShipsState : public State {
     GameState nextState = GameState::PlacingShips;
-    ShipField& field;
-    ShipManager& manager;
-    int currentShipIndex;
+    Player& player;
+    size_t currentShipIndex;
     ShipOrientation orientation = ShipOrientation::VERTICAL;
     sf::Font font;
     sf::Text instructionText;
+    sf::Text resultText;
     sf::RectangleShape shipRepresentation;
-    int currentX = 0;
-    int currentY = 0;
-    sf::Vector2f cell_size = {20, 20};
+    sf::Vector2f drawOffset;
+    sf::Vector2f cellSize;
+    size_t currentX;
+    size_t currentY;
     void drawField(sf::RenderWindow& window);
+    void placeShipHelper();
 
    public:
-    PlacingShipsState(ShipField& field, ShipManager& manager);
+    PlacingShipsState(Player& player);
     void handleInput(sf::Event& event) override;
     void update() override;
     void render(sf::RenderWindow& window) override;

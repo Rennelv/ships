@@ -4,18 +4,16 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 
-#include "Abilities/AbilityManager.hpp"
 #include "Enums.hpp"
-#include "ShipField.hpp"
-#include "ShipManager.hpp"
+#include "Player.hpp"
 
-AttackingShipsState::AttackingShipsState(ShipField &field, ShipManager &shipManager, AbilityManager &abilityManager)
-    : field(field), shipManager(shipManager), abilityManager(abilityManager) {
+AttackingShipsState::AttackingShipsState(Player &player) : player(player) {
     currentX = 0;
     currentY = 0;
     drawOffset = {10, 70};
     cellSize = {20, 20};
     dealDamage = 1;
+
     font.loadFromFile("assets/fonts/font.ttf");
     instructionText.setFont(font);
     instructionText.setCharacterSize(24);
@@ -35,55 +33,39 @@ AttackingShipsState::AttackingShipsState(ShipField &field, ShipManager &shipMana
 }
 
 void AttackingShipsState::handleInput(sf::Event &event) {
+    if (event.type == sf::Event::MouseButtonPressed) {
+        if (event.mouseButton.button == sf::Mouse::Left) {
+            attackShipHelper();
+        }
+    }
+    if (event.type == sf::Event::MouseMoved) {
+        int x = (event.mouseMove.x - drawOffset.x) / cellSize.x;
+        int y = (event.mouseMove.y - drawOffset.y) / cellSize.y;
+        if (x >= 0 && x < static_cast<int>(player.getField().getWidth()) && y >= 0 && y < static_cast<int>(player.getField().getHeight())) {
+            currentX = x;
+            currentY = y;
+        }
+    }
     if (event.type == sf::Event::KeyPressed) {
         switch (event.key.code) {
             case sf::Keyboard::Up:
                 if (currentY > 0) currentY--;
                 break;
             case sf::Keyboard::Down:
-                if (currentY < field.getHeight() - 1) currentY++;
+                if (currentY < player.getField().getHeight() - 1) currentY++;
                 break;
             case sf::Keyboard::Left:
                 if (currentX > 0) currentX--;
                 break;
             case sf::Keyboard::Right:
-                if (currentX < field.getWidth() - 1) currentX++;
+                if (currentX < player.getField().getWidth() - 1) currentX++;
                 break;
 
             case sf::Keyboard::E:
-                try {
-                    if (abilityManager.getAbilityType() == AbilityType::DoubleDamage) {
-                        abilityManager.useAbility(field, currentX, currentY);
-                        resultText.setString("Double damage activated");
-                    } else if (abilityManager.getAbilityType() == AbilityType::Scanner) {
-                        abilityManager.useAbility(field, currentX, currentY);
-                        resultText.setString("Scanner activated. Press Enter to scan");
-                    } else if (abilityManager.getAbilityType() == AbilityType::Bombard) {
-                        abilityManager.useAbility(field, currentX, currentY);
-                        resultText.setString("Bombard activated");
-                    }
-
-                } catch (const std::exception &e) {
-                    resultText.setString(e.what());
-                }
+                useAbilityHelper();
                 break;
             case sf::Keyboard::Enter:
-                if (abilityManager.getAbilityStatus().scannerIsActive) {
-                    abilityManager.useAbility(field, currentX, currentY);
-                    if (abilityManager.getAbilityStatus().scannerShipFound)
-                        resultText.setString("Scanner used. Ship in range");
-                    else
-                        resultText.setString("Scanner used. No ship in range");
-
-                    break;
-                }
-                try {
-                    field.attackShip(currentX, currentY, true, dealDamage);
-                    abilityManager.getAbilityStatus().doubleDamageIsActive = false;
-
-                } catch (const std::exception &e) {
-                    resultText.setString(e.what());
-                }
+                attackShipHelper();
                 break;
             default:
                 break;
@@ -93,14 +75,14 @@ void AttackingShipsState::handleInput(sf::Event &event) {
 
 void AttackingShipsState::update() {
     selectionBox.setPosition(drawOffset.x + currentX * 20, drawOffset.y + currentY * 20);
-    if (abilityManager.getAbilityStatus().scannerIsActive) {
+    if (player.getAbilityStatus().scannerIsActive) {
         selectionBox.setSize(cellSize * 2.f);
         selectionBox.setOutlineColor(sf::Color::Green);
     } else {
         selectionBox.setSize(cellSize);
         selectionBox.setOutlineColor(sf::Color::Yellow);
     }
-    dealDamage = abilityManager.getAbilityStatus().doubleDamageIsActive ? 2 : 1;
+    dealDamage = player.getAbilityStatus().doubleDamageIsActive ? 2 : 1;
 }
 
 void AttackingShipsState::render(sf::RenderWindow &window) {
@@ -116,7 +98,7 @@ void AttackingShipsState::render(sf::RenderWindow &window) {
 
     window.display();
 
-    if (shipManager.getAliveCount() == 0) {
+    if (player.getShipManager().getAliveCount() == 0) {
         nextState = GameState::Exit;
     }
 }
@@ -130,9 +112,9 @@ void AttackingShipsState::drawField(sf::RenderWindow &window) {
     cellShape.setSize(cellSize);  // Set the size of each cell
     cellShape.setOutlineColor(sf::Color::Black);
     cellShape.setOutlineThickness(1.f);
-    for (int y = 0; y < field.getHeight(); ++y) {
-        for (int x = 0; x < field.getWidth(); ++x) {
-            CellVisibilityState cellState = field.getCellVisibilityState(x, y);
+    for (size_t y = 0; y < player.getField().getHeight(); ++y) {
+        for (size_t x = 0; x < player.getField().getWidth(); ++x) {
+            CellVisibilityState cellState = player.getField().getCellVisibilityState(x, y);
             switch (cellState) {
                 case CellVisibilityState::UNKNOWN:
                     cellShape.setFillColor(sf::Color::Cyan);
@@ -141,7 +123,7 @@ void AttackingShipsState::drawField(sf::RenderWindow &window) {
                     cellShape.setFillColor(sf::Color::White);
                     break;
                 case CellVisibilityState::SHIP:
-                    switch (field.getShipSegmentState(x, y)) {
+                    switch (player.getField().getShipSegmentState(x, y)) {
                         case ShipSegmentState::INTACT:
                             cellShape.setFillColor(sf::Color::Blue);
                             break;
@@ -162,3 +144,45 @@ void AttackingShipsState::drawField(sf::RenderWindow &window) {
         }
     }
 }
+
+void AttackingShipsState::useAbilityHelper() {
+    try {
+        if (player.getAbilityManager().getPendingAbilityType() == AbilityType::DoubleDamage) {
+            player.useAbility(currentX, currentY);
+            resultText.setString("Double damage activated");
+        } else if (player.getAbilityManager().getPendingAbilityType() == AbilityType::Scanner) {
+            if (player.getAbilityStatus().scannerIsActive) {
+                player.getAbilityStatus().scannerIsActive = false;
+                resultText.setString("Scanner deactivated. Ability not used");
+                return;
+            }
+            player.useAbility(currentX, currentY);
+            resultText.setString("Scanner activated. Press Enter to scan");
+        } else if (player.getAbilityManager().getPendingAbilityType() == AbilityType::Bombard) {
+            player.useAbility(currentX, currentY);
+            resultText.setString("Bombard activated");
+        }
+
+    } catch (const std::exception &e) {
+        resultText.setString(e.what());
+    }
+};
+
+void AttackingShipsState::attackShipHelper() {
+    if (player.getAbilityStatus().scannerIsActive) {
+        player.useAbility(currentX, currentY);
+        if (player.getAbilityStatus().scannerShipFound)
+            resultText.setString("Scanner used. Ship in range");
+        else
+            resultText.setString("Scanner used. No ship in range");
+
+        return;
+    }
+    try {
+        player.attackShip(currentX, currentY, true, dealDamage);
+        player.getAbilityStatus().doubleDamageIsActive = false;
+
+    } catch (const std::exception &e) {
+        resultText.setString(e.what());
+    }
+};

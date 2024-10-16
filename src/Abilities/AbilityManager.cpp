@@ -42,7 +42,7 @@ AbilityManager::AbilityManager() {
     }
 }
 
-void AbilityManager::useAbility(ShipField &field, int x, int y) {
+void AbilityManager::useAbility(ShipField &field, int x, int y, AbilityResults &abilityResults) {
     if (abilities.empty()) {
         throw NoAbilitiesException();
     }
@@ -62,13 +62,9 @@ void AbilityManager::addRandomAbility() {
     abilities.push(getRandomAbility());
 }
 
-AbilityType AbilityManager::getAbilityType() {
+AbilityType AbilityManager::getPendingAbilityType() const {
     if (abilities.empty()) {
         throw NoAbilitiesException();
     }
     return abilities.front()->getType();
-}
-
-AbilityResults &AbilityManager::getAbilityStatus() {
-    return abilityResults;
 }
