@@ -9,7 +9,3 @@ void DoubleDamageAbility::use([[maybe_unused]] ShipField& field, int, int, Abili
 AbilityType DoubleDamageAbility::getType() {
     return AbilityType::DoubleDamage;
 }
-
-bool DoubleDamageAbility::getResult() {
-    return true;
-}

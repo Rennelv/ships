@@ -13,7 +13,3 @@ void ScannerAbility::use(ShipField& field, int x, int y, AbilityResults& ret) {
 AbilityType ScannerAbility::getType() {
     return AbilityType::Scanner;
 }
-
-bool ScannerAbility::getResult() {
-    return result;
-}

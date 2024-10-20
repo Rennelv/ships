@@ -46,7 +46,3 @@ void BombardAbility::use(ShipField& field, int, int, AbilityResults& ret) {
 AbilityType BombardAbility::getType() {
     return AbilityType::Bombard;
 }
-
-bool BombardAbility::getResult() {
-    return true;
-}

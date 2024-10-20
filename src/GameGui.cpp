@@ -9,7 +9,7 @@
 #include "GuiStates/PlacingShipsState.hpp"
 
 GameGui::GameGui() {
-    window.create(sf::VideoMode(800, 600), "Battlefield 0", sf::Style::Close | sf::Style::Titlebar);
+    window.create(sf::VideoMode(1600, 900), "Battlefield 0", sf::Style::Close | sf::Style::Titlebar);
     window.setFramerateLimit(60);
     // sf::ContextSettings settings;
     // settings.antialiasingLevel = 8;
