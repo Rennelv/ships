@@ -4,11 +4,12 @@
 
 #include "GuiStates/AttackingShipsState.hpp"
 #include "GuiStates/CreateFieldState.hpp"
+#include "GuiStates/CreateShipsState.hpp"
 #include "GuiStates/MenuState.hpp"
 #include "GuiStates/PlacingShipsState.hpp"
 
 GameGui::GameGui() {
-    window.create(sf::VideoMode(800, 600), "Battlefield 0");
+    window.create(sf::VideoMode(800, 600), "Battlefield 0", sf::Style::Close | sf::Style::Titlebar);
     window.setFramerateLimit(60);
     // sf::ContextSettings settings;
     // settings.antialiasingLevel = 8;
@@ -32,6 +33,10 @@ void GameGui::changeState(GameState newState) {
         case GameState::CreateField:
             currentState = newState;
             state = std::make_unique<CreateFieldState>(player);
+            break;
+        case GameState::CreateShips:
+            currentState = newState;
+            state = std::make_unique<CreateShipState>(player);
             break;
         case GameState::Exit:
             window.close();

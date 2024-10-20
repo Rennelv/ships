@@ -46,14 +46,6 @@ void AbilityManager::useAbility(ShipField &field, int x, int y, AbilityResults &
     if (abilities.empty()) {
         throw NoAbilitiesException();
     }
-    if (abilities.front()->getType() == AbilityType::Scanner) {
-        if (!abilityResults.scannerIsActive) {
-            abilityResults.scannerIsActive = true;
-            return;
-        } else {
-            abilityResults.scannerIsActive = false;
-        }
-    }
     abilities.front()->use(field, x, y, abilityResults);
     abilities.pop();
 }

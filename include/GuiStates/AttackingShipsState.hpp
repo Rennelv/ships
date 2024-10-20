@@ -10,7 +10,9 @@
 
 class AttackingShipsState : public State {
     GameState nextState = GameState::AttackingShips;
+
     Player &player;
+
     sf::Font font;
     sf::Text instructionText;
     sf::Text resultText;
@@ -20,9 +22,10 @@ class AttackingShipsState : public State {
     size_t currentX;
     size_t currentY;
     int dealDamage;
+
     void drawField(sf::RenderWindow &window);
-    void useAbilityHelper();
-    void attackShipHelper();
+    void onAbilityUse();
+    void onAttackUse();
 
    public:
     AttackingShipsState(Player &player);

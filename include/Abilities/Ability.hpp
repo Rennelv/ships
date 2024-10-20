@@ -3,7 +3,11 @@
 
 #include "Abilities/AbilityResults.hpp"
 #include "ShipField.hpp"
-enum class AbilityType { DoubleDamage, Scanner, Bombard };
+enum class AbilityType {
+    DoubleDamage,
+    Scanner,
+    Bombard,
+};
 
 class Ability {
    public:

@@ -51,7 +51,7 @@ class C_0003843296779074973901 {
 +attackShip(int x, int y, bool expose_cell = true, int damage = 1) : bool
 +checkShipCollision(int ship_length, int x, int y, ShipOrientation orientation) const : bool
 +clearField() : void
-+exposeSurroundingShipCells(int ship_length, int x, int y) : void
+-exposeSurroundingShipCells(int ship_length, int x, int y) : void
 +getCellVisibilityState(int x, int y) const : CellVisibilityState
 +getHeight() const : size_t
 +getIsShip(int x, int y) const : bool
@@ -66,7 +66,6 @@ __
 class "ShipField::FieldElement" as C_0000316359785794417378
 class C_0000316359785794417378 {
 __
-+is_ship : bool
 +ship : Ship *
 +ship_segment_index : size_t
 +state : CellVisibilityState

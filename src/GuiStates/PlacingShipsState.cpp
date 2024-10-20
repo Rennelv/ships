@@ -4,6 +4,7 @@
 #include <SFML/Window/Event.hpp>
 
 #include "Enums.hpp"
+#include "Player.hpp"
 
 PlacingShipsState::PlacingShipsState(Player& player) : player(player), currentShipIndex(0), orientation(ShipOrientation::VERTICAL) {
     drawOffset = {10, 70};
@@ -62,8 +63,8 @@ void PlacingShipsState::handleInput(sf::Event& event) {
 }
 
 void PlacingShipsState::update() {
-    if (currentShipIndex < player.getShipManager().getShipCount()) {
-        int shipLength = player.getShipManager().getShip(currentShipIndex).getLength();
+    if (currentShipIndex < player.getShipCount()) {
+        int shipLength = player.getShipLength(currentShipIndex);
         if (orientation == ShipOrientation::VERTICAL) {
             shipRepresentation.setSize(sf::Vector2f(cellSize.x, shipLength * cellSize.y));
         } else {
@@ -82,7 +83,7 @@ void PlacingShipsState::render(sf::RenderWindow& window) {
     drawField(window);
 
     // Draw the current ship
-    if (currentShipIndex < player.getShipManager().getShipCount()) {
+    if (currentShipIndex < player.getShipCount()) {
         window.draw(shipRepresentation);
     }
 
@@ -107,15 +108,14 @@ void PlacingShipsState::drawField(sf::RenderWindow& window) {
 }
 
 void PlacingShipsState::placeShipHelper() {
-    Ship& ship = player.getShipManager().getShip(currentShipIndex);
     try {
-        player.placeShip(ship, currentX, currentY, orientation);
+        player.placeShipByIndex(currentShipIndex, currentX, currentY, orientation);
     } catch (const std::exception& e) {
         currentShipIndex--;
         resultText.setString(e.what());
     }
     currentShipIndex++;
-    if (currentShipIndex >= player.getShipManager().getShipCount()) {
+    if (currentShipIndex >= player.getShipCount()) {
         nextState = GameState::AttackingShips;  // Change to the next state
     }
 }

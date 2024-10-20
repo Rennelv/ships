@@ -5,7 +5,7 @@
 MenuState::MenuState() : selectedItemIndex(0) {
     font.loadFromFile("assets/fonts/font.ttf");
 
-    std::vector<std::string> items = {"Start Game", "Options", "Exit"};
+    std::vector<std::string> items = {"Start Game", "um", "Exit"};
     for (const auto &item : items) {
         sf::Text text;
         text.setFont(font);

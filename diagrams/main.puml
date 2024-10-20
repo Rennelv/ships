@@ -19,6 +19,7 @@ enum "GameState" as C_0004356735495323104445
 enum C_0004356735495323104445 {
 Menu
 CreateField
+CreateShips
 PlacingShips
 AttackingShips
 Exit
@@ -93,7 +94,7 @@ class C_0003843296779074973901 {
 +attackShip(int x, int y, bool expose_cell = true, int damage = 1) : bool
 +checkShipCollision(int ship_length, int x, int y, ShipOrientation orientation) const : bool
 +clearField() : void
-+exposeSurroundingShipCells(int ship_length, int x, int y) : void
+-exposeSurroundingShipCells(int ship_length, int x, int y) : void
 +getCellVisibilityState(int x, int y) const : CellVisibilityState
 +getHeight() const : size_t
 +getIsShip(int x, int y) const : bool
@@ -108,7 +109,6 @@ __
 class "ShipField::FieldElement" as C_0000316359785794417378
 class C_0000316359785794417378 {
 __
-+is_ship : bool
 +ship : Ship *
 +ship_segment_index : size_t
 +state : CellVisibilityState
@@ -138,7 +138,6 @@ class C_0002235219345516323367 {
 +useAbility(ShipField & field, int x, int y, AbilityResults & abilityResults) : void
 __
 -abilities : std::queue<std::unique_ptr<Ability>>
--abilityResults : AbilityResults
 }
 class "ShipManager" as C_0017499122254539489506
 class C_0017499122254539489506 {
@@ -147,7 +146,7 @@ class C_0017499122254539489506 {
 +~ShipManager() = default : void
 ..
 +getAliveCount() const : size_t
-+getShip(int index) : Ship &
++getShip(size_t index) : Ship &
 +getShipCount() const : size_t
 __
 -ships : std::vector<Ship>
@@ -161,10 +160,12 @@ class C_0003605716991605700936 {
 +attackShip(int x, int y, bool exposeCell = true, int damage = 1) : void
 +createField(int width, int height) : void
 +createShipManager(size_t count, size_t * lengths) : void
-+getAbilityManager() const : const AbilityManager &
-+getAbilityStatus() : AbilityResults &
++getAbilityResults() : AbilityResults &
++getAliveCount() const : size_t
 +getField() const : const ShipField &
-+getShipManager() const : ShipManager &
++getPendingAbilityType() const : AbilityType
++getShipCount() const : size_t
++getShipLength(size_t index) const : size_t
 +placeShip(Ship & ship, int x, int y, ShipOrientation orientation) : void
 +placeShipByIndex(int index, int x, int y, ShipOrientation orientation) : void
 +useAbility(int x, int y) : void
@@ -215,13 +216,14 @@ C_0017635961848386255115 ..> C_0006740456236575953687
 C_0002235219345516323367 ..> C_0002593715388203665760
 C_0002235219345516323367 ..> C_0017635961848386255115
 C_0002235219345516323367 ..> C_0003843296779074973901
+C_0002235219345516323367 ..> C_0005219465313958275113
 C_0002235219345516323367 ..> C_0006740456236575953687
-C_0002235219345516323367 o-- C_0005219465313958275113 : -abilityResults
 C_0002235219345516323367 o-- C_0006911030825501507270 : -abilities
 C_0017499122254539489506 ..> C_0014529657433315016423
 C_0017499122254539489506 o-- C_0010668212532447068380 : -ships
 C_0003605716991605700936 ..> C_0014529657433315016423
 C_0003605716991605700936 ..> C_0002579181642537833876
+C_0003605716991605700936 ..> C_0006740456236575953687
 C_0003605716991605700936 --> C_0017499122254539489506 : -shipManager
 C_0003605716991605700936 --> C_0003843296779074973901 : -field
 C_0003605716991605700936 --> C_0002235219345516323367 : -abilityManager

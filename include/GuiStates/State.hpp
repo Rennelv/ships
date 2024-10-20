@@ -4,13 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/Event.hpp>
 
-enum class GameState {
-    Menu,
-    CreateField,
-    PlacingShips,
-    AttackingShips,
-    Exit,
-};
+#include "GameStates.hpp"
 
 class State {
    public:

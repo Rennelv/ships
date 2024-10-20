@@ -15,7 +15,7 @@ class ShipManager {
     ~ShipManager() = default;
     size_t getShipCount() const;
     size_t getAliveCount() const;
-    Ship& getShip(int index);
+    Ship& getShip(size_t index);
 };
 
 #endif  // SHIPMANAGER_HPP

@@ -1,6 +1,9 @@
 #ifndef PLAYER_HPP
 #define PLAYER_HPP
 
+#include <cstddef>
+
+#include "Abilities/Ability.hpp"
 #include "Abilities/AbilityManager.hpp"
 #include "ShipField.hpp"
 #include "ShipManager.hpp"
@@ -20,10 +23,16 @@ class Player {
     void placeShip(Ship& ship, int x, int y, ShipOrientation orientation);
     void placeShipByIndex(int index, int x, int y, ShipOrientation orientation);
 
+    size_t getShipCount() const;
+    size_t getShipLength(size_t index) const;
+    size_t getAliveCount() const;
+    AbilityType getPendingAbilityType() const;
+
+    AbilityResults& getAbilityResults();
+
     const ShipField& getField() const;
-    ShipManager& getShipManager() const;
-    const AbilityManager& getAbilityManager() const;
-    AbilityResults& getAbilityStatus();
+    // const ShipManager& getShipManager() const;
+    // const AbilityManager& getAbilityManager() const;
 };
 
 #endif  // PLAYER_HPP

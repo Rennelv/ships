@@ -41,18 +41,34 @@ void Player::placeShipByIndex(int index, int x, int y, ShipOrientation orientati
     placeShip(ship, x, y, orientation);
 }
 
+size_t Player::getShipCount() const {
+    return shipManager->getShipCount();
+}
+
+size_t Player::getShipLength(size_t index) const {
+    return shipManager->getShip(index).getLength();
+}
+
+size_t Player::getAliveCount() const {
+    return shipManager->getAliveCount();
+}
+
+AbilityResults& Player::getAbilityResults() {
+    return abilityResults;
+}
+
+AbilityType Player::getPendingAbilityType() const {
+    return abilityManager->getPendingAbilityType();
+}
+
 const ShipField& Player::getField() const {
     return *field;
 }
 
-ShipManager& Player::getShipManager() const {
-    return *shipManager;
-}
+// const ShipManager& Player::getShipManager() const {
+//     return *shipManager;
+// }
 
-const AbilityManager& Player::getAbilityManager() const {
-    return *abilityManager;
-}
-
-AbilityResults& Player::getAbilityStatus() {
-    return abilityResults;
-}
+// const AbilityManager& Player::getAbilityManager() const {
+//     return *abilityManager;
+// }

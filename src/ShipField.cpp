@@ -200,13 +200,11 @@ void ShipField::placeShip(Ship &ship, int x, int y, ShipOrientation orientation)
         for (size_t i = x_size; i < x_size + ship_length; i++) {
             field[y_size][i].ship = &ship;
             field[y_size][i].ship_segment_index = i - x_size;
-            field[y_size][i].is_ship = true;
         }
     } else {  // vertical placement of the ship on the field
         for (size_t i = y_size; i < y_size + ship_length; i++) {
             field[i][x_size].ship = &ship;
             field[i][x_size].ship_segment_index = i - y_size;
-            field[i][x_size].is_ship = true;
         }
     }
 }
@@ -253,7 +251,7 @@ bool ShipField::getIsShip(int x, int y) const {
     if (static_cast<size_t>(x) >= width || static_cast<size_t>(y) >= height) {
         return false;
     }
-    return (field[y][x].is_ship);
+    return (!(field[y][x].ship == nullptr));
 }
 
 void ShipField::clearField() {

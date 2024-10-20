@@ -30,12 +30,8 @@ size_t ShipManager::getAliveCount() const {
     return alive;
 }
 
-Ship& ShipManager::getShip(int index) {
-    if (index < 0) {
-        throw std::out_of_range("Index out of range");
-        // index = ships_count + index;
-    }
-    if (static_cast<size_t>(index) >= ships_count) {
+Ship& ShipManager::getShip(size_t index) {
+    if (index >= ships_count) {
         throw std::out_of_range("Index out of range");
     }
 

@@ -26,7 +26,7 @@ void CreateFieldState::handleInput(sf::Event &event) {
             fieldWidth = std::max(1, fieldWidth - 1);
         } else if (event.key.code == sf::Keyboard::Enter) {
             player.createField(fieldWidth, fieldHeight);
-            nextState = GameState::PlacingShips;  // Change to the next state
+            nextState = GameState::CreateShips;  // Change to the next state
         }
     }
 }

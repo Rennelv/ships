@@ -48,7 +48,7 @@ class C_0017499122254539489506 {
 +~ShipManager() = default : void
 ..
 +getAliveCount() const : size_t
-+getShip(int index) : Ship &
++getShip(size_t index) : Ship &
 +getShipCount() const : size_t
 __
 -ships : std::vector<Ship>

@@ -35,7 +35,7 @@ AttackingShipsState::AttackingShipsState(Player &player) : player(player) {
 void AttackingShipsState::handleInput(sf::Event &event) {
     if (event.type == sf::Event::MouseButtonPressed) {
         if (event.mouseButton.button == sf::Mouse::Left) {
-            attackShipHelper();
+            onAttackUse();
         }
     }
     if (event.type == sf::Event::MouseMoved) {
@@ -62,10 +62,10 @@ void AttackingShipsState::handleInput(sf::Event &event) {
                 break;
 
             case sf::Keyboard::E:
-                useAbilityHelper();
+                onAbilityUse();
                 break;
             case sf::Keyboard::Enter:
-                attackShipHelper();
+                onAttackUse();
                 break;
             default:
                 break;
@@ -75,14 +75,14 @@ void AttackingShipsState::handleInput(sf::Event &event) {
 
 void AttackingShipsState::update() {
     selectionBox.setPosition(drawOffset.x + currentX * 20, drawOffset.y + currentY * 20);
-    if (player.getAbilityStatus().scannerIsActive) {
+    if (player.getAbilityResults().scannerIsActive) {
         selectionBox.setSize(cellSize * 2.f);
         selectionBox.setOutlineColor(sf::Color::Green);
     } else {
         selectionBox.setSize(cellSize);
         selectionBox.setOutlineColor(sf::Color::Yellow);
     }
-    dealDamage = player.getAbilityStatus().doubleDamageIsActive ? 2 : 1;
+    dealDamage = player.getAbilityResults().doubleDamageIsActive ? 2 : 1;
 }
 
 void AttackingShipsState::render(sf::RenderWindow &window) {
@@ -98,7 +98,7 @@ void AttackingShipsState::render(sf::RenderWindow &window) {
 
     window.display();
 
-    if (player.getShipManager().getAliveCount() == 0) {
+    if (player.getAliveCount() == 0) {
         nextState = GameState::Exit;
     }
 }
@@ -145,44 +145,49 @@ void AttackingShipsState::drawField(sf::RenderWindow &window) {
     }
 }
 
-void AttackingShipsState::useAbilityHelper() {
+void AttackingShipsState::onAbilityUse() {
     try {
-        if (player.getAbilityManager().getPendingAbilityType() == AbilityType::DoubleDamage) {
-            player.useAbility(currentX, currentY);
-            resultText.setString("Double damage activated");
-        } else if (player.getAbilityManager().getPendingAbilityType() == AbilityType::Scanner) {
-            if (player.getAbilityStatus().scannerIsActive) {
-                player.getAbilityStatus().scannerIsActive = false;
-                resultText.setString("Scanner deactivated. Ability not used");
-                return;
-            }
-            player.useAbility(currentX, currentY);
-            resultText.setString("Scanner activated. Press Enter to scan");
-        } else if (player.getAbilityManager().getPendingAbilityType() == AbilityType::Bombard) {
-            player.useAbility(currentX, currentY);
-            resultText.setString("Bombard activated");
+        switch (player.getPendingAbilityType()) {
+            case AbilityType::DoubleDamage:
+                player.useAbility(currentX, currentY);
+                resultText.setString("Double damage activated");
+                break;
+            case AbilityType::Scanner:
+                if (player.getAbilityResults().scannerIsActive) {
+                    player.getAbilityResults().scannerIsActive = false;
+                    resultText.setString("Scanner deactivated. Ability not used");
+                } else {
+                    player.getAbilityResults().scannerIsActive = true;
+                    resultText.setString("Scanner activated. Press Attack again to scan");
+                }
+                break;
+            case AbilityType::Bombard:
+                player.useAbility(currentX, currentY);
+                resultText.setString("Bombard activated");
+                break;
         }
-
     } catch (const std::exception &e) {
         resultText.setString(e.what());
     }
 };
 
-void AttackingShipsState::attackShipHelper() {
-    if (player.getAbilityStatus().scannerIsActive) {
+void AttackingShipsState::onAttackUse() {
+    if (player.getAbilityResults().scannerIsActive) {
         player.useAbility(currentX, currentY);
-        if (player.getAbilityStatus().scannerShipFound)
+        if (player.getAbilityResults().scannerShipFound)
             resultText.setString("Scanner used. Ship in range");
         else
             resultText.setString("Scanner used. No ship in range");
-
+        player.getAbilityResults().scannerIsActive = false;
         return;
     }
+
     try {
         player.attackShip(currentX, currentY, true, dealDamage);
-        player.getAbilityStatus().doubleDamageIsActive = false;
+        player.getAbilityResults().doubleDamageIsActive = false;
 
     } catch (const std::exception &e) {
         resultText.setString(e.what());
     }
+    resultText.setString("");
 };

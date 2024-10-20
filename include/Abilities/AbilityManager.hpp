@@ -10,7 +10,6 @@
 
 class AbilityManager {
    private:
-    AbilityResults abilityResults;
     std::queue<std::unique_ptr<Ability>> abilities;
     std::unique_ptr<Ability> getRandomAbility();
 

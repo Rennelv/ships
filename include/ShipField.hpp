@@ -10,12 +10,12 @@ class ShipField {
     struct FieldElement {
         CellVisibilityState state = CellVisibilityState::UNKNOWN;
         Ship* ship = nullptr;
-        bool is_ship = false;
         size_t ship_segment_index = 0;
     };
     size_t width;
     size_t height;
     FieldElement** field;
+    void exposeSurroundingShipCells(int ship_length, int x, int y);  // exposes cells around ship
 
    public:
     ShipField();
@@ -29,7 +29,6 @@ class ShipField {
 
     size_t getWidth() const;                                                                    // returns width of field
     size_t getHeight() const;                                                                   // returns height of field
-    void exposeSurroundingShipCells(int ship_length, int x, int y);                             // exposes cells around ship
     bool checkShipCollision(int ship_length, int x, int y, ShipOrientation orientation) const;  // returns true if ship collides with another ship
     CellVisibilityState getCellVisibilityState(int x, int y) const;                             // returns state of cell
     bool getIsShip(int x, int y) const;                                                         // returns true if cell contains ship

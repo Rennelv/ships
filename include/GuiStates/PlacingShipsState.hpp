@@ -7,6 +7,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include "Enums.hpp"
 #include "GuiStates/State.hpp"
 #include "Player.hpp"
 
