@@ -28,8 +28,8 @@ void Player::attackShip(int x, int y, bool exposeCell, int damage) {
     if (was_killed) abilityManager->addRandomAbility();
 }
 
-void Player::useAbility(int x, int y) {
-    abilityManager->useAbility(*field, x, y, abilityResults);
+void Player::useAbility(Player& otherPlayer, int x, int y) {
+    abilityManager->useAbility(otherPlayer.getField(), x, y, abilityResults);
 }
 
 void Player::placeShip(Ship& ship, int x, int y, ShipOrientation orientation) {
@@ -61,14 +61,11 @@ AbilityType Player::getPendingAbilityType() const {
     return abilityManager->getPendingAbilityType();
 }
 
-const ShipField& Player::getField() const {
+ShipField& Player::getField() {
     return *field;
 }
 
-// const ShipManager& Player::getShipManager() const {
-//     return *shipManager;
-// }
-
-// const AbilityManager& Player::getAbilityManager() const {
-//     return *abilityManager;
-// }
+void Player::attack(Player& otherPlayer, int x, int y, int damage) {
+    bool was_killed = otherPlayer.getField().attackShip(x, y, true, damage);
+    if (was_killed) abilityManager->addRandomAbility();
+}

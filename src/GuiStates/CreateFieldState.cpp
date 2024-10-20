@@ -3,7 +3,9 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Shape.hpp>
 
-CreateFieldState::CreateFieldState(Player &player) : player(player) {
+#include "AiPlayer.hpp"
+
+CreateFieldState::CreateFieldState(Player &player, AiPlayer &aiPlayer) : player(player), aiPlayer(aiPlayer) {
     drawOffset = {10, 50};
     cellSize = {20, 20};
 
@@ -26,6 +28,7 @@ void CreateFieldState::handleInput(sf::Event &event) {
             fieldWidth = std::max(1, fieldWidth - 1);
         } else if (event.key.code == sf::Keyboard::Enter) {
             player.createField(fieldWidth, fieldHeight);
+            aiPlayer.createField(fieldWidth, fieldHeight);
             nextState = GameState::CreateShips;  // Change to the next state
         }
     }

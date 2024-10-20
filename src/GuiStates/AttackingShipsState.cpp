@@ -4,13 +4,15 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include "AiPlayer.hpp"
 #include "Enums.hpp"
 #include "Player.hpp"
 
-AttackingShipsState::AttackingShipsState(Player &player) : player(player) {
+AttackingShipsState::AttackingShipsState(Player &player, AiPlayer &aiPlayer) : player(player), aiPlayer(aiPlayer) {
     currentX = 0;
     currentY = 0;
-    drawOffset = {10, 70};
+    drawOffsetf1 = {10, 70};
+    drawOffsetf2 = {800, 70};
     cellSize = {20, 20};
     dealDamage = 1;
 
@@ -39,8 +41,8 @@ void AttackingShipsState::handleInput(sf::Event &event) {
         }
     }
     if (event.type == sf::Event::MouseMoved) {
-        int x = (event.mouseMove.x - drawOffset.x) / cellSize.x;
-        int y = (event.mouseMove.y - drawOffset.y) / cellSize.y;
+        int x = (event.mouseMove.x - drawOffsetf1.x) / cellSize.x;
+        int y = (event.mouseMove.y - drawOffsetf1.y) / cellSize.y;
         if (x >= 0 && x < static_cast<int>(player.getField().getWidth()) && y >= 0 && y < static_cast<int>(player.getField().getHeight())) {
             currentX = x;
             currentY = y;
@@ -74,7 +76,7 @@ void AttackingShipsState::handleInput(sf::Event &event) {
 }
 
 void AttackingShipsState::update() {
-    selectionBox.setPosition(drawOffset.x + currentX * 20, drawOffset.y + currentY * 20);
+    selectionBox.setPosition(drawOffsetf1.x + currentX * 20, drawOffsetf1.y + currentY * 20);
     if (player.getAbilityResults().scannerIsActive) {
         selectionBox.setSize(cellSize * 2.f);
         selectionBox.setOutlineColor(sf::Color::Green);
@@ -139,7 +141,38 @@ void AttackingShipsState::drawField(sf::RenderWindow &window) {
                     cellShape.setFillColor(sf::Color::Black);
                     break;
             }
-            cellShape.setPosition(drawOffset.x + x * cellShape.getSize().x, drawOffset.y + y * cellShape.getSize().y);
+            cellShape.setPosition(drawOffsetf2.x + x * cellShape.getSize().x, drawOffsetf2.y + y * cellShape.getSize().y);
+            window.draw(cellShape);
+        }
+    }
+    for (size_t y = 0; y < aiPlayer.getField().getHeight(); ++y) {
+        for (size_t x = 0; x < aiPlayer.getField().getWidth(); ++x) {
+            CellVisibilityState cellState = aiPlayer.getField().getCellVisibilityState(x, y);
+            switch (cellState) {
+                case CellVisibilityState::UNKNOWN:
+                    cellShape.setFillColor(sf::Color::Cyan);
+                    break;
+                case CellVisibilityState::BLANK:
+                    cellShape.setFillColor(sf::Color::White);
+                    break;
+                case CellVisibilityState::SHIP:
+                    switch (aiPlayer.getField().getShipSegmentState(x, y)) {
+                        case ShipSegmentState::INTACT:
+                            cellShape.setFillColor(sf::Color::Blue);
+                            break;
+                        case ShipSegmentState::DAMAGED:
+                            cellShape.setFillColor(sf::Color::Yellow);
+                            break;
+                        case ShipSegmentState::DESTROYED:
+                            cellShape.setFillColor(sf::Color::Red);
+                            break;
+                    }
+                    break;
+                default:
+                    cellShape.setFillColor(sf::Color::Black);
+                    break;
+            }
+            cellShape.setPosition(drawOffsetf1.x + x * cellShape.getSize().x, drawOffsetf1.y + y * cellShape.getSize().y);
             window.draw(cellShape);
         }
     }
@@ -149,7 +182,7 @@ void AttackingShipsState::onAbilityUse() {
     try {
         switch (player.getPendingAbilityType()) {
             case AbilityType::DoubleDamage:
-                player.useAbility(currentX, currentY);
+                player.useAbility(player, currentX, currentY);
                 resultText.setString("Double damage activated");
                 break;
             case AbilityType::Scanner:
@@ -162,7 +195,7 @@ void AttackingShipsState::onAbilityUse() {
                 }
                 break;
             case AbilityType::Bombard:
-                player.useAbility(currentX, currentY);
+                player.useAbility(player, currentX, currentY);
                 resultText.setString("Bombard activated");
                 break;
         }
@@ -173,7 +206,7 @@ void AttackingShipsState::onAbilityUse() {
 
 void AttackingShipsState::onAttackUse() {
     if (player.getAbilityResults().scannerIsActive) {
-        player.useAbility(currentX, currentY);
+        player.useAbility(player, currentX, currentY);
         if (player.getAbilityResults().scannerShipFound)
             resultText.setString("Scanner used. Ship in range");
         else
@@ -183,8 +216,9 @@ void AttackingShipsState::onAttackUse() {
     }
 
     try {
-        player.attackShip(currentX, currentY, true, dealDamage);
+        player.attack(aiPlayer, currentX, currentY, dealDamage);
         player.getAbilityResults().doubleDamageIsActive = false;
+        aiPlayer.attackRandomCell(player);
 
     } catch (const std::exception &e) {
         resultText.setString(e.what());

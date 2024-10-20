@@ -5,6 +5,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include "AiPlayer.hpp"
 #include "GuiStates/State.hpp"
 #include "Player.hpp"
 
@@ -12,12 +13,14 @@ class AttackingShipsState : public State {
     GameState nextState = GameState::AttackingShips;
 
     Player &player;
+    AiPlayer &aiPlayer;
 
     sf::Font font;
     sf::Text instructionText;
     sf::Text resultText;
     sf::RectangleShape selectionBox;
-    sf::Vector2f drawOffset;
+    sf::Vector2f drawOffsetf1;
+    sf::Vector2f drawOffsetf2;
     sf::Vector2f cellSize;
     size_t currentX;
     size_t currentY;
@@ -28,7 +31,7 @@ class AttackingShipsState : public State {
     void onAttackUse();
 
    public:
-    AttackingShipsState(Player &player);
+    AttackingShipsState(Player &player, AiPlayer &aiPlayer);
     void handleInput(sf::Event &event) override;
     void update() override;
     void render(sf::RenderWindow &window) override;

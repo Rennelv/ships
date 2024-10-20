@@ -4,12 +4,14 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include "AiPlayer.hpp"
 #include "GuiStates/State.hpp"
 #include "Player.hpp"
 
 class CreateFieldState : public State {
     GameState nextState = GameState::CreateField;
     Player &player;
+    AiPlayer &aiPlayer;
     int fieldWidth = 10;
     int fieldHeight = 10;
     sf::Font font;
@@ -19,7 +21,7 @@ class CreateFieldState : public State {
     void drawField(sf::RenderWindow &window);
 
    public:
-    CreateFieldState(Player &player);
+    CreateFieldState(Player &player, AiPlayer &aiPlayer);
     void handleInput(sf::Event &event) override;
     void update() override;
     void render(sf::RenderWindow &window) override;

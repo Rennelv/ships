@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
+#include "AiPlayer.hpp"
 #include "GuiStates/State.hpp"  // Include the base state class and derived state classes
 #include "Player.hpp"
 
@@ -16,6 +17,7 @@ class GameGui {
 
    private:
     Player player;
+    AiPlayer aiPlayer;
     void update();
     void render();
     void pollEvents();

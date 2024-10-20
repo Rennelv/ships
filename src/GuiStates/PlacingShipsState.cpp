@@ -3,10 +3,12 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include "AiPlayer.hpp"
 #include "Enums.hpp"
 #include "Player.hpp"
 
-PlacingShipsState::PlacingShipsState(Player& player) : player(player), currentShipIndex(0), orientation(ShipOrientation::VERTICAL) {
+PlacingShipsState::PlacingShipsState(Player& player, AiPlayer& aiPlayer)
+    : player(player), aiPlayer(aiPlayer), currentShipIndex(0), orientation(ShipOrientation::VERTICAL) {
     drawOffset = {10, 70};
     cellSize = {20, 20};
 
@@ -116,6 +118,7 @@ void PlacingShipsState::placeShipHelper() {
     }
     currentShipIndex++;
     if (currentShipIndex >= player.getShipCount()) {
+        aiPlayer.placeShipsRandomly();
         nextState = GameState::AttackingShips;  // Change to the next state
     }
 }

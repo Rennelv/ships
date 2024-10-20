@@ -24,19 +24,19 @@ void GameGui::changeState(GameState newState) {
             break;
         case GameState::PlacingShips:
             currentState = newState;
-            state = std::make_unique<PlacingShipsState>(player);
+            state = std::make_unique<PlacingShipsState>(player, aiPlayer);
             break;
         case GameState::AttackingShips:
             currentState = newState;
-            state = std::make_unique<AttackingShipsState>(player);
+            state = std::make_unique<AttackingShipsState>(player, aiPlayer);
             break;
         case GameState::CreateField:
             currentState = newState;
-            state = std::make_unique<CreateFieldState>(player);
+            state = std::make_unique<CreateFieldState>(player, aiPlayer);
             break;
         case GameState::CreateShips:
             currentState = newState;
-            state = std::make_unique<CreateShipState>(player);
+            state = std::make_unique<CreateShipState>(player, aiPlayer);
             break;
         case GameState::Exit:
             window.close();

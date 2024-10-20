@@ -3,6 +3,7 @@
 
 #include <SFML/Graphics/Text.hpp>
 
+#include "AiPlayer.hpp"
 #include "GuiStates/State.hpp"
 #include "Player.hpp"
 
@@ -13,7 +14,7 @@ struct InputBox {
 
 class CreateShipState : public State {
    public:
-    CreateShipState(Player& player);
+    CreateShipState(Player& player, AiPlayer& aiPlayer);
     void handleInput(sf::Event& event) override;
     void update() override;
     void render(sf::RenderWindow& window) override;
@@ -22,6 +23,7 @@ class CreateShipState : public State {
    private:
     void createShips();
     Player& player;
+    AiPlayer& aiPlayer;
     InputBox inputBoxes[4];
     int activeBoxIndex;
     GameState nextState = GameState::CreateShips;
