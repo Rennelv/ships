@@ -48,11 +48,43 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libgl1-mesa-dev libudev-dev libopenal-dev clang-format
+        sudo apt-get install -y \
+          libgl1-mesa-dev \
+          libudev-dev \
+          libopenal-dev \
+          clang-format \
+          libgtest-dev \
+          libvorbis-dev \
+          libflac-dev \
+          libogg-dev \
+          libfreetype6-dev \
+          libx11-dev \
+          libxrandr-dev \
+          libxcursor-dev \
+          libxi-dev \
+          libxinerama-dev \
+          libx11-xcb-dev \
+          libxcb-randr0-dev \
+          libxcb-image0-dev \
+          libjpeg-dev \
+          libpng-dev \
+          libtiff-dev \
+          zlib1g-dev
+
+        # Установка GTest
+        cd /usr/src/gtest
+        sudo cmake .
+        sudo make
+        sudo cp *.a /usr/lib
 
     - name: Install dependencies (Windows)
       if: matrix.os == 'windows-latest'
-      run: choco install llvm --version=14.0.0 # Adjust version as needed
+      run: |
+        choco install llvm --version=14.0.0 # Adjust version as needed
+        choco install openal-soft
+        choco install vorbis-tools
+        choco install freetype
+        # Add more dependencies as needed
 
     - name: Configure CMake
       run: |
