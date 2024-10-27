@@ -44,6 +44,17 @@ jobs:
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
+    - name: Check code formatting
+      # Ensure clang-format is installed on the runner
+      run: |
+        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
+          sudo apt-get install -y clang-format;
+          sudo apt-get install libgl1-mesa-dev;
+        fi
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          choco install llvm --version=14.0.0; # Adjust version as needed
+        fi
+        
     - name: Configure CMake
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
@@ -58,17 +69,6 @@ jobs:
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: ctest --build-config ${{ matrix.build_type }}
-
-    - name: Check code formatting
-      # Ensure clang-format is installed on the runner
-      run: |
-        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-          sudo apt-get install -y clang-format;
-          sudo apt-get install libgl1-mesa-dev;
-        fi
-        if [ "${{ matrix.os }}" == "windows-latest" ]; then
-          choco install llvm --version=14.0.0; # Adjust version as needed
-        fi
 
     - name: Run clang-format
       run: |
