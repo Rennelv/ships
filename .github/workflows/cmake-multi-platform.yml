@@ -71,12 +71,6 @@ jobs:
           libtiff-dev \
           zlib1g-dev
 
-        # Установка GTest
-        cd /usr/src/gtest
-        sudo cmake .
-        sudo make
-        sudo cp *.a /usr/lib
-
     - name: Install dependencies (Windows)
       if: matrix.os == 'windows-latest'
       run: |
