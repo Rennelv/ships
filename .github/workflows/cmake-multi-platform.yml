@@ -48,7 +48,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libgl1-mesa-dev libudev-dev clang-format
+        sudo apt-get install -y libgl1-mesa-dev libudev-dev libopenal-dev clang-format
 
     - name: Install dependencies (Windows)
       if: matrix.os == 'windows-latest'
