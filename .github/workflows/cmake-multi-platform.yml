@@ -64,6 +64,7 @@ jobs:
       run: |
         if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
           sudo apt-get install -y clang-format;
+          sudo apt-get install libgl1-mesa-dev;
         fi
         if [ "${{ matrix.os }}" == "windows-latest" ]; then
           choco install llvm --version=14.0.0; # Adjust version as needed
