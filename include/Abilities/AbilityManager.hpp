@@ -15,7 +15,8 @@ class AbilityManager {
 
    public:
     AbilityManager();
-    void useAbility(ShipField& field, int x, int y, AbilityResults& abilityResults);
+    void useAbility(ShipField& field, ShipManager& manager, int x, int y, AbilityResults& abilityResults);
+
     void addRandomAbility();
     AbilityType getPendingAbilityType() const;
 };

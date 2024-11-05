@@ -15,6 +15,7 @@ class ShipManager {
     ~ShipManager() = default;
     size_t getShipCount() const;
     size_t getAliveCount() const;
+    size_t getShipLength(size_t index) const;
     Ship& getShip(size_t index);
 };
 

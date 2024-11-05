@@ -7,21 +7,24 @@
 #include "Abilities/AbilityManager.hpp"
 #include "ShipField.hpp"
 #include "ShipManager.hpp"
+
 class Player {
-    ShipManager* shipManager = nullptr;
-    ShipField* field = nullptr;
-    AbilityManager* abilityManager = nullptr;
+    ShipManager shipManager;
+    ShipField field;
+    AbilityManager abilityManager;
     AbilityResults abilityResults;
 
    public:
     Player();
-    ~Player();
     void createField(int width, int height);
     void createShipManager(size_t count, size_t* lengths);
     void attackShip(int x, int y, bool exposeCell, int damage);
-    void useAbility(int x, int y);
+    // void useAbility(int x, int y);
     void placeShip(Ship& ship, int x, int y, ShipOrientation orientation);
     void placeShipByIndex(int index, int x, int y, ShipOrientation orientation);
+
+    void attack(Player& targetPlayer, int x, int y, int damage, bool exposeCell = true);
+    void useAbility(Player& targetPlayer, int x, int y);
 
     size_t getShipCount() const;
     size_t getShipLength(size_t index) const;

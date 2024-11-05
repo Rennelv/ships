@@ -82,7 +82,11 @@ void AttackingShipsState::update() {
         selectionBox.setSize(cellSize);
         selectionBox.setOutlineColor(sf::Color::Yellow);
     }
+
     dealDamage = player.getAbilityResults().doubleDamageIsActive ? 2 : 1;
+    if (player.getAliveCount() == 0) {
+        nextState = GameState::Exit;
+    }
 }
 
 void AttackingShipsState::render(sf::RenderWindow &window) {
@@ -97,10 +101,6 @@ void AttackingShipsState::render(sf::RenderWindow &window) {
     window.draw(selectionBox);
 
     window.display();
-
-    if (player.getAliveCount() == 0) {
-        nextState = GameState::Exit;
-    }
 }
 
 GameState AttackingShipsState::changeState() {
@@ -149,7 +149,7 @@ void AttackingShipsState::onAbilityUse() {
     try {
         switch (player.getPendingAbilityType()) {
             case AbilityType::DoubleDamage:
-                player.useAbility(currentX, currentY);
+                player.useAbility(player, currentX, currentY);
                 resultText.setString("Double damage activated");
                 break;
             case AbilityType::Scanner:
@@ -162,7 +162,7 @@ void AttackingShipsState::onAbilityUse() {
                 }
                 break;
             case AbilityType::Bombard:
-                player.useAbility(currentX, currentY);
+                player.useAbility(player, currentX, currentY);
                 resultText.setString("Bombard activated");
                 break;
         }
@@ -173,7 +173,7 @@ void AttackingShipsState::onAbilityUse() {
 
 void AttackingShipsState::onAttackUse() {
     if (player.getAbilityResults().scannerIsActive) {
-        player.useAbility(currentX, currentY);
+        player.useAbility(player, currentX, currentY);
         if (player.getAbilityResults().scannerShipFound)
             resultText.setString("Scanner used. Ship in range");
         else

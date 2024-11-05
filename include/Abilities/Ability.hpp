@@ -3,6 +3,7 @@
 
 #include "Abilities/AbilityResults.hpp"
 #include "ShipField.hpp"
+#include "ShipManager.hpp"
 enum class AbilityType {
     DoubleDamage,
     Scanner,
@@ -11,7 +12,7 @@ enum class AbilityType {
 
 class Ability {
    public:
-    virtual void use(ShipField& field, int x, int y, AbilityResults& ret) = 0;
+    virtual void use(ShipField& field, ShipManager& manager, int x, int y, AbilityResults& ret) = 0;
     virtual ~Ability() = default;
     virtual AbilityType getType() = 0;
 };

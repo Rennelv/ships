@@ -1,11 +1,17 @@
 #include "Abilities/BombardAbility.hpp"
 
-#include <cstddef>
 #include <random>
 
 #include "ShipField.hpp"
+#include "ShipManager.hpp"
 
-void BombardAbility::use(ShipField& field, int, int, AbilityResults& ret) {
+void BombardAbility::use(ShipField& field, ShipManager& manager, int, int, AbilityResults& ret) {
+    // Check if there are any ships on the field using ShipManager
+    if (manager.getAliveCount() == 0) {
+        ret.bombardDamageDealt = false;
+        return;
+    }
+
     // Get random segment
     std::random_device rd;   // Obtain a random number from hardware
     std::mt19937 gen(rd());  // Seed the generator
@@ -14,23 +20,6 @@ void BombardAbility::use(ShipField& field, int, int, AbilityResults& ret) {
 
     int x = disX(gen);
     int y = disY(gen);
-
-    // Check if there are any ships on the field
-    bool shipFound = false;
-    for (size_t i = 0; i < field.getWidth(); ++i) {
-        for (size_t j = 0; j < field.getHeight(); ++j) {
-            if (field.getIsShip(i, j) && field.getShipSegmentState(i, j) != ShipSegmentState::DESTROYED) {
-                shipFound = true;
-                break;
-            }
-        }
-        if (shipFound) break;
-    }
-
-    if (!shipFound) {
-        ret.bombardDamageDealt = false;
-        return;
-    }
 
     // Find a random segment that contains a ship
     while (!(field.getIsShip(x, y) && field.getShipSegmentState(x, y) != ShipSegmentState::DESTROYED)) {

@@ -1,8 +1,9 @@
 #include "Abilities/DoubleDamageAbility.hpp"
 
 #include "ShipField.hpp"
+#include "ShipManager.hpp"
 
-void DoubleDamageAbility::use([[maybe_unused]] ShipField& field, int, int, AbilityResults& ret) {
+void DoubleDamageAbility::use(ShipField&, ShipManager&, int, int, AbilityResults& ret) {
     ret.doubleDamageIsActive = true;
 }
 

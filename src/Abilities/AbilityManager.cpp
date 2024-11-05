@@ -6,13 +6,15 @@
 #include <memory>
 #include <queue>
 #include <random>
+#include <stdexcept>
 
 #include "Abilities/Ability.hpp"
 #include "Abilities/BombardAbility.hpp"
 #include "Abilities/DoubleDamageAbility.hpp"
 #include "Abilities/ScannerAbility.hpp"
-#include "Exceptions.hpp"
+#include "Exceptions/NoAbilitiesException.hpp"
 #include "ShipField.hpp"
+#include "ShipManager.hpp"
 
 std::unique_ptr<Ability> AbilityManager::getRandomAbility() {
     int random = rand() % 3;
@@ -42,11 +44,11 @@ AbilityManager::AbilityManager() {
     }
 }
 
-void AbilityManager::useAbility(ShipField &field, int x, int y, AbilityResults &abilityResults) {
+void AbilityManager::useAbility(ShipField &targetField, ShipManager &targetShipManager, int x, int y, AbilityResults &abilityResults) {
     if (abilities.empty()) {
-        throw NoAbilitiesException();
+        throw exceptions::NoAbilitiesException();
     }
-    abilities.front()->use(field, x, y, abilityResults);
+    abilities.front()->use(targetField, targetShipManager, x, y, abilityResults);
     abilities.pop();
 }
 
@@ -56,7 +58,7 @@ void AbilityManager::addRandomAbility() {
 
 AbilityType AbilityManager::getPendingAbilityType() const {
     if (abilities.empty()) {
-        throw NoAbilitiesException();
+        throw exceptions::NoAbilitiesException();
     }
     return abilities.front()->getType();
 }

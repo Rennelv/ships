@@ -19,6 +19,11 @@ class Ship {
     Ship(int length);
     ~Ship();
 
+    Ship(const Ship& other);
+    Ship& operator=(const Ship& other);
+    Ship(Ship&& other) noexcept;
+    Ship& operator=(Ship&& other) noexcept;
+
     void takeDamage(size_t segment_index, int damage);     // deals damage to segment by index
     int getSegmentHP(size_t index) const;                  // returns hp of segment by index
     ShipSegmentState getSegmentState(size_t index) const;  // returns state of segment by index

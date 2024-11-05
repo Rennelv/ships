@@ -40,7 +40,6 @@ void GameGui::changeState(GameState newState) {
             break;
         case GameState::Exit:
             window.close();
-            // Add other states as needed
     }
 }
 
