@@ -35,7 +35,27 @@ jobs:
     - name: Install dependencies
       if: matrix.os == 'ubuntu-latest'
       run: |
-        sudo apt-get install -y --no-upgrade g++ cmake libgl1-mesa-dev libglfw3 libglfw3-dev libglew-dev ninja-build
+        sudo apt-get install -y --no-upgrade g++ cmake libgl1-mesa-dev \
+          libudev-dev \
+          libopenal-dev \
+          clang-format \
+          libgtest-dev \
+          libvorbis-dev \
+          libflac-dev \
+          libogg-dev \
+          libfreetype6-dev \
+          libx11-dev \
+          libxrandr-dev \
+          libxcursor-dev \
+          libxi-dev \
+          libxinerama-dev \
+          libx11-xcb-dev \
+          libxcb-randr0-dev \
+          libxcb-image0-dev \
+          libjpeg-dev \
+          libpng-dev \
+          libtiff-dev \
+          zlib1g-dev
 
     - name: Configure CMake
       run: >
@@ -54,16 +74,6 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: ctest --build-config ${{ matrix.build_type }}
-
-    - name: Check code formatting      
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
-          sudo apt-get install -y clang-format;
-        fi
-        if [ "${{ matrix.os }}" == "windows-latest" ]; then
-          choco install llvm --version=14.0.0; # Adjust version as needed
-        fi
 
     - name: Run check code formatting
       if: matrix.os == 'ubuntu-latest'
