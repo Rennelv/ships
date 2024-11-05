@@ -10,8 +10,8 @@
 class CreateFieldState : public State {
     GameState nextState = GameState::CreateField;
     Player &player;
-    int fieldWidth = 10;
-    int fieldHeight = 10;
+    int fieldWidth;
+    int fieldHeight;
     sf::Font font;
     sf::Text fieldSizeText;
     sf::Vector2f drawOffset;

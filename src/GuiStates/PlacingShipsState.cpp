@@ -10,6 +10,9 @@ PlacingShipsState::PlacingShipsState(Player& player) : player(player), currentSh
     drawOffset = {10, 70};
     cellSize = {20, 20};
 
+    currentX = 0;
+    currentY = 0;
+
     font.loadFromFile("assets/fonts/font.ttf");
     instructionText.setFont(font);
     instructionText.setCharacterSize(24);
@@ -58,6 +61,9 @@ void PlacingShipsState::handleInput(sf::Event& event) {
             }
         } else if (event.key.code == sf::Keyboard::Enter) {
             placeShipHelper();
+        } else if (event.key.code == sf::Keyboard::Escape) {
+            player.createField(player.getField().getWidth(), player.getField().getHeight());
+            nextState = GameState::CreateShips;
         }
     }
 }

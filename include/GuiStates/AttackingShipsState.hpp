@@ -21,7 +21,6 @@ class AttackingShipsState : public State {
     sf::Vector2f cellSize;
     size_t currentX;
     size_t currentY;
-    int dealDamage;
 
     void drawField(sf::RenderWindow &window);
     void onAbilityUse();

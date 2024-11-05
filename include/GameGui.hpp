@@ -3,8 +3,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <memory>
+#include <vector>
 
-#include "GuiStates/State.hpp"  // Include the base state class and derived state classes
+#include "GuiStates/State.hpp"
 #include "Player.hpp"
 
 class GameGui {
@@ -15,6 +16,7 @@ class GameGui {
     void mainLoop();
 
    private:
+    std::vector<State> states;
     Player player;
     void update();
     void render();

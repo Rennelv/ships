@@ -53,6 +53,10 @@ void CreateShipState::handleInput(sf::Event& event) {
                 createShips();
                 nextState = GameState::PlacingShips;
             } break;
+            case sf::Keyboard::Escape:
+                player.createShipManager(0, nullptr);
+                nextState = GameState::CreateField;
+                break;
             default:
                 break;
         }

@@ -5,6 +5,8 @@
 #include <SFML/Window/Event.hpp>
 
 #include "Enums.hpp"
+#include "Exceptions/NoAbilitiesException.hpp"
+#include "Exceptions/OutOfBoundsException.hpp"
 #include "Player.hpp"
 
 AttackingShipsState::AttackingShipsState(Player &player) : player(player) {
@@ -12,7 +14,6 @@ AttackingShipsState::AttackingShipsState(Player &player) : player(player) {
     currentY = 0;
     drawOffset = {10, 70};
     cellSize = {20, 20};
-    dealDamage = 1;
 
     font.loadFromFile("assets/fonts/font.ttf");
     instructionText.setFont(font);
@@ -83,9 +84,8 @@ void AttackingShipsState::update() {
         selectionBox.setOutlineColor(sf::Color::Yellow);
     }
 
-    dealDamage = player.getAbilityResults().doubleDamageIsActive ? 2 : 1;
     if (player.getAliveCount() == 0) {
-        nextState = GameState::Exit;
+        nextState = GameState::Menu;
     }
 }
 
@@ -166,12 +166,15 @@ void AttackingShipsState::onAbilityUse() {
                 resultText.setString("Bombard activated");
                 break;
         }
+    } catch (const exceptions::NoAbilitiesException &e) {
+        resultText.setString("No abilities available");
     } catch (const std::exception &e) {
         resultText.setString(e.what());
     }
 };
 
 void AttackingShipsState::onAttackUse() {
+    // If the scanner is active use it
     if (player.getAbilityResults().scannerIsActive) {
         player.useAbility(player, currentX, currentY);
         if (player.getAbilityResults().scannerShipFound)
@@ -182,10 +185,11 @@ void AttackingShipsState::onAttackUse() {
         return;
     }
 
+    // else attack the cell
     try {
-        player.attackShip(currentX, currentY, true, dealDamage);
-        player.getAbilityResults().doubleDamageIsActive = false;
-
+        player.attack(player, currentX, currentY, 1, true);
+    } catch (const exceptions::OutOfBoundsException &e) {
+        resultText.setString("Coordinates are out of field bounds");
     } catch (const std::exception &e) {
         resultText.setString(e.what());
     }

@@ -18,8 +18,6 @@ class Player {
     Player();
     void createField(int width, int height);
     void createShipManager(size_t count, size_t* lengths);
-    void attackShip(int x, int y, bool exposeCell, int damage);
-    // void useAbility(int x, int y);
     void placeShip(Ship& ship, int x, int y, ShipOrientation orientation);
     void placeShipByIndex(int index, int x, int y, ShipOrientation orientation);
 
@@ -34,8 +32,6 @@ class Player {
     AbilityResults& getAbilityResults();
 
     const ShipField& getField() const;
-    // const ShipManager& getShipManager() const;
-    // const AbilityManager& getAbilityManager() const;
 };
 
 #endif  // PLAYER_HPP

@@ -37,7 +37,7 @@ void MenuState::handleInput(sf::Event &event) {
 }
 
 void MenuState::update() {
-    // Update menu logic if needed
+    ///
 }
 
 void MenuState::render(sf::RenderWindow &window) {
