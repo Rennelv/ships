@@ -35,27 +35,7 @@ jobs:
     - name: Install dependencies
       if: matrix.os == 'ubuntu-latest'
       run: |
-        sudo apt-get install -y --no-upgrade g++ cmake ninja-build libgl1-mesa-dev \
-          libudev-dev \
-          libopenal-dev \
-          clang-format \
-          libgtest-dev \
-          libvorbis-dev \
-          libflac-dev \
-          libogg-dev \
-          libfreetype6-dev \
-          libx11-dev \
-          libxrandr-dev \
-          libxcursor-dev \
-          libxi-dev \
-          libxinerama-dev \
-          libx11-xcb-dev \
-          libxcb-randr0-dev \
-          libxcb-image0-dev \
-          libjpeg-dev \
-          libpng-dev \
-          libtiff-dev \
-          zlib1g-dev
+        sudo apt-get install -y --no-upgrade g++ cmake ninja-build libsfml-dev
 
     - name: Configure CMake
       run: >

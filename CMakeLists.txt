@@ -13,21 +13,25 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Include FetchContent module
 include(FetchContent)
 
-# Fetch SFML from GitHub
-FetchContent_Declare(
-    SFML
-    GIT_REPOSITORY https://github.com/SFML/SFML.git
-    GIT_TAG 2.6.x
-    GIT_SHALLOW ON
-    EXCLUDE_FROM_ALL
-    SYSTEM
-)
-FetchContent_MakeAvailable(SFML)
+# Check if SFML is available locally
+find_package(SFML 2.6 COMPONENTS graphics window system audio QUIET)
+
+if (NOT SFML_FOUND)
+    message(WARNING "SFML not found locally. Fetching from GitHub...")
+    # Fetch SFML from GitHub if not found locally
+    FetchContent_Declare(
+        SFML
+        GIT_REPOSITORY https://github.com/SFML/SFML.git
+        GIT_TAG 2.6.x
+        GIT_SHALLOW ON
+        EXCLUDE_FROM_ALL
+        SYSTEM
+    )
+    FetchContent_MakeAvailable(SFML)
+endif()
 
 # Add include directories
 include_directories(${PROJECT_SOURCE_DIR}/include)
-# include_directories(${PROJECT_SOURCE_DIR}/include/GuiStates)
-# include_directories(${PROJECT_SOURCE_DIR}/include/Abilities)
 
 # Add source files
 file(GLOB_RECURSE SOURCES
@@ -38,7 +42,11 @@ file(GLOB_RECURSE SOURCES
 add_executable(SeaBattle ${SOURCES})
 
 # Link SFML libraries
-target_link_libraries(SeaBattle PRIVATE sfml-graphics sfml-window sfml-system sfml-audio)
+if (SFML_FOUND)
+    target_link_libraries(SeaBattle PRIVATE sfml-graphics sfml-window sfml-system sfml-audio)
+else()
+    target_link_libraries(SeaBattle PRIVATE sfml-graphics sfml-window sfml-system sfml-audio)
+endif()
 
 # Set C++ standard to C++17
 target_compile_features(SeaBattle PRIVATE cxx_std_17)
