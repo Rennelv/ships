@@ -1,5 +1,5 @@
 # Ignore hidden files
-.*
+.clang-uml
 
 battleship
 seabattle
@@ -10,6 +10,7 @@ compile_commands.json
 *.docx
 *.pdf
 *.bak
+*cache*
 
 !.gitignore
 
