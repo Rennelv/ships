@@ -6,7 +6,15 @@
 #include <stdexcept>
 
 #include "Enums.hpp"
+#include "Exceptions/OutOfBoundsException.hpp"
+#include "Exceptions/ShipCollisionException.hpp"
 #include "Ship.hpp"
+
+ShipField::ShipField() {
+    width = 0;
+    height = 0;
+    field = nullptr;
+}
 
 ShipField::ShipField(int new_width, int new_height) {
     if (new_width <= 0 || new_height <= 0) {
@@ -94,12 +102,12 @@ bool ShipField::checkShipCollision(int ship_length, int head_x, int head_y, Ship
         if (head_x + ship_length > static_cast<int>(width)) {
             return true;
         }
-        for (int i = head_x - 1; i < head_x + ship_length + 1; i++) {
-            for (int j = head_y - 1; j < head_y + 2; j++) {
-                if (i >= static_cast<int>(width) || j >= static_cast<int>(height) || i < 0 || j <= 0) {
+        for (int x = head_x - 1; x < head_x + ship_length + 1; x++) {
+            for (int y = head_y - 1; y < head_y + 2; y++) {
+                if (x < 0 || y < 0 || x >= static_cast<int>(width) || y >= static_cast<int>(height)) {
                     continue;
                 }
-                if (getIsShip(i, j)) {
+                if (getIsShip(x, y)) {
                     return true;  // cant place ship
                 }
             }
@@ -108,12 +116,12 @@ bool ShipField::checkShipCollision(int ship_length, int head_x, int head_y, Ship
         if (head_y + ship_length > static_cast<int>(height)) {
             return true;
         }
-        for (int i = head_x; i < head_x + 2; i++) {
-            for (int j = head_y; j < head_y + ship_length + 1; j++) {
-                if (i >= static_cast<int>(width) || j >= static_cast<int>(height) || i < 0 || j < 0) {
+        for (int x = head_x - 1; x < head_x + 2; x++) {
+            for (int y = head_y - 1; y < head_y + ship_length + 1; y++) {
+                if (x < 0 || y < 0 || x >= static_cast<int>(width) || y >= static_cast<int>(height)) {
                     continue;
                 }
-                if (getIsShip(i, j)) {
+                if (getIsShip(x, y)) {
                     return true;  // cant place ship
                 }
             }
@@ -122,11 +130,11 @@ bool ShipField::checkShipCollision(int ship_length, int head_x, int head_y, Ship
     return false;
 }
 
-void ShipField::exposeSurroundingShipCells(int ship_length, int x, int y) {
+void ShipField::exposeSurroundingShipCells(int ship_length, int head_x, int head_y) {
     ShipOrientation orientation;
 
     // calculate orientation of the ship
-    if (getIsShip(x, y - 1) || getIsShip(x, y + 1)) {
+    if (getIsShip(head_x, head_y - 1) || getIsShip(head_x, head_y + 1)) {
         orientation = ShipOrientation::VERTICAL;
     } else {
         orientation = ShipOrientation::HORIZONTAL;
@@ -134,38 +142,38 @@ void ShipField::exposeSurroundingShipCells(int ship_length, int x, int y) {
 
     // calculate head of the ship
     if (orientation == ShipOrientation::HORIZONTAL) {
-        while (getIsShip(x - 1, y)) {
-            x--;
+        while (getIsShip(head_x - 1, head_y)) {
+            head_x--;
         }
     } else {
-        while (getIsShip(x, y - 1)) {
-            y--;
+        while (getIsShip(head_x, head_y - 1)) {
+            head_y--;
         }
     }
 
     if (orientation == ShipOrientation::HORIZONTAL) {
-        for (int i = x - 1; i < x + ship_length + 1; i++) {
-            for (int j = y - 1; j < y + 2; j++) {
-                if (i >= static_cast<int>(width) || j >= static_cast<int>(height) || i < 0 || j < 0) {
+        for (int x = head_x - 1; x < head_x + ship_length + 1; x++) {
+            for (int y = head_y - 1; y < head_y + 2; y++) {
+                if (x < 0 || y < 0 || x >= static_cast<int>(width) || y >= static_cast<int>(height)) {
                     continue;
                 }
-                if (getIsShip(i, j)) {
-                    continue;
+                if (getIsShip(x, y)) {
+                    field[y][x].state = CellVisibilityState::SHIP;
                 } else {
-                    field[j][i].state = CellVisibilityState::BLANK;
+                    field[y][x].state = CellVisibilityState::BLANK;
                 }
             }
         }
     } else {
-        for (int i = x - 1; i < x + 2; i++) {
-            for (int j = y - 1; j < y + ship_length + 1; j++) {
-                if (i >= static_cast<int>(width) || j >= static_cast<int>(height) || i < 0 || j < 0) {
+        for (int x = head_x - 1; x < head_x + 2; x++) {
+            for (int y = head_y - 1; y < head_y + ship_length + 1; y++) {
+                if (x < 0 || y < 0 || x >= static_cast<int>(width) || y >= static_cast<int>(height)) {
                     continue;
                 }
-                if (getIsShip(i, j)) {
-                    continue;
+                if (getIsShip(x, y)) {
+                    field[y][x].state = CellVisibilityState::SHIP;
                 } else {
-                    field[j][i].state = CellVisibilityState::BLANK;
+                    field[y][x].state = CellVisibilityState::BLANK;
                 }
             }
         }
@@ -176,57 +184,58 @@ void ShipField::placeShip(Ship &ship, int x, int y, ShipOrientation orientation)
     const size_t ship_length = ship.getLength();
 
     if (x < 0 || y < 0) {  // 0 0 is the bottom left corner
-        throw std::invalid_argument("Coordinates must be non-negative");
+        throw exceptions::OutOfBoundsException("Coordinates cant be negative");
     }
 
     const size_t x_size = static_cast<size_t>(x);
     const size_t y_size = static_cast<size_t>(y);
 
     if (y_size >= height || x_size >= width) {
-        throw std::invalid_argument("Coordinates are out of field bounds");
+        throw exceptions::OutOfBoundsException("Coordinates are out of field bounds");
     }
 
     if (checkShipCollision(ship_length, x_size, y_size, orientation)) {
-        throw std::invalid_argument("Ship collides with another ship or borders");
+        throw exceptions::ShipCollisionException("Ship collides with another ship or borders");
     }
 
     if (orientation == ShipOrientation::HORIZONTAL) {  // horizontal placement of the ship on the field
         for (size_t i = x_size; i < x_size + ship_length; i++) {
             field[y_size][i].ship = &ship;
             field[y_size][i].ship_segment_index = i - x_size;
-            field[y_size][i].is_ship = true;
         }
     } else {  // vertical placement of the ship on the field
         for (size_t i = y_size; i < y_size + ship_length; i++) {
             field[i][x_size].ship = &ship;
             field[i][x_size].ship_segment_index = i - y_size;
-            field[i][x_size].is_ship = true;
         }
     }
 }
 
-void ShipField::attackShip(int x, int y, int damage) {
+bool ShipField::attackShip(int x, int y, bool expose_cell, int damage) {
     if (x < 0 || y < 0 || static_cast<size_t>(x) >= width || static_cast<size_t>(y) >= height) {
-        throw std::invalid_argument("Coordinates are out of field bounds");
+        throw exceptions::OutOfBoundsException("Coordinates are out of field bounds");
     }
 
     if (getIsShip(x, y) == false) {
-        field[y][x].state = CellVisibilityState::BLANK;
-        return;
+        if (expose_cell) field[y][x].state = CellVisibilityState::BLANK;
+        return false;
     }
 
     Ship *current = field[y][x].ship;
     const size_t ship_segment_index = field[y][x].ship_segment_index;
 
+    if (expose_cell) field[y][x].state = CellVisibilityState::SHIP;
+
     if (current->getSegmentHP(ship_segment_index) <= 0) {
-        return;
+        return false;
     }
 
-    field[y][x].state = CellVisibilityState::SHIP;
     current->takeDamage(ship_segment_index, damage);
     if (current->isAlive() == false) {
         exposeSurroundingShipCells(current->getLength(), x, y);
+        return true;
     }
+    return false;
 }
 
 size_t ShipField::getWidth() const {
@@ -244,7 +253,7 @@ bool ShipField::getIsShip(int x, int y) const {
     if (static_cast<size_t>(x) >= width || static_cast<size_t>(y) >= height) {
         return false;
     }
-    return (field[y][x].is_ship);
+    return (!(field[y][x].ship == nullptr));
 }
 
 void ShipField::clearField() {

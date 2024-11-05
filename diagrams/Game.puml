@@ -43,6 +43,7 @@ __
 }
 class "ShipField" as C_0003843296779074973901
 class C_0003843296779074973901 {
++ShipField() : void
 +ShipField(int width, int height) : void
 +ShipField(const ShipField & other) : void
 +ShipField(ShipField && other) noexcept : void
@@ -51,8 +52,8 @@ class C_0003843296779074973901 {
 +operator=(const ShipField & other) : ShipField &
 +operator=(ShipField && other) noexcept : ShipField &
 ..
-+attackShip(int x, int y, int damage = 1) : void
--checkShipCollision(int ship_length, int x, int y, ShipOrientation orientation) const : bool
++attackShip(int x, int y, bool expose_cell = true, int damage = 1) : bool
++checkShipCollision(int ship_length, int x, int y, ShipOrientation orientation) const : bool
 +clearField() : void
 -exposeSurroundingShipCells(int ship_length, int x, int y) : void
 +getCellVisibilityState(int x, int y) const : CellVisibilityState
@@ -69,18 +70,18 @@ __
 class "ShipField::FieldElement" as C_0000316359785794417378
 class C_0000316359785794417378 {
 __
-+is_ship : bool
 +ship : Ship *
 +ship_segment_index : size_t
 +state : CellVisibilityState
 }
 class "ShipManager" as C_0017499122254539489506
 class C_0017499122254539489506 {
++ShipManager() : void
 +ShipManager(size_t count, size_t * lengths) : void
-+~ShipManager() : void
++~ShipManager() = default : void
 ..
 +getAliveCount() const : size_t
-+getShip(int index) : Ship &
++getShip(size_t index) : Ship &
 +getShipCount() const : size_t
 __
 -ships : std::vector<Ship>
@@ -92,6 +93,8 @@ class C_0017470460303031448044 {
 +~Game() : void
 ..
 +run() : void
++runCli() : void
++runGui() : void
 __
 -field : ShipField *
 -manager : ShipManager *

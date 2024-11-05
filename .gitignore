@@ -4,16 +4,33 @@
 battleship
 seabattle
 test_input.txt
+valgrind-out.txt
 compile_commands.json
-*.txt
 *.odt
 *.docx
 *.pdf
+*.bak
 
 !.gitignore
 
+bin
+debug
+archive
+
+Makefile
+
 # Ignore build directories
 build/
+
+# Ignore CMake files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+CMakeLists.txt.user
+CMakeLists.txt.user.lock
+*.cmake
+_*
+Makefile
 
 # Ignore IDE-specific files
 .vscode/

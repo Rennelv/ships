@@ -10,6 +10,8 @@ class Game {
    public:
     Game();
     ~Game();
+    void runCli();
+    void runGui();
     void run();
 };
 

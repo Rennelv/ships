@@ -4,6 +4,10 @@
 
 #include "Ship.hpp"
 
+ShipManager::ShipManager() {
+    ships_count = 0;
+}
+
 ShipManager::ShipManager(size_t count, size_t* lengths) {
     ships.reserve(count);
     ships_count = count;
@@ -26,11 +30,16 @@ size_t ShipManager::getAliveCount() const {
     return alive;
 }
 
-Ship& ShipManager::getShip(int index) {
-    if (index < 0) {
-        index = ships_count + index;
+size_t ShipManager::getShipLength(size_t index) const {
+    if (index >= ships_count) {
+        throw std::out_of_range("Index out of range");
     }
-    if (static_cast<size_t>(index) >= ships_count) {
+
+    return ships.at(index).getLength();
+}
+
+Ship& ShipManager::getShip(size_t index) {
+    if (index >= ships_count) {
         throw std::out_of_range("Index out of range");
     }
 

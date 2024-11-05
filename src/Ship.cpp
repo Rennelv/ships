@@ -60,3 +60,48 @@ size_t Ship::getLength() const {
 bool Ship::isAlive() const {
     return health > 0;
 }
+
+// Copy constructor
+Ship::Ship(const Ship& other) : length(other.length), health(other.health), segments(new Segment[other.length]) {
+    for (size_t i = 0; i < length; ++i) {
+        segments[i] = other.segments[i];
+    }
+}
+
+// Copy assignment operator
+Ship& Ship::operator=(const Ship& other) {
+    if (this != &other) {
+        delete[] segments;  // Free existing memory
+
+        length = other.length;
+        health = other.health;
+        segments = new Segment[length];
+        for (size_t i = 0; i < length; ++i) {
+            segments[i] = other.segments[i];
+        }
+    }
+    return *this;
+}
+
+// Move constructor
+Ship::Ship(Ship&& other) noexcept : length(other.length), health(other.health), segments(other.segments) {
+    other.segments = nullptr;
+    other.length = 0;
+    other.health = 0;
+}
+
+// Move assignment operator
+Ship& Ship::operator=(Ship&& other) noexcept {
+    if (this != &other) {
+        delete[] segments;  // Free existing memory
+
+        length = other.length;
+        health = other.health;
+        segments = other.segments;
+
+        other.segments = nullptr;
+        other.length = 0;
+        other.health = 0;
+    }
+    return *this;
+}
