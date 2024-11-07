@@ -3,7 +3,7 @@
 #include "Abilities/AbilityManager.hpp"
 #include "ShipManager.hpp"
 
-Player::Player() : shipManager(), field(10, 10), abilityManager() {
+Player::Player() : ship_manager(), field(10, 10), ability_manager() {
 }
 
 void Player::createField(int width, int height) {
@@ -11,7 +11,7 @@ void Player::createField(int width, int height) {
 }
 
 void Player::createShipManager(size_t count, size_t* lengths) {
-    shipManager = ShipManager(count, lengths);
+    ship_manager = ShipManager(count, lengths);
 }
 
 void Player::placeShip(Ship& ship, int x, int y, ShipOrientation orientation) {
@@ -19,28 +19,28 @@ void Player::placeShip(Ship& ship, int x, int y, ShipOrientation orientation) {
 }
 
 void Player::placeShipByIndex(int index, int x, int y, ShipOrientation orientation) {
-    Ship& ship = shipManager.getShip(index);
+    Ship& ship = ship_manager.getShip(index);
     placeShip(ship, x, y, orientation);
 }
 
 size_t Player::getShipCount() const {
-    return shipManager.getShipCount();
+    return ship_manager.getShipCount();
 }
 
 size_t Player::getShipLength(size_t index) const {
-    return shipManager.getShipLength(index);
+    return ship_manager.getShipLength(index);
 }
 
 size_t Player::getAliveCount() const {
-    return shipManager.getAliveCount();
+    return ship_manager.getAliveCount();
 }
 
-AbilityResults& Player::getAbilityResults() {
-    return abilityResults;
+AbilityResults Player::getAbilityResults() {
+    return ability_results;
 }
 
 AbilityType Player::getPendingAbilityType() const {
-    return abilityManager.getPendingAbilityType();
+    return ability_manager.getPendingAbilityType();
 }
 
 const ShipField& Player::getField() const {
@@ -48,14 +48,14 @@ const ShipField& Player::getField() const {
 }
 
 void Player::attack(Player& targetPlayer, int x, int y, int damage, bool exposeCell) {
-    if (abilityResults.doubleDamageIsActive) {
+    if (ability_results.DoubleDamageIsActive) {
         damage *= 2;
-        abilityResults.doubleDamageIsActive = false;
+        ability_results.DoubleDamageIsActive = false;
     }
     bool was_killed = targetPlayer.field.attackShip(x, y, exposeCell, damage);
-    if (was_killed) abilityManager.addRandomAbility();
+    if (was_killed) ability_manager.addRandomAbility();
 }
 
 void Player::useAbility(Player& targetPlayer, int x, int y) {
-    abilityManager.useAbility(targetPlayer.field, targetPlayer.shipManager, x, y, abilityResults);
+    ability_manager.useAbility(targetPlayer.field, targetPlayer.ship_manager, x, y, ability_results);
 }

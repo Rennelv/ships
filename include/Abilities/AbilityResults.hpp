@@ -2,10 +2,9 @@
 #define ABILITYRESULTS_HPP
 
 struct AbilityResults {
-    bool doubleDamageIsActive = false;
-    bool scannerIsActive = false;
-    bool scannerShipFound = false;
-    bool bombardDamageDealt = false;
+    bool DoubleDamageIsActive = false;
+    bool ScannerShipFound = false;
+    bool BombardDamageDealt = false;
 };
 
 #endif

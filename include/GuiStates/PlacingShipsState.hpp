@@ -12,18 +12,22 @@
 #include "Player.hpp"
 
 class PlacingShipsState : public State {
-    GameState nextState = GameState::PlacingShips;
-    Player& player;
-    size_t currentShipIndex;
+    GameState next_state = GameState::PlacingShips;
+
+    size_t current_x;
+    size_t current_y;
+    size_t current_ship_index;
     ShipOrientation orientation = ShipOrientation::VERTICAL;
+
+    Player& player;
+
     sf::Font font;
-    sf::Text instructionText;
-    sf::Text resultText;
-    sf::RectangleShape shipRepresentation;
-    sf::Vector2f drawOffset;
-    sf::Vector2f cellSize;
-    size_t currentX;
-    size_t currentY;
+    sf::Text instruction_text;
+    sf::Text result_text;
+    sf::RectangleShape ship_representation;
+    sf::Vector2f draw_offset;
+    sf::Vector2f cell_size;
+
     void drawField(sf::RenderWindow& window);
     void placeShipHelper();
 

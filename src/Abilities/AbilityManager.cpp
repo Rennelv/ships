@@ -32,11 +32,8 @@ std::unique_ptr<Ability> AbilityManager::getRandomAbility() {
 AbilityManager::AbilityManager() {
     std::unique_ptr<Ability> ab[] = {std::make_unique<DoubleDamageAbility>(), std::make_unique<ScannerAbility>(), std::make_unique<BombardAbility>()};
 
-    // Obtain a random number from hardware
     std::random_device rd;
-    // Seed the generator
     std::mt19937 gen(rd());
-    // Shuffle the array
     std::shuffle(std::begin(ab), std::end(ab), gen);
 
     for (auto &ability : ab) {
@@ -44,11 +41,11 @@ AbilityManager::AbilityManager() {
     }
 }
 
-void AbilityManager::useAbility(ShipField &targetField, ShipManager &targetShipManager, int x, int y, AbilityResults &abilityResults) {
+void AbilityManager::useAbility(ShipField &target_field, ShipManager &target_ship_manager, int x, int y, AbilityResults &ability_results) {
     if (abilities.empty()) {
         throw exceptions::NoAbilitiesException();
     }
-    abilities.front()->use(targetField, targetShipManager, x, y, abilityResults);
+    abilities.front()->use(target_field, target_ship_manager, x, y, ability_results);
     abilities.pop();
 }
 
@@ -61,4 +58,8 @@ AbilityType AbilityManager::getPendingAbilityType() const {
         throw exceptions::NoAbilitiesException();
     }
     return abilities.front()->getType();
+}
+
+bool AbilityManager::empty() const {
+    return abilities.empty();
 }

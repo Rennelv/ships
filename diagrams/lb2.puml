@@ -11,27 +11,8 @@ class "std::queue<std::unique_ptr<Ability>>" as C_0006911030825501507270
 class C_0006911030825501507270 {
 __
 }
-class "std::unique_ptr<State>" as C_0003593355595461115184
-class C_0003593355595461115184 {
-__
-}
-enum "GameState" as C_0004356735495323104445
-enum C_0004356735495323104445 {
-Menu
-CreateField
-CreateShips
-PlacingShips
-AttackingShips
-Exit
-}
-abstract "State" as C_0001914138303902600425
-abstract C_0001914138303902600425 {
-+~State() = default : void
-..
-{abstract} +changeState() = 0 : GameState
-{abstract} +handleInput(sf::Event & event) = 0 : void
-{abstract} +render(sf::RenderWindow & window) = 0 : void
-{abstract} +update() = 0 : void
+class "std::string" as C_0001275076681856179721
+class C_0001275076681856179721 {
 __
 }
 class "AbilityResults" as C_0005219465313958275113
@@ -157,51 +138,57 @@ class C_0002235219345516323367 {
 __
 -abilities : std::queue<std::unique_ptr<Ability>>
 }
-class "Player" as C_0003605716991605700936
-class C_0003605716991605700936 {
-+Player() : void
-..
-+attack(Player & target_player, int x, int y, int damage, bool expose_cell = true) : void
-+createField(int width, int height) : void
-+createShipManager(size_t count, size_t * lengths) : void
-+getAbilityResults() : AbilityResults
-+getAliveCount() const : size_t
-+getField() const : const ShipField &
-+getPendingAbilityType() const : AbilityType
-+getShipCount() const : size_t
-+getShipLength(size_t index) const : size_t
-+placeShip(Ship & ship, int x, int y, ShipOrientation orientation) : void
-+placeShipByIndex(int index, int x, int y, ShipOrientation orientation) : void
-+useAbility(Player & target_player, int x, int y) : void
+class "BombardAbility" as C_0012849869308180511032
+class C_0012849869308180511032 {
++getType() : AbilityType
++use(ShipField & field, ShipManager & manager, int x, int y, AbilityResults & ret) : void
 __
--ability_manager : AbilityManager
--ability_results : AbilityResults
--field : ShipField
-+scanner_is_active : bool
--ship_manager : ShipManager
 }
-class "GameGui" as C_0007395642151187698177
-class C_0007395642151187698177 {
-+GameGui() : void
-..
--changeState(GameState new_state) : void
-+mainLoop() : void
--pollEvents() : void
--render() : void
-+run() : void
--update() : void
+class "DoubleDamageAbility" as C_0002469271380474702704
+class C_0002469271380474702704 {
++getType() : AbilityType
++use(ShipField & field, ShipManager & manager, int x, int y, AbilityResults & ret) : void
 __
--current_state : GameState
--event : sf::Event
--player : Player
--state : std::unique_ptr<State>
--window : sf::RenderWindow
+}
+class "ScannerAbility" as C_0005147631956111864072
+class C_0005147631956111864072 {
++getType() : AbilityType
++use(ShipField & field, ShipManager & manager, int x, int y, AbilityResults & ret) : void
+__
+}
+class "exceptions::BaseException" as C_0010866204493294675298
+class C_0010866204493294675298 {
++BaseException(const std::string & message) : void
++BaseException(const char * message) : void
+..
++what() const noexcept : const char *
+__
+#message : std::string
+}
+class "exceptions::NoAbilitiesException" as C_0014872412191399316063
+class C_0014872412191399316063 {
++NoAbilitiesException() : void
++NoAbilitiesException(const std::string & message) : void
++NoAbilitiesException(const char * message) : void
+__
+}
+class "exceptions::PlaceShipOutOfBoundsException" as C_0009044063635314502983
+class C_0009044063635314502983 {
++PlaceShipOutOfBoundsException() : void
++PlaceShipOutOfBoundsException(const std::string & message) : void
++PlaceShipOutOfBoundsException(const char * message) : void
+__
+}
+class "exceptions::ShipCollisionException" as C_0005819130468169833287
+class C_0005819130468169833287 {
++ShipCollisionException() : void
++ShipCollisionException(const std::string & message) : void
++ShipCollisionException(const char * message) : void
+__
 }
 C_0010668212532447068380 ..> C_0014529657433315016423
 C_0002593715388203665760 ..> C_0017635961848386255115
 C_0006911030825501507270 ..> C_0002593715388203665760
-C_0003593355595461115184 ..> C_0001914138303902600425
-C_0001914138303902600425 ..> C_0004356735495323104445
 C_0014529657433315016423 ..> C_0014256742677139282670
 C_0014529657433315016423 --> C_0000674658759292391449 : -segments
 C_0000674658759292391449 --+ C_0014529657433315016423
@@ -227,16 +214,34 @@ C_0002235219345516323367 ..> C_0017499122254539489506
 C_0002235219345516323367 ..> C_0005219465313958275113
 C_0002235219345516323367 ..> C_0006740456236575953687
 C_0002235219345516323367 o-- C_0006911030825501507270 : -abilities
-C_0003605716991605700936 ..> C_0014529657433315016423
-C_0003605716991605700936 ..> C_0002579181642537833876
-C_0003605716991605700936 ..> C_0006740456236575953687
-C_0003605716991605700936 o-- C_0017499122254539489506 : -ship_manager
-C_0003605716991605700936 o-- C_0003843296779074973901 : -field
-C_0003605716991605700936 o-- C_0002235219345516323367 : -ability_manager
-C_0003605716991605700936 o-- C_0005219465313958275113 : -ability_results
-C_0007395642151187698177 o-- C_0003605716991605700936 : -player
-C_0007395642151187698177 o-- C_0004356735495323104445 : -current_state
-C_0007395642151187698177 o-- C_0003593355595461115184 : -state
+C_0012849869308180511032 ..> C_0003843296779074973901
+C_0012849869308180511032 ..> C_0017499122254539489506
+C_0012849869308180511032 ..> C_0005219465313958275113
+C_0012849869308180511032 ..> C_0006740456236575953687
+C_0017635961848386255115 <|-- C_0012849869308180511032
+
+C_0002469271380474702704 ..> C_0003843296779074973901
+C_0002469271380474702704 ..> C_0017499122254539489506
+C_0002469271380474702704 ..> C_0005219465313958275113
+C_0002469271380474702704 ..> C_0006740456236575953687
+C_0017635961848386255115 <|-- C_0002469271380474702704
+
+C_0005147631956111864072 ..> C_0003843296779074973901
+C_0005147631956111864072 ..> C_0017499122254539489506
+C_0005147631956111864072 ..> C_0005219465313958275113
+C_0005147631956111864072 ..> C_0006740456236575953687
+C_0017635961848386255115 <|-- C_0005147631956111864072
+
+C_0010866204493294675298 o-- C_0001275076681856179721 : #message
+C_0014872412191399316063 ..> C_0001275076681856179721
+C_0010866204493294675298 <|-- C_0014872412191399316063
+
+C_0009044063635314502983 ..> C_0001275076681856179721
+C_0010866204493294675298 <|-- C_0009044063635314502983
+
+C_0005819130468169833287 ..> C_0001275076681856179721
+C_0010866204493294675298 <|-- C_0005819130468169833287
+
 
 'Generated with clang-uml, version 0.5.5
 'LLVM version clang version 18.1.8

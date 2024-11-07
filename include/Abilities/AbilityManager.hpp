@@ -15,10 +15,11 @@ class AbilityManager {
 
    public:
     AbilityManager();
-    void useAbility(ShipField& field, ShipManager& manager, int x, int y, AbilityResults& abilityResults);
+    void useAbility(ShipField& field, ShipManager& manager, int x, int y, AbilityResults& ability_results);
 
     void addRandomAbility();
     AbilityType getPendingAbilityType() const;
+    bool empty() const;
 };
 
 #endif  // ABILITYMANAGER_HPP

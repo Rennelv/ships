@@ -3,7 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 #include <memory>
-#include <vector>
 
 #include "GuiStates/State.hpp"
 #include "Player.hpp"
@@ -11,12 +10,10 @@
 class GameGui {
    public:
     GameGui();
-    ~GameGui() = default;
     void run();
     void mainLoop();
 
    private:
-    std::vector<State> states;
     Player player;
     void update();
     void render();
@@ -25,10 +22,10 @@ class GameGui {
     sf::RenderWindow window;
     sf::Event event;
 
-    GameState currentState;
+    GameState current_state;
     std::unique_ptr<State> state;
 
-    void changeState(GameState newState);
+    void changeState(GameState new_state);
 };
 
 #endif  // GUI_HPP

@@ -6,7 +6,7 @@
 #include <stdexcept>
 
 #include "Enums.hpp"
-#include "Exceptions/OutOfBoundsException.hpp"
+#include "Exceptions/PlaceShipOutOfBoundsException.hpp"
 #include "Exceptions/ShipCollisionException.hpp"
 #include "Ship.hpp"
 
@@ -184,14 +184,14 @@ void ShipField::placeShip(Ship &ship, int x, int y, ShipOrientation orientation)
     const size_t ship_length = ship.getLength();
 
     if (x < 0 || y < 0) {  // 0 0 is the bottom left corner
-        throw exceptions::OutOfBoundsException("Coordinates cant be negative");
+        throw exceptions::PlaceShipOutOfBoundsException("Coordinates cant be negative");
     }
 
     const size_t x_size = static_cast<size_t>(x);
     const size_t y_size = static_cast<size_t>(y);
 
     if (y_size >= height || x_size >= width) {
-        throw exceptions::OutOfBoundsException("Coordinates are out of field bounds");
+        throw exceptions::PlaceShipOutOfBoundsException("Coordinates are out of field bounds");
     }
 
     if (checkShipCollision(ship_length, x_size, y_size, orientation)) {
@@ -213,7 +213,7 @@ void ShipField::placeShip(Ship &ship, int x, int y, ShipOrientation orientation)
 
 bool ShipField::attackShip(int x, int y, bool expose_cell, int damage) {
     if (x < 0 || y < 0 || static_cast<size_t>(x) >= width || static_cast<size_t>(y) >= height) {
-        throw exceptions::OutOfBoundsException("Coordinates are out of field bounds");
+        throw exceptions::PlaceShipOutOfBoundsException("Coordinates are out of field bounds");
     }
 
     if (getIsShip(x, y) == false) {

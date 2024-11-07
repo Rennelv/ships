@@ -8,14 +8,18 @@
 #include "Player.hpp"
 
 class CreateFieldState : public State {
-    GameState nextState = GameState::CreateField;
+    GameState next_state = GameState::CreateField;
+
     Player &player;
-    int fieldWidth;
-    int fieldHeight;
+
+    int field_width;
+    int field_height;
+
     sf::Font font;
-    sf::Text fieldSizeText;
-    sf::Vector2f drawOffset;
-    sf::Vector2f cellSize;
+    sf::Text field_size_text;
+    sf::Vector2f draw_offset;
+    sf::Vector2f cell_size;
+
     void drawField(sf::RenderWindow &window);
 
    public:

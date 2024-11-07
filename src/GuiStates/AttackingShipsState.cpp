@@ -6,31 +6,31 @@
 
 #include "Enums.hpp"
 #include "Exceptions/NoAbilitiesException.hpp"
-#include "Exceptions/OutOfBoundsException.hpp"
+#include "Exceptions/PlaceShipOutOfBoundsException.hpp"
 #include "Player.hpp"
 
 AttackingShipsState::AttackingShipsState(Player &player) : player(player) {
-    currentX = 0;
-    currentY = 0;
-    drawOffset = {10, 70};
-    cellSize = {20, 20};
+    current_x = 0;
+    current_y = 0;
+    draw_offset = {10, 70};
+    cell_size = {20, 20};
 
     font.loadFromFile("assets/fonts/font.ttf");
-    instructionText.setFont(font);
-    instructionText.setCharacterSize(24);
-    instructionText.setFillColor(sf::Color::White);
-    instructionText.setPosition(10, 10);
-    instructionText.setString("Use arrow keys to move, Enter to attack, E to use ability");
+    instruction_text.setFont(font);
+    instruction_text.setCharacterSize(24);
+    instruction_text.setFillColor(sf::Color::White);
+    instruction_text.setPosition(10, 10);
+    instruction_text.setString("Use arrow keys to move, Enter to attack, E to use ability");
 
-    resultText.setFont(font);
-    resultText.setCharacterSize(24);
-    resultText.setFillColor(sf::Color::Red);
-    resultText.setPosition(10, 40);
+    result_text.setFont(font);
+    result_text.setCharacterSize(24);
+    result_text.setFillColor(sf::Color::Red);
+    result_text.setPosition(10, 40);
 
-    selectionBox.setSize(cellSize);
-    selectionBox.setFillColor(sf::Color::Transparent);
-    selectionBox.setOutlineColor(sf::Color::Yellow);
-    selectionBox.setOutlineThickness(2);
+    selection_box.setSize(cell_size);
+    selection_box.setFillColor(sf::Color::Transparent);
+    selection_box.setOutlineColor(sf::Color::Yellow);
+    selection_box.setOutlineThickness(2);
 }
 
 void AttackingShipsState::handleInput(sf::Event &event) {
@@ -40,26 +40,26 @@ void AttackingShipsState::handleInput(sf::Event &event) {
         }
     }
     if (event.type == sf::Event::MouseMoved) {
-        int x = (event.mouseMove.x - drawOffset.x) / cellSize.x;
-        int y = (event.mouseMove.y - drawOffset.y) / cellSize.y;
+        int x = (event.mouseMove.x - draw_offset.x) / cell_size.x;
+        int y = (event.mouseMove.y - draw_offset.y) / cell_size.y;
         if (x >= 0 && x < static_cast<int>(player.getField().getWidth()) && y >= 0 && y < static_cast<int>(player.getField().getHeight())) {
-            currentX = x;
-            currentY = y;
+            current_x = x;
+            current_y = y;
         }
     }
     if (event.type == sf::Event::KeyPressed) {
         switch (event.key.code) {
             case sf::Keyboard::Up:
-                if (currentY > 0) currentY--;
+                if (current_y > 0) current_y--;
                 break;
             case sf::Keyboard::Down:
-                if (currentY < player.getField().getHeight() - 1) currentY++;
+                if (current_y < player.getField().getHeight() - 1) current_y++;
                 break;
             case sf::Keyboard::Left:
-                if (currentX > 0) currentX--;
+                if (current_x > 0) current_x--;
                 break;
             case sf::Keyboard::Right:
-                if (currentX < player.getField().getWidth() - 1) currentX++;
+                if (current_x < player.getField().getWidth() - 1) current_x++;
                 break;
 
             case sf::Keyboard::E:
@@ -75,72 +75,72 @@ void AttackingShipsState::handleInput(sf::Event &event) {
 }
 
 void AttackingShipsState::update() {
-    selectionBox.setPosition(drawOffset.x + currentX * 20, drawOffset.y + currentY * 20);
-    if (player.getAbilityResults().scannerIsActive) {
-        selectionBox.setSize(cellSize * 2.f);
-        selectionBox.setOutlineColor(sf::Color::Green);
+    selection_box.setPosition(draw_offset.x + current_x * 20, draw_offset.y + current_y * 20);
+    if (player.scanner_is_active) {
+        selection_box.setSize(cell_size * 2.f);
+        selection_box.setOutlineColor(sf::Color::Green);
     } else {
-        selectionBox.setSize(cellSize);
-        selectionBox.setOutlineColor(sf::Color::Yellow);
+        selection_box.setSize(cell_size);
+        selection_box.setOutlineColor(sf::Color::Yellow);
     }
 
     if (player.getAliveCount() == 0) {
-        nextState = GameState::Menu;
+        next_state = GameState::Menu;
     }
 }
 
 void AttackingShipsState::render(sf::RenderWindow &window) {
     window.clear();
-    window.draw(instructionText);
-    window.draw(resultText);
+    window.draw(instruction_text);
+    window.draw(result_text);
 
     // Draw the field
     drawField(window);
 
     // Draw the selection box
-    window.draw(selectionBox);
+    window.draw(selection_box);
 
     window.display();
 }
 
 GameState AttackingShipsState::changeState() {
-    return nextState;
+    return next_state;
 }
 
 void AttackingShipsState::drawField(sf::RenderWindow &window) {
-    sf::RectangleShape cellShape;
-    cellShape.setSize(cellSize);  // Set the size of each cell
-    cellShape.setOutlineColor(sf::Color::Black);
-    cellShape.setOutlineThickness(1.f);
+    sf::RectangleShape cell_shape;
+    cell_shape.setSize(cell_size);  // Set the size of each cell
+    cell_shape.setOutlineColor(sf::Color::Black);
+    cell_shape.setOutlineThickness(1.f);
     for (size_t y = 0; y < player.getField().getHeight(); ++y) {
         for (size_t x = 0; x < player.getField().getWidth(); ++x) {
             CellVisibilityState cellState = player.getField().getCellVisibilityState(x, y);
             switch (cellState) {
                 case CellVisibilityState::UNKNOWN:
-                    cellShape.setFillColor(sf::Color::Cyan);
+                    cell_shape.setFillColor(sf::Color::Cyan);
                     break;
                 case CellVisibilityState::BLANK:
-                    cellShape.setFillColor(sf::Color::White);
+                    cell_shape.setFillColor(sf::Color::White);
                     break;
                 case CellVisibilityState::SHIP:
                     switch (player.getField().getShipSegmentState(x, y)) {
                         case ShipSegmentState::INTACT:
-                            cellShape.setFillColor(sf::Color::Blue);
+                            cell_shape.setFillColor(sf::Color::Blue);
                             break;
                         case ShipSegmentState::DAMAGED:
-                            cellShape.setFillColor(sf::Color::Yellow);
+                            cell_shape.setFillColor(sf::Color::Yellow);
                             break;
                         case ShipSegmentState::DESTROYED:
-                            cellShape.setFillColor(sf::Color::Red);
+                            cell_shape.setFillColor(sf::Color::Red);
                             break;
                     }
                     break;
                 default:
-                    cellShape.setFillColor(sf::Color::Black);
+                    cell_shape.setFillColor(sf::Color::Black);
                     break;
             }
-            cellShape.setPosition(drawOffset.x + x * cellShape.getSize().x, drawOffset.y + y * cellShape.getSize().y);
-            window.draw(cellShape);
+            cell_shape.setPosition(draw_offset.x + x * cell_shape.getSize().x, draw_offset.y + y * cell_shape.getSize().y);
+            window.draw(cell_shape);
         }
     }
 }
@@ -149,49 +149,49 @@ void AttackingShipsState::onAbilityUse() {
     try {
         switch (player.getPendingAbilityType()) {
             case AbilityType::DoubleDamage:
-                player.useAbility(player, currentX, currentY);
-                resultText.setString("Double damage activated");
+                player.useAbility(player, current_x, current_y);
+                result_text.setString("Double damage activated");
                 break;
             case AbilityType::Scanner:
-                if (player.getAbilityResults().scannerIsActive) {
-                    player.getAbilityResults().scannerIsActive = false;
-                    resultText.setString("Scanner deactivated. Ability not used");
+                if (player.scanner_is_active) {
+                    player.scanner_is_active = false;
+                    result_text.setString("Scanner deactivated. Ability not used");
                 } else {
-                    player.getAbilityResults().scannerIsActive = true;
-                    resultText.setString("Scanner activated. Press Attack again to scan");
+                    player.scanner_is_active = true;
+                    result_text.setString("Scanner activated. Press Attack to scan");
                 }
                 break;
             case AbilityType::Bombard:
-                player.useAbility(player, currentX, currentY);
-                resultText.setString("Bombard activated");
+                player.useAbility(player, current_x, current_y);
+                result_text.setString("Bombard activated");
                 break;
         }
     } catch (const exceptions::NoAbilitiesException &e) {
-        resultText.setString("No abilities available");
+        result_text.setString("No abilities available");
     } catch (const std::exception &e) {
-        resultText.setString(e.what());
+        result_text.setString(e.what());
     }
 };
 
 void AttackingShipsState::onAttackUse() {
     // If the scanner is active use it
-    if (player.getAbilityResults().scannerIsActive) {
-        player.useAbility(player, currentX, currentY);
-        if (player.getAbilityResults().scannerShipFound)
-            resultText.setString("Scanner used. Ship in range");
+    if (player.scanner_is_active) {
+        player.useAbility(player, current_x, current_y);
+        if (player.getAbilityResults().ScannerShipFound)
+            result_text.setString("Scanner used. Ship in range");
         else
-            resultText.setString("Scanner used. No ship in range");
-        player.getAbilityResults().scannerIsActive = false;
+            result_text.setString("Scanner used. No ship in range");
+        player.scanner_is_active = false;
         return;
     }
 
     // else attack the cell
     try {
-        player.attack(player, currentX, currentY, 1, true);
-    } catch (const exceptions::OutOfBoundsException &e) {
-        resultText.setString("Coordinates are out of field bounds");
+        player.attack(player, current_x, current_y, 1, true);
+    } catch (const exceptions::PlaceShipOutOfBoundsException &e) {
+        result_text.setString("Coordinates are out of field bounds");
     } catch (const std::exception &e) {
-        resultText.setString(e.what());
+        result_text.setString(e.what());
     }
-    resultText.setString("");
+    result_text.setString("");
 };

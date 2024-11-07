@@ -9,18 +9,19 @@
 #include "Player.hpp"
 
 class AttackingShipsState : public State {
-    GameState nextState = GameState::AttackingShips;
+    GameState next_state = GameState::AttackingShips;
+
+    size_t current_x;
+    size_t current_y;
 
     Player &player;
 
     sf::Font font;
-    sf::Text instructionText;
-    sf::Text resultText;
-    sf::RectangleShape selectionBox;
-    sf::Vector2f drawOffset;
-    sf::Vector2f cellSize;
-    size_t currentX;
-    size_t currentY;
+    sf::Text instruction_text;
+    sf::Text result_text;
+    sf::RectangleShape selection_box;
+    sf::Vector2f draw_offset;
+    sf::Vector2f cell_size;
 
     void drawField(sf::RenderWindow &window);
     void onAbilityUse();

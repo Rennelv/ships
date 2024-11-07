@@ -1,4 +1,8 @@
 @startuml
+class "std::string" as C_0001275076681856179721
+class C_0001275076681856179721 {
+__
+}
 enum "ShipSegmentState" as C_0014256742677139282670
 enum C_0014256742677139282670 {
 INTACT
@@ -19,7 +23,12 @@ SHIP
 class "Ship" as C_0014529657433315016423
 class C_0014529657433315016423 {
 +Ship(int length) : void
++Ship(const Ship & other) : void
++Ship(Ship && other) noexcept : void
 +~Ship() : void
+..
++operator=(const Ship & other) : Ship &
++operator=(Ship && other) noexcept : Ship &
 ..
 +getLength() const : size_t
 +getSegmentHP(size_t index) const : int
@@ -70,6 +79,29 @@ __
 +ship_segment_index : size_t
 +state : CellVisibilityState
 }
+class "exceptions::BaseException" as C_0010866204493294675298
+class C_0010866204493294675298 {
++BaseException(const std::string & message) : void
++BaseException(const char * message) : void
+..
++what() const noexcept : const char *
+__
+#message : std::string
+}
+class "exceptions::PlaceShipOutOfBoundsException" as C_0009044063635314502983
+class C_0009044063635314502983 {
++PlaceShipOutOfBoundsException() : void
++PlaceShipOutOfBoundsException(const std::string & message) : void
++PlaceShipOutOfBoundsException(const char * message) : void
+__
+}
+class "exceptions::ShipCollisionException" as C_0005819130468169833287
+class C_0005819130468169833287 {
++ShipCollisionException() : void
++ShipCollisionException(const std::string & message) : void
++ShipCollisionException(const char * message) : void
+__
+}
 C_0014529657433315016423 ..> C_0014256742677139282670
 C_0014529657433315016423 --> C_0000674658759292391449 : -segments
 C_0000674658759292391449 --+ C_0014529657433315016423
@@ -82,6 +114,13 @@ C_0003843296779074973901 --> C_0000316359785794417378 : -field
 C_0000316359785794417378 --+ C_0003843296779074973901
 C_0000316359785794417378 o-- C_0003333043679234439357 : +state
 C_0000316359785794417378 --> C_0014529657433315016423 : +ship
+C_0010866204493294675298 o-- C_0001275076681856179721 : #message
+C_0009044063635314502983 ..> C_0001275076681856179721
+C_0010866204493294675298 <|-- C_0009044063635314502983
+
+C_0005819130468169833287 ..> C_0001275076681856179721
+C_0010866204493294675298 <|-- C_0005819130468169833287
+
 
 'Generated with clang-uml, version 0.5.5
 'LLVM version clang version 18.1.8
