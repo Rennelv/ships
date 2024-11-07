@@ -8,7 +8,7 @@
 class BombardAbility : public Ability {
    public:
     void use(ShipField &field, ShipManager &manager, int x, int y, AbilityResults &ret) override;
-    AbilityType getType() override;
+    AbilityType getType() const override;
 };
 
 #endif  // BOMBARDABILITY_HPP

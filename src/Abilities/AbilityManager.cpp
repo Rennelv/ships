@@ -6,44 +6,46 @@
 #include <memory>
 #include <queue>
 #include <random>
-#include <stdexcept>
 
 #include "Abilities/Ability.hpp"
 #include "Abilities/BombardAbility.hpp"
 #include "Abilities/DoubleDamageAbility.hpp"
 #include "Abilities/ScannerAbility.hpp"
-#include "Exceptions/NoAbilitiesException.hpp"
+#include "Exceptions/Exceptions.hpp"
 #include "ShipField.hpp"
 #include "ShipManager.hpp"
 
 std::unique_ptr<Ability> AbilityManager::getRandomAbility() {
-    int random = rand() % 3;
-    switch (random) {
-        case 0:
-            return std::make_unique<DoubleDamageAbility>();
-        case 1:
-            return std::make_unique<ScannerAbility>();
-        case 2:
-            return std::make_unique<BombardAbility>();
-    }
-    throw std::runtime_error("Invalid random number");
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, ability_factory.size() - 1);
+
+    return ability_factory[dis(gen)]();
 }
 
-AbilityManager::AbilityManager() {
-    std::unique_ptr<Ability> ab[] = {std::make_unique<DoubleDamageAbility>(), std::make_unique<ScannerAbility>(), std::make_unique<BombardAbility>()};
+AbilityManager::AbilityManager()
+    : ability_factory({
+          []() { return std::make_unique<DoubleDamageAbility>(); },
+          []() { return std::make_unique<ScannerAbility>(); },
+          []() { return std::make_unique<BombardAbility>(); },
+      }) {
+    std::vector<std::unique_ptr<Ability>> temp_abilities;
+    for (const auto &factory : ability_factory) {
+        temp_abilities.push_back(factory());
+    }
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::shuffle(std::begin(ab), std::end(ab), gen);
+    std::shuffle(temp_abilities.begin(), temp_abilities.end(), gen);
 
-    for (auto &ability : ab) {
+    for (auto &ability : temp_abilities) {
         abilities.push(std::move(ability));
     }
 }
 
 void AbilityManager::useAbility(ShipField &target_field, ShipManager &target_ship_manager, int x, int y, AbilityResults &ability_results) {
     if (abilities.empty()) {
-        throw exceptions::NoAbilitiesException();
+        throw exceptions::NoAbilityAvailableException();
     }
     abilities.front()->use(target_field, target_ship_manager, x, y, ability_results);
     abilities.pop();
@@ -55,11 +57,11 @@ void AbilityManager::addRandomAbility() {
 
 AbilityType AbilityManager::getPendingAbilityType() const {
     if (abilities.empty()) {
-        throw exceptions::NoAbilitiesException();
+        throw exceptions::NoAbilityAvailableException();
     }
     return abilities.front()->getType();
 }
 
-bool AbilityManager::empty() const {
-    return abilities.empty();
-}
+// bool AbilityManager::empty() const {
+//     return abilities.empty();
+// }

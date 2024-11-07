@@ -29,6 +29,6 @@ void BombardAbility::use(ShipField& field, ShipManager& manager, int, int, Abili
     ret.BombardDamageDealt = true;
 }
 
-AbilityType BombardAbility::getType() {
+AbilityType BombardAbility::getType() const {
     return AbilityType::Bombard;
 }

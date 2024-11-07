@@ -11,6 +11,14 @@ class "std::queue<std::unique_ptr<Ability>>" as C_0006911030825501507270
 class C_0006911030825501507270 {
 __
 }
+class "std::function<std::unique_ptr<Ability>()>" as C_0006416152866459361376
+class C_0006416152866459361376 {
+__
+}
+class "std::vector<std::function<std::unique_ptr<Ability>()>>" as C_0003282825241778546884
+class C_0003282825241778546884 {
+__
+}
 class "std::unique_ptr<State>" as C_0003593355595461115184
 class C_0003593355595461115184 {
 __
@@ -40,6 +48,12 @@ __
 +BombardDamageDealt : bool
 +DoubleDamageIsActive : bool
 +ScannerShipFound : bool
+}
+enum "AbilityType" as C_0006740456236575953687
+enum C_0006740456236575953687 {
+DoubleDamage
+Scanner
+Bombard
 }
 enum "ShipSegmentState" as C_0014256742677139282670
 enum C_0014256742677139282670 {
@@ -131,17 +145,11 @@ __
 -ships : std::vector<Ship>
 -ships_count : size_t
 }
-enum "AbilityType" as C_0006740456236575953687
-enum C_0006740456236575953687 {
-DoubleDamage
-Scanner
-Bombard
-}
 abstract "Ability" as C_0017635961848386255115
 abstract C_0017635961848386255115 {
 +~Ability() = default : void
 ..
-{abstract} +getType() = 0 : AbilityType
+{abstract} +getType() const = 0 : AbilityType
 {abstract} +use(ShipField & field, ShipManager & manager, int x, int y, AbilityResults & ret) = 0 : void
 __
 }
@@ -150,12 +158,12 @@ class C_0002235219345516323367 {
 +AbilityManager() : void
 ..
 +addRandomAbility() : void
-+empty() const : bool
 +getPendingAbilityType() const : AbilityType
 -getRandomAbility() : std::unique_ptr<Ability>
 +useAbility(ShipField & field, ShipManager & manager, int x, int y, AbilityResults & ability_results) : void
 __
 -abilities : std::queue<std::unique_ptr<Ability>>
+-ability_factory : const std::vector<std::function<std::unique_ptr<Ability> ()>>
 }
 class "Player" as C_0003605716991605700936
 class C_0003605716991605700936 {
@@ -200,6 +208,8 @@ __
 C_0010668212532447068380 ..> C_0014529657433315016423
 C_0002593715388203665760 ..> C_0017635961848386255115
 C_0006911030825501507270 ..> C_0002593715388203665760
+C_0006416152866459361376 ..> C_0002593715388203665760
+C_0003282825241778546884 ..> C_0006416152866459361376
 C_0003593355595461115184 ..> C_0001914138303902600425
 C_0001914138303902600425 ..> C_0004356735495323104445
 C_0014529657433315016423 ..> C_0014256742677139282670
@@ -227,6 +237,7 @@ C_0002235219345516323367 ..> C_0017499122254539489506
 C_0002235219345516323367 ..> C_0005219465313958275113
 C_0002235219345516323367 ..> C_0006740456236575953687
 C_0002235219345516323367 o-- C_0006911030825501507270 : -abilities
+C_0002235219345516323367 o-- C_0003282825241778546884 : -ability_factory
 C_0003605716991605700936 ..> C_0014529657433315016423
 C_0003605716991605700936 ..> C_0002579181642537833876
 C_0003605716991605700936 ..> C_0006740456236575953687

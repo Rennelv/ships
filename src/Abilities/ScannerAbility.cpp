@@ -13,6 +13,6 @@ void ScannerAbility::use(ShipField& field, ShipManager&, int x, int y, AbilityRe
     }
 }
 
-AbilityType ScannerAbility::getType() {
+AbilityType ScannerAbility::getType() const {
     return AbilityType::Scanner;
 }

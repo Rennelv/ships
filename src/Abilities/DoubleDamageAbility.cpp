@@ -7,6 +7,6 @@ void DoubleDamageAbility::use(ShipField&, ShipManager&, int, int, AbilityResults
     ret.DoubleDamageIsActive = true;
 }
 
-AbilityType DoubleDamageAbility::getType() {
+AbilityType DoubleDamageAbility::getType() const {
     return AbilityType::DoubleDamage;
 }

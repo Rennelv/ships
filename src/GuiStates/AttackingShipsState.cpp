@@ -5,8 +5,7 @@
 #include <SFML/Window/Event.hpp>
 
 #include "Enums.hpp"
-#include "Exceptions/NoAbilitiesException.hpp"
-#include "Exceptions/PlaceShipOutOfBoundsException.hpp"
+#include "Exceptions/Exceptions.hpp"
 #include "Player.hpp"
 
 AttackingShipsState::AttackingShipsState(Player &player) : player(player) {
@@ -166,7 +165,7 @@ void AttackingShipsState::onAbilityUse() {
                 result_text.setString("Bombard activated");
                 break;
         }
-    } catch (const exceptions::NoAbilitiesException &e) {
+    } catch (const exceptions::NoAbilityAvailableException &e) {
         result_text.setString("No abilities available");
     } catch (const std::exception &e) {
         result_text.setString(e.what());
@@ -188,7 +187,7 @@ void AttackingShipsState::onAttackUse() {
     // else attack the cell
     try {
         player.attack(player, current_x, current_y, 1, true);
-    } catch (const exceptions::PlaceShipOutOfBoundsException &e) {
+    } catch (const exceptions::OutOfBoundsAttackException &e) {
         result_text.setString("Coordinates are out of field bounds");
     } catch (const std::exception &e) {
         result_text.setString(e.what());

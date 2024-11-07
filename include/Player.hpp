@@ -3,8 +3,8 @@
 
 #include <cstddef>
 
-#include "Abilities/Ability.hpp"
 #include "Abilities/AbilityManager.hpp"
+#include "Abilities/AbilityType.hpp"
 #include "ShipField.hpp"
 #include "ShipManager.hpp"
 
