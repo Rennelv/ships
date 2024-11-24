@@ -4,13 +4,12 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
-#include "GuiStates/State.hpp"  // Include the base state class and derived state classes
+#include "GuiStates/State.hpp"
 #include "Player.hpp"
 
 class GameGui {
    public:
     GameGui();
-    ~GameGui() = default;
     void run();
     void mainLoop();
 
@@ -23,10 +22,10 @@ class GameGui {
     sf::RenderWindow window;
     sf::Event event;
 
-    GameState currentState;
+    GameState current_state;
     std::unique_ptr<State> state;
 
-    void changeState(GameState newState);
+    void changeState(GameState new_state);
 };
 
 #endif  // GUI_HPP

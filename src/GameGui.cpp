@@ -16,26 +16,26 @@ GameGui::GameGui() {
     changeState(GameState::Menu);
 }
 
-void GameGui::changeState(GameState newState) {
-    switch (newState) {
+void GameGui::changeState(GameState new_state) {
+    switch (new_state) {
         case GameState::Menu:
-            currentState = newState;
+            current_state = new_state;
             state = std::make_unique<MenuState>();
             break;
         case GameState::PlacingShips:
-            currentState = newState;
+            current_state = new_state;
             state = std::make_unique<PlacingShipsState>(player);
             break;
         case GameState::AttackingShips:
-            currentState = newState;
+            current_state = new_state;
             state = std::make_unique<AttackingShipsState>(player);
             break;
         case GameState::CreateField:
-            currentState = newState;
+            current_state = new_state;
             state = std::make_unique<CreateFieldState>(player);
             break;
         case GameState::CreateShips:
-            currentState = newState;
+            current_state = new_state;
             state = std::make_unique<CreateShipState>(player);
             break;
         case GameState::Exit:
@@ -66,7 +66,7 @@ void GameGui::mainLoop() {
     while (window.isOpen()) {
         update();
         render();
-        if (state->changeState() != currentState) {
+        if (state->changeState() != current_state) {
             changeState(state->changeState());
         }
     }

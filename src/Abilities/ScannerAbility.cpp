@@ -4,15 +4,15 @@
 #include "ShipManager.hpp"
 
 void ScannerAbility::use(ShipField& field, ShipManager&, int x, int y, AbilityResults& ret) {
-    int scannerRange = 1;
-    if (field.getIsShip(x, y) || field.getIsShip(x + scannerRange, y) || field.getIsShip(x, y + scannerRange) ||
-        field.getIsShip(x + scannerRange, y + scannerRange)) {
-        ret.scannerShipFound = true;
+    int scanner_range = 1;
+    if (field.getIsShip(x, y) || field.getIsShip(x + scanner_range, y) || field.getIsShip(x, y + scanner_range) ||
+        field.getIsShip(x + scanner_range, y + scanner_range)) {
+        ret.ScannerShipFound = true;
     } else {
-        ret.scannerShipFound = false;
+        ret.ScannerShipFound = false;
     }
 }
 
-AbilityType ScannerAbility::getType() {
+AbilityType ScannerAbility::getType() const {
     return AbilityType::Scanner;
 }

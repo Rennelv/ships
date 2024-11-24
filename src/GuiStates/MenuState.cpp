@@ -2,7 +2,7 @@
 
 #include <SFML/Window/Event.hpp>
 
-MenuState::MenuState() : selectedItemIndex(0) {
+MenuState::MenuState() : selected_item_index(0) {
     font.loadFromFile("assets/fonts/font.ttf");
 
     std::vector<std::string> items = {"Start Game", "um", "Exit"};
@@ -12,16 +12,16 @@ MenuState::MenuState() : selectedItemIndex(0) {
         text.setString(item);
         text.setCharacterSize(24);
         text.setFillColor(sf::Color::White);
-        menuItems.push_back(text);
+        menu_items.push_back(text);
     }
 
     // Position menu items
-    for (size_t i = 0; i < menuItems.size(); ++i) {
-        menuItems[i].setPosition(100, 100 + i * 30);
+    for (size_t i = 0; i < menu_items.size(); ++i) {
+        menu_items[i].setPosition(100, 100 + i * 30);
     }
 
     // Highlight the first item
-    menuItems[selectedItemIndex].setFillColor(sf::Color::Red);
+    menu_items[selected_item_index].setFillColor(sf::Color::Red);
 }
 
 void MenuState::handleInput(sf::Event &event) {
@@ -37,48 +37,48 @@ void MenuState::handleInput(sf::Event &event) {
 }
 
 void MenuState::update() {
-    // Update menu logic if needed
+    //
 }
 
 void MenuState::render(sf::RenderWindow &window) {
     window.clear();
-    for (const auto &item : menuItems) {
+    for (const auto &item : menu_items) {
         window.draw(item);
     }
     window.display();
 }
 
 void MenuState::moveUp() {
-    if (selectedItemIndex > 0) {
-        menuItems[selectedItemIndex].setFillColor(sf::Color::White);
-        selectedItemIndex--;
-        menuItems[selectedItemIndex].setFillColor(sf::Color::Red);
+    if (selected_item_index > 0) {
+        menu_items[selected_item_index].setFillColor(sf::Color::White);
+        selected_item_index--;
+        menu_items[selected_item_index].setFillColor(sf::Color::Red);
     }
 }
 
 void MenuState::moveDown() {
-    if (selectedItemIndex < menuItems.size() - 1) {
-        menuItems[selectedItemIndex].setFillColor(sf::Color::White);
-        selectedItemIndex++;
-        menuItems[selectedItemIndex].setFillColor(sf::Color::Red);
+    if (selected_item_index < menu_items.size() - 1) {
+        menu_items[selected_item_index].setFillColor(sf::Color::White);
+        selected_item_index++;
+        menu_items[selected_item_index].setFillColor(sf::Color::Red);
     }
 }
 
 GameState MenuState::changeState() {
-    return nextState;
+    return next_state;
 }
 
 void MenuState::selectItem() {
-    switch (selectedItemIndex) {
+    switch (selected_item_index) {
         case 0:
-            nextState = GameState::CreateField;
+            next_state = GameState::CreateField;
             break;
         case 1:
             // Handle Options
 
             break;
         case 2:
-            nextState = GameState::Exit;
+            next_state = GameState::Exit;
             break;
     }
 }

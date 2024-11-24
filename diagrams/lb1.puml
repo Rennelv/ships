@@ -3,6 +3,10 @@ class "std::vector<Ship>" as C_0010668212532447068380
 class C_0010668212532447068380 {
 __
 }
+class "std::string" as C_0001275076681856179721
+class C_0001275076681856179721 {
+__
+}
 enum "ShipSegmentState" as C_0014256742677139282670
 enum C_0014256742677139282670 {
 INTACT
@@ -23,7 +27,12 @@ SHIP
 class "Ship" as C_0014529657433315016423
 class C_0014529657433315016423 {
 +Ship(int length) : void
++Ship(const Ship & other) : void
++Ship(Ship && other) noexcept : void
 +~Ship() : void
+..
++operator=(const Ship & other) : Ship &
++operator=(Ship && other) noexcept : Ship &
 ..
 +getLength() const : size_t
 +getSegmentHP(size_t index) const : int
@@ -40,6 +49,20 @@ class C_0000674658759292391449 {
 __
 +hp : int
 +state : ShipSegmentState
+}
+class "ShipManager" as C_0017499122254539489506
+class C_0017499122254539489506 {
++ShipManager() : void
++ShipManager(size_t count, size_t * lengths) : void
++~ShipManager() = default : void
+..
++getAliveCount() const : size_t
++getShip(size_t index) : Ship &
++getShipCount() const : size_t
++getShipLength(size_t index) const : size_t
+__
+-ships : std::vector<Ship>
+-ships_count : size_t
 }
 class "ShipField" as C_0003843296779074973901
 class C_0003843296779074973901 {
@@ -74,24 +97,39 @@ __
 +ship_segment_index : size_t
 +state : CellVisibilityState
 }
-class "ShipManager" as C_0017499122254539489506
-class C_0017499122254539489506 {
-+ShipManager() : void
-+ShipManager(size_t count, size_t * lengths) : void
-+~ShipManager() = default : void
+class "exceptions::GameException" as C_0007589199267016446353
+class C_0007589199267016446353 {
++GameException(const std::string & message) : void
 ..
-+getAliveCount() const : size_t
-+getShip(size_t index) : Ship &
-+getShipCount() const : size_t
++what() const noexcept : const char *
 __
--ships : std::vector<Ship>
--ships_count : size_t
+-msg : std::string
+}
+class "exceptions::NoAbilityAvailableException" as C_0006087931829388500955
+class C_0006087931829388500955 {
++NoAbilityAvailableException() : void
++NoAbilityAvailableException(const std::string & message) : void
+__
+}
+class "exceptions::ShipPlacementConflictException" as C_0014145847858458416793
+class C_0014145847858458416793 {
++ShipPlacementConflictException() : void
++ShipPlacementConflictException(const std::string & message) : void
+__
+}
+class "exceptions::OutOfBoundsAttackException" as C_0000456049838779900119
+class C_0000456049838779900119 {
++OutOfBoundsAttackException() : void
++OutOfBoundsAttackException(const std::string & message) : void
+__
 }
 C_0010668212532447068380 ..> C_0014529657433315016423
 C_0014529657433315016423 ..> C_0014256742677139282670
 C_0014529657433315016423 --> C_0000674658759292391449 : -segments
 C_0000674658759292391449 --+ C_0014529657433315016423
 C_0000674658759292391449 o-- C_0014256742677139282670 : +state
+C_0017499122254539489506 ..> C_0014529657433315016423
+C_0017499122254539489506 o-- C_0010668212532447068380 : -ships
 C_0003843296779074973901 ..> C_0002579181642537833876
 C_0003843296779074973901 ..> C_0003333043679234439357
 C_0003843296779074973901 ..> C_0014256742677139282670
@@ -100,8 +138,16 @@ C_0003843296779074973901 --> C_0000316359785794417378 : -field
 C_0000316359785794417378 --+ C_0003843296779074973901
 C_0000316359785794417378 o-- C_0003333043679234439357 : +state
 C_0000316359785794417378 --> C_0014529657433315016423 : +ship
-C_0017499122254539489506 ..> C_0014529657433315016423
-C_0017499122254539489506 o-- C_0010668212532447068380 : -ships
+C_0007589199267016446353 o-- C_0001275076681856179721 : -msg
+C_0006087931829388500955 ..> C_0001275076681856179721
+C_0007589199267016446353 <|-- C_0006087931829388500955
+
+C_0014145847858458416793 ..> C_0001275076681856179721
+C_0007589199267016446353 <|-- C_0014145847858458416793
+
+C_0000456049838779900119 ..> C_0001275076681856179721
+C_0007589199267016446353 <|-- C_0000456049838779900119
+
 
 'Generated with clang-uml, version 0.5.5
 'LLVM version clang version 18.1.8

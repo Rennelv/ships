@@ -12,24 +12,27 @@ struct InputBox {
 };
 
 class CreateShipState : public State {
+    GameState next_state = GameState::CreateShips;
+
+    Player& player;
+
+    InputBox input_boxes[4];
+    int active_box_index;
+
+    sf::Text title_text;
+    sf::Text ships_text;
+    sf::Text number_ships_text;
+    sf::Font font;
+    sf::Vector2f draw_offset;
+
+    void createShips();
+
    public:
     CreateShipState(Player& player);
     void handleInput(sf::Event& event) override;
     void update() override;
     void render(sf::RenderWindow& window) override;
     GameState changeState() override;
-
-   private:
-    void createShips();
-    Player& player;
-    InputBox inputBoxes[4];
-    int activeBoxIndex;
-    GameState nextState = GameState::CreateShips;
-    sf::Text titleText;
-    sf::Text shipsText;
-    sf::Text numberShipsText;
-    sf::Font font;
-    sf::Vector2f drawOffset;
 };
 
 #endif  // CREATESHIPSTATE_HPP

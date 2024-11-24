@@ -8,7 +8,7 @@
 class ScannerAbility : public Ability {
    public:
     void use(ShipField &field, ShipManager &manager, int x, int y, AbilityResults &ret) override;
-    AbilityType getType() override;
+    AbilityType getType() const override;
 };
 
 #endif  // SCANNERABILITY_HPP

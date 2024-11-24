@@ -23,7 +23,12 @@ SHIP
 class "Ship" as C_0014529657433315016423
 class C_0014529657433315016423 {
 +Ship(int length) : void
++Ship(const Ship & other) : void
++Ship(Ship && other) noexcept : void
 +~Ship() : void
+..
++operator=(const Ship & other) : Ship &
++operator=(Ship && other) noexcept : Ship &
 ..
 +getLength() const : size_t
 +getSegmentHP(size_t index) const : int
@@ -50,6 +55,7 @@ class C_0017499122254539489506 {
 +getAliveCount() const : size_t
 +getShip(size_t index) : Ship &
 +getShipCount() const : size_t
++getShipLength(size_t index) const : size_t
 __
 -ships : std::vector<Ship>
 -ships_count : size_t
