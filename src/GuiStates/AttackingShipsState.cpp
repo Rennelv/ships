@@ -8,10 +8,11 @@
 #include "Exceptions/Exceptions.hpp"
 #include "Player.hpp"
 
-AttackingShipsState::AttackingShipsState(Player &player) : player(player) {
+AttackingShipsState::AttackingShipsState(Player &player, AiPlayer &player2) : player(player), ai_player(player2) {
     current_x = 0;
     current_y = 0;
     draw_offset = {10, 70};
+    draw_offset2 = {400, 70};
     cell_size = {20, 20};
 
     font.loadFromFile("assets/fonts/font.ttf");
@@ -39,8 +40,8 @@ void AttackingShipsState::handleInput(sf::Event &event) {
         }
     }
     if (event.type == sf::Event::MouseMoved) {
-        int x = (event.mouseMove.x - draw_offset.x) / cell_size.x;
-        int y = (event.mouseMove.y - draw_offset.y) / cell_size.y;
+        int x = (event.mouseMove.x - draw_offset2.x) / cell_size.x;
+        int y = (event.mouseMove.y - draw_offset2.y) / cell_size.y;
         if (x >= 0 && x < static_cast<int>(player.getField().getWidth()) && y >= 0 && y < static_cast<int>(player.getField().getHeight())) {
             current_x = x;
             current_y = y;
@@ -67,6 +68,9 @@ void AttackingShipsState::handleInput(sf::Event &event) {
             case sf::Keyboard::Enter:
                 onAttackUse();
                 break;
+            case sf::Keyboard::Escape:
+                next_state = GameState::SaveLoadState;
+                break;
             default:
                 break;
         }
@@ -74,7 +78,7 @@ void AttackingShipsState::handleInput(sf::Event &event) {
 }
 
 void AttackingShipsState::update() {
-    selection_box.setPosition(draw_offset.x + current_x * 20, draw_offset.y + current_y * 20);
+    selection_box.setPosition(draw_offset2.x + current_x * 20, draw_offset2.y + current_y * 20);
     if (player.scanner_is_active) {
         selection_box.setSize(cell_size * 2.f);
         selection_box.setOutlineColor(sf::Color::Green);
@@ -83,7 +87,12 @@ void AttackingShipsState::update() {
         selection_box.setOutlineColor(sf::Color::Yellow);
     }
 
+    if (ai_player.getPlayer().getAliveCount() == 0) {
+        ai_player.reset();
+    }
+
     if (player.getAliveCount() == 0) {
+        // end the game
         next_state = GameState::Menu;
     }
 }
@@ -94,7 +103,9 @@ void AttackingShipsState::render(sf::RenderWindow &window) {
     window.draw(result_text);
 
     // Draw the field
-    drawField(window);
+    drawField(window, player, draw_offset, true);
+
+    drawField(window, ai_player.getPlayer(), draw_offset2);
 
     // Draw the selection box
     window.draw(selection_box);
@@ -106,7 +117,7 @@ GameState AttackingShipsState::changeState() {
     return next_state;
 }
 
-void AttackingShipsState::drawField(sf::RenderWindow &window) {
+void AttackingShipsState::drawField(sf::RenderWindow &window, Player &player, sf::Vector2f draw_offset, bool god_eye) {
     sf::RectangleShape cell_shape;
     cell_shape.setSize(cell_size);  // Set the size of each cell
     cell_shape.setOutlineColor(sf::Color::Black);
@@ -116,7 +127,11 @@ void AttackingShipsState::drawField(sf::RenderWindow &window) {
             CellVisibilityState cellState = player.getField().getCellVisibilityState(x, y);
             switch (cellState) {
                 case CellVisibilityState::UNKNOWN:
-                    cell_shape.setFillColor(sf::Color::Cyan);
+                    if (player.getField().getIsShip(x, y) && god_eye) {
+                        cell_shape.setFillColor(sf::Color::Blue);
+                    } else {
+                        cell_shape.setFillColor(sf::Color::Cyan);
+                    }
                     break;
                 case CellVisibilityState::BLANK:
                     cell_shape.setFillColor(sf::Color::White);
@@ -148,7 +163,7 @@ void AttackingShipsState::onAbilityUse() {
     try {
         switch (player.getPendingAbilityType()) {
             case AbilityType::DoubleDamage:
-                player.useAbility(player, current_x, current_y);
+                player.useAbility(ai_player.getPlayer(), current_x, current_y);
                 result_text.setString("Double damage activated");
                 break;
             case AbilityType::Scanner:
@@ -161,7 +176,7 @@ void AttackingShipsState::onAbilityUse() {
                 }
                 break;
             case AbilityType::Bombard:
-                player.useAbility(player, current_x, current_y);
+                player.useAbility(ai_player.getPlayer(), current_x, current_y);
                 result_text.setString("Bombard activated");
                 break;
         }
@@ -175,7 +190,7 @@ void AttackingShipsState::onAbilityUse() {
 void AttackingShipsState::onAttackUse() {
     // If the scanner is active use it
     if (player.scanner_is_active) {
-        player.useAbility(player, current_x, current_y);
+        player.useAbility(ai_player.getPlayer(), current_x, current_y);
         if (player.getAbilityResults().ScannerShipFound)
             result_text.setString("Scanner used. Ship in range");
         else
@@ -184,13 +199,16 @@ void AttackingShipsState::onAttackUse() {
         return;
     }
 
+    result_text.setString("");
     // else attack the cell
     try {
-        player.attack(player, current_x, current_y, 1, true);
+        player.attack(ai_player.getPlayer(), current_x, current_y, 1, true);
     } catch (const exceptions::OutOfBoundsAttackException &e) {
         result_text.setString("Coordinates are out of field bounds");
     } catch (const std::exception &e) {
         result_text.setString(e.what());
     }
-    result_text.setString("");
+
+    // Second player attacks
+    ai_player.attack(player);
 };

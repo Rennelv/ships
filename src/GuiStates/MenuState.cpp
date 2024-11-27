@@ -5,7 +5,7 @@
 MenuState::MenuState() : selected_item_index(0) {
     font.loadFromFile("assets/fonts/font.ttf");
 
-    std::vector<std::string> items = {"Start Game", "um", "Exit"};
+    std::vector<std::string> items = {"Start Game", "Load Game", "Exit"};
     for (const auto &item : items) {
         sf::Text text;
         text.setFont(font);
@@ -75,7 +75,7 @@ void MenuState::selectItem() {
             break;
         case 1:
             // Handle Options
-
+            next_state = GameState::SaveLoadState;
             break;
         case 2:
             next_state = GameState::Exit;

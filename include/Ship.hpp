@@ -2,6 +2,9 @@
 #define SHIP_HPP
 
 #include <cstddef>
+#include <iostream>
+#include <istream>
+#include <ostream>
 
 #include "Enums.hpp"
 
@@ -29,6 +32,12 @@ class Ship {
     ShipSegmentState getSegmentState(size_t index) const;  // returns state of segment by index
     size_t getLength() const;                              // returns length of ship
     bool isAlive() const;                                  // returns true if ship is alive
+
+    bool operator==(const Ship& other) const;
+    bool operator!=(const Ship& other) const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Ship& ship);
+    friend std::istream& operator>>(std::istream& is, Ship& ship);
 };
 
 #endif  // SHIP_HPP

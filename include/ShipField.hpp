@@ -2,9 +2,12 @@
 #define SHIPFIELD_HPP
 
 #include <cstddef>
+#include <istream>
+#include <ostream>
 
 #include "Enums.hpp"
 #include "Ship.hpp"
+#include "ShipManager.hpp"
 
 class ShipField {
     struct FieldElement {
@@ -37,6 +40,17 @@ class ShipField {
     void placeShip(Ship& ship, int x, int y, ShipOrientation orientation);   // places ship on field
     bool attackShip(int x, int y, bool expose_cell = true, int damage = 1);  // attacks ship on field
     void clearField();                                                       // clears field
+
+    ShipOrientation getShipOrientation(int x, int y) const;  // returns orientation of ship
+    std::pair<int, int> getShipHead(int x, int y) const;     // returns head of ship
+
+    void restoreShips(std::istream& is, ShipManager& manager);  // restores ships from manager
+
+    friend std::ostream& operator<<(std::ostream& os, const ShipField& field);
+    friend std::istream& operator>>(std::istream& is, ShipField& field);
+
+    bool operator==(const ShipField& other) const;
+    bool operator!=(const ShipField& other) const;
 };
 
 #endif  // SHIPFIELD_HPP

@@ -3,15 +3,14 @@
 
 battleship
 seabattle
-test_input.txt
-valgrind-out.txt
 compile_commands.json
 *.odt
 *.docx
 *.pdf
 *.bak
 *cache*
-
+*.txt
+!CMakeLists.txt
 !.gitignore
 
 bin

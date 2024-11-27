@@ -3,11 +3,16 @@
 #include "ShipField.hpp"
 
 #include <cstddef>
+#include <set>
 #include <stdexcept>
+#include <string>
+#include <unordered_map>
+#include <utility>
 
 #include "Enums.hpp"
 #include "Exceptions/Exceptions.hpp"
 #include "Ship.hpp"
+#include "ShipManager.hpp"
 
 ShipField::ShipField() {
     width = 0;
@@ -129,26 +134,42 @@ bool ShipField::checkShipCollision(int ship_length, int head_x, int head_y, Ship
     return false;
 }
 
-void ShipField::exposeSurroundingShipCells(int ship_length, int head_x, int head_y) {
-    ShipOrientation orientation;
-
-    // calculate orientation of the ship
-    if (getIsShip(head_x, head_y - 1) || getIsShip(head_x, head_y + 1)) {
-        orientation = ShipOrientation::VERTICAL;
-    } else {
-        orientation = ShipOrientation::HORIZONTAL;
+ShipOrientation ShipField::getShipOrientation(int x, int y) const {
+    if (x < 0 || y < 0) {
+        throw std::invalid_argument("Coordinates must be non-negative");
     }
+    if (static_cast<size_t>(x) >= width || static_cast<size_t>(y) >= height) {
+        throw std::invalid_argument("Coordinates are out of field bounds");
+    }
+    if (getIsShip(x, y) == false) {
+        throw std::logic_error("No ship at the given coordinates");
+    }
+    if (getIsShip(x, y - 1) || getIsShip(x, y + 1)) {
+        return ShipOrientation::VERTICAL;
+    }
+    return ShipOrientation::HORIZONTAL;
+}
 
-    // calculate head of the ship
+std::pair<int, int> ShipField::getShipHead(int x, int y) const {
+    ShipOrientation orientation = getShipOrientation(x, y);
     if (orientation == ShipOrientation::HORIZONTAL) {
-        while (getIsShip(head_x - 1, head_y)) {
-            head_x--;
+        while (getIsShip(x - 1, y)) {
+            x--;
         }
     } else {
-        while (getIsShip(head_x, head_y - 1)) {
-            head_y--;
+        while (getIsShip(x, y - 1)) {
+            y--;
         }
     }
+    return std::make_pair(x, y);
+}
+
+void ShipField::exposeSurroundingShipCells(int ship_length, int head_x, int head_y) {
+    ShipOrientation orientation = getShipOrientation(head_x, head_y);
+
+    auto ship_head = getShipHead(head_x, head_y);
+    head_x = ship_head.first;
+    head_y = ship_head.second;
 
     if (orientation == ShipOrientation::HORIZONTAL) {
         for (int x = head_x - 1; x < head_x + ship_length + 1; x++) {
@@ -273,19 +294,6 @@ CellVisibilityState ShipField::getCellVisibilityState(int x, int y) const {
     return field[y][x].state;
 }
 
-// int ShipField::getShipSegmentHP(int x, int y) const {
-//     if (x < 0 || y < 0) {
-//         throw std::invalid_argument("Coordinates must be non-negative");
-//     }
-//     if (static_cast<size_t>(x) >= width || static_cast<size_t>(y) >= height) {
-//         throw std::invalid_argument("Coordinates are out of field bounds");
-//     }
-//     if (getIsShip(x, y) == false) {
-//         throw std::logic_error("No ship at the given coordinates");
-//     }
-//     return field[y][x].ship->getSegmentHP(field[y][x].ship_segment_index);
-// }
-
 ShipSegmentState ShipField::getShipSegmentState(int x, int y) const {
     if (x < 0 || y < 0) {
         throw std::invalid_argument("Coordinates must be non-negative");
@@ -297,4 +305,125 @@ ShipSegmentState ShipField::getShipSegmentState(int x, int y) const {
         throw std::logic_error("No ship at the given coordinates");
     }
     return field[y][x].ship->getSegmentState(field[y][x].ship_segment_index);
+}
+
+std::ostream &operator<<(std::ostream &os, const ShipField &field) {
+    os << "===Field===\n";
+    os << field.width << ' ' << field.height << '\n';
+    std::unordered_map<Ship *, std::pair<int, int>> ship_heads;
+    std::unordered_map<Ship *, int> ship_indexes;
+    for (size_t i = 0; i < field.height; i++) {
+        for (size_t j = 0; j < field.width; j++) {
+            int head_x = static_cast<int>(j);
+            int head_y = static_cast<int>(i);
+            if (field.getIsShip(j, i)) {
+                auto ship_head = field.getShipHead(head_x, head_y);
+                head_x = ship_head.first;
+                head_y = ship_head.second;
+
+                ship_heads.emplace(field.field[i][j].ship, field.getShipHead(head_x, head_y));
+            }
+            os << static_cast<int>(field.field[i][j].state) << ' ';
+        }
+        os << '\n';
+    }
+    os << "===End Field===\n";
+
+    os << "===Field Ships===\n";
+    os << ship_heads.size() << '\n';
+    for (auto ship_head : ship_heads) {
+        auto ship = ship_head.first;
+        auto head = ship_head.second;
+        ShipOrientation orientation = field.getShipOrientation(head.first, head.second);
+        os << static_cast<int>(ship->getLength()) << ' ' << head.first << ' ' << head.second << ' ' << static_cast<int>(orientation) << '\n';
+        os << *ship;
+    }
+    os << "===End Field Ships===\n";
+    return os;
+}
+
+std::istream &operator>>(std::istream &is, ShipField &field) {
+    std::string line;
+    is >> std::ws;
+    std::getline(is, line);
+    if (line != "===Field===") {
+        throw std::invalid_argument("Invalid save file");
+    }
+    size_t width, height;
+    is >> width >> height;
+    field = ShipField(width, height);
+    for (size_t i = 0; i < field.height; i++) {
+        for (size_t j = 0; j < field.width; j++) {
+            int state;
+            is >> state;
+            field.field[i][j].state = static_cast<CellVisibilityState>(state);
+        }
+    }
+    is >> std::ws;
+    std::getline(is, line);
+    if (line != "===End Field===") {
+        throw std::invalid_argument("Invalid save file");
+    }
+
+    return is;
+}
+
+void ShipField::restoreShips(std::istream &is, ShipManager &manager) {
+    std::string line;
+    is >> std::ws;
+    std::getline(is, line);
+    if (line != "===Field Ships===") {
+        throw std::invalid_argument("Invalid save file");
+    }
+    size_t ship_count;
+    is >> ship_count;
+    std::set<int> used_ship_indexes;
+    for (size_t i = 0; i < ship_count; i++) {
+        int length, x, y, orientation;
+        is >> length >> x >> y >> orientation;
+        ShipOrientation ship_orientation = static_cast<ShipOrientation>(orientation);
+        Ship temp_ship(length);
+        is >> temp_ship;
+
+        for (size_t ship_index = 0; ship_index < manager.getShipCount(); ship_index++) {
+            if (manager.getShip(ship_index) == temp_ship && used_ship_indexes.find(ship_index) == used_ship_indexes.end()) {
+                used_ship_indexes.insert(ship_index);
+                placeShip(manager.getShip(ship_index), x, y, ship_orientation);
+                break;
+            }
+            if (ship_index == manager.getShipCount() - 1) {
+                throw std::invalid_argument("Invalid save file");
+            }
+        }
+    }
+    is >> std::ws;
+    std::getline(is, line);
+    if (line != "===End Field Ships===") {
+        throw std::invalid_argument("Invalid save file");
+    }
+}
+
+bool ShipField::operator==(const ShipField &other) const {
+    if (width != other.width || height != other.height) {
+        return false;
+    }
+    for (size_t i = 0; i < height; i++) {
+        for (size_t j = 0; j < width; j++) {
+            if (field[i][j].state != other.field[i][j].state) {
+                return false;
+            }
+            if (field[i][j].ship != nullptr && other.field[i][j].ship != nullptr) {
+                if (*field[i][j].ship != *other.field[i][j].ship) {
+                    return false;
+                }
+            } else if (field[i][j].ship != nullptr || other.field[i][j].ship != nullptr) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool ShipField::operator!=(const ShipField &other) const {
+    return !(*this == other);
 }

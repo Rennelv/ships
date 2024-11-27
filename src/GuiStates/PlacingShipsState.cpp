@@ -3,10 +3,12 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include "AiPlayer.hpp"
 #include "Enums.hpp"
 #include "Player.hpp"
 
-PlacingShipsState::PlacingShipsState(Player& player) : current_ship_index(0), orientation(ShipOrientation::VERTICAL), player(player) {
+PlacingShipsState::PlacingShipsState(Player& player, AiPlayer& player2)
+    : current_ship_index(0), orientation(ShipOrientation::VERTICAL), player(player), player2(player2) {
     draw_offset = {10, 70};
     cell_size = {20, 20};
 
@@ -101,14 +103,14 @@ GameState PlacingShipsState::changeState() {
 }
 
 void PlacingShipsState::drawField(sf::RenderWindow& window) {
-    sf::RectangleShape cellShape(cell_size);
-    cellShape.setOutlineColor(sf::Color::White);
-    cellShape.setOutlineThickness(1);
+    sf::RectangleShape cell_shape(cell_size);
+    cell_shape.setOutlineColor(sf::Color::White);
+    cell_shape.setOutlineThickness(1);
     for (size_t y = 0; y < player.getField().getHeight(); y++) {
         for (size_t x = 0; x < player.getField().getWidth(); x++) {
-            cellShape.setPosition(draw_offset.x + x * cell_size.x, draw_offset.y + y * cell_size.y);
-            cellShape.setFillColor(player.getField().getIsShip(x, y) ? sf::Color::Red : sf::Color::Green);
-            window.draw(cellShape);
+            cell_shape.setPosition(draw_offset.x + x * cell_size.x, draw_offset.y + y * cell_size.y);
+            cell_shape.setFillColor(player.getField().getIsShip(x, y) ? sf::Color::Red : sf::Color::Green);
+            window.draw(cell_shape);
         }
     }
 }
@@ -122,6 +124,7 @@ void PlacingShipsState::placeShipHelper() {
     }
     current_ship_index++;
     if (current_ship_index >= player.getShipCount()) {
+        player2.placeShips();                    // Place ships for the AI player before changing the state
         next_state = GameState::AttackingShips;  // Change to the next state
     }
 }

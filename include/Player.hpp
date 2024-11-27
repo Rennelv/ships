@@ -2,6 +2,8 @@
 #define PLAYER_HPP
 
 #include <cstddef>
+#include <istream>
+#include <ostream>
 
 #include "Abilities/AbilityManager.hpp"
 #include "Abilities/AbilityType.hpp"
@@ -35,6 +37,9 @@ class Player {
     AbilityResults getAbilityResults();
 
     const ShipField& getField() const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Player& player);
+    friend std::istream& operator>>(std::istream& is, Player& player);
 };
 
 #endif  // PLAYER_HPP

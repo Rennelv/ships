@@ -5,7 +5,9 @@
 #include "ShipField.hpp"
 #include "ShipManager.hpp"
 
-void BombardAbility::use(ShipField& field, ShipManager& manager, int, int, AbilityResults& ret) {
+void BombardAbility::use(AbilityInput& input, AbilityResults& ret) {
+    ShipManager& manager = input.target_manager;
+    ShipField& field = input.target_field;
     // Check if there are any ships on the field using ShipManager
     if (manager.getAliveCount() == 0) {
         ret.BombardDamageDealt = false;

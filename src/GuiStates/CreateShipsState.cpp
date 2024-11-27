@@ -3,9 +3,10 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
+#include "AiPlayer.hpp"
 #include "Player.hpp"
 
-CreateShipState::CreateShipState(Player& player) : player(player), active_box_index(0) {
+CreateShipState::CreateShipState(Player& player, AiPlayer& player2) : player(player), player2(player2), active_box_index(0) {
     draw_offset = {10, 100};
     font.loadFromFile("assets/fonts/font.ttf");
 
@@ -72,6 +73,8 @@ void CreateShipState::createShips() {
         }
     }
     player.createShipManager(lengths.size(), lengths.data());
+
+    player2.createShipManager(lengths.size(), lengths.data());
 }
 
 void CreateShipState::render(sf::RenderWindow& window) {

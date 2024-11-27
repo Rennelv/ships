@@ -7,6 +7,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include "AiPlayer.hpp"
 #include "Enums.hpp"
 #include "GuiStates/State.hpp"
 #include "Player.hpp"
@@ -20,6 +21,7 @@ class PlacingShipsState : public State {
     ShipOrientation orientation = ShipOrientation::VERTICAL;
 
     Player& player;
+    AiPlayer& player2;
 
     sf::Font font;
     sf::Text instruction_text;
@@ -32,7 +34,7 @@ class PlacingShipsState : public State {
     void placeShipHelper();
 
    public:
-    PlacingShipsState(Player& player);
+    PlacingShipsState(Player& player, AiPlayer& player2);
     void handleInput(sf::Event& event) override;
     void update() override;
     void render(sf::RenderWindow& window) override;

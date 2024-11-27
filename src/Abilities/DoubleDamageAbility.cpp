@@ -1,9 +1,6 @@
 #include "Abilities/DoubleDamageAbility.hpp"
 
-#include "ShipField.hpp"
-#include "ShipManager.hpp"
-
-void DoubleDamageAbility::use(ShipField&, ShipManager&, int, int, AbilityResults& ret) {
+void DoubleDamageAbility::use(AbilityInput&, AbilityResults& ret) {
     ret.DoubleDamageIsActive = true;
 }
 

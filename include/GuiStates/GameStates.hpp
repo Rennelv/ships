@@ -7,6 +7,7 @@ enum class GameState {
     CreateShips,
     PlacingShips,
     AttackingShips,
+    SaveLoadState,
     Exit,
 };
 
