@@ -1,4 +1,8 @@
 @startuml
+class "sf::Vector2<float>" as C_0009693095778494330448
+class C_0009693095778494330448 {
+__
+}
 class "std::vector<Ship>" as C_0010668212532447068380
 class C_0010668212532447068380 {
 __
@@ -27,8 +31,16 @@ class "std::vector<std::function<std::shared_ptr<Ability>()>>" as C_001037881816
 class C_0010378818160678026980 {
 __
 }
+class "std::vector<sf::Text>" as C_0015054090575003110977
+class C_0015054090575003110977 {
+__
+}
 class "std::unique_ptr<State>" as C_0003593355595461115184
 class C_0003593355595461115184 {
+__
+}
+class "std::string" as C_0001275076681856179721
+class C_0001275076681856179721 {
 __
 }
 enum "ShipSegmentState" as C_0014256742677139282670
@@ -231,6 +243,95 @@ abstract C_0001914138303902600425 {
 {abstract} +update() = 0 : void
 __
 }
+class "CreateFieldState" as C_0003925512848679538817
+class C_0003925512848679538817 {
++CreateFieldState(Player & player, AiPlayer & player2) : void
+..
++changeState() : GameState
+-drawField(sf::RenderWindow & window) : void
++handleInput(sf::Event & event) : void
++render(sf::RenderWindow & window) : void
++update() : void
+__
+-cell_size : sf::Vector2f
+-draw_offset : sf::Vector2f
+-field_height : int
+-field_size_text : sf::Text
+-field_width : int
+-font : sf::Font
+-next_state : GameState
+-player : Player &
+-player2 : AiPlayer &
+}
+class "InputBox" as C_0006905555226801011843
+class C_0006905555226801011843 {
+__
++box : sf::RectangleShape
++value : int
+}
+class "CreateShipState" as C_0016717855027770416060
+class C_0016717855027770416060 {
++CreateShipState(Player & player, AiPlayer & player2) : void
+..
++changeState() : GameState
+-createShips() : void
++handleInput(sf::Event & event) : void
++render(sf::RenderWindow & window) : void
++update() : void
+__
+-active_box_index : int
+-draw_offset : sf::Vector2f
+-font : sf::Font
+-input_boxes : InputBox[4]
+-next_state : GameState
+-number_ships_text : sf::Text
+-player : Player &
+-player2 : AiPlayer &
+-ships_text : sf::Text
+-title_text : sf::Text
+}
+class "MenuState" as C_0013166903766216927070
+class C_0013166903766216927070 {
++MenuState() : void
+..
++changeState() : GameState
++handleInput(sf::Event & event) : void
+-moveDown() : void
+-moveUp() : void
++render(sf::RenderWindow & window) : void
+-selectItem() : void
++update() : void
+__
+-font : sf::Font
+-menu_items : std::vector<sf::Text>
+-next_state : GameState
+-selected_item_index : size_t
+}
+class "PlacingShipsState" as C_0003009358475785535108
+class C_0003009358475785535108 {
++PlacingShipsState(Player & player, AiPlayer & player2) : void
+..
++changeState() : GameState
+-drawField(sf::RenderWindow & window) : void
++handleInput(sf::Event & event) : void
+-placeShipHelper() : void
++render(sf::RenderWindow & window) : void
++update() : void
+__
+-cell_size : sf::Vector2f
+-current_ship_index : size_t
+-current_x : size_t
+-current_y : size_t
+-draw_offset : sf::Vector2f
+-font : sf::Font
+-instruction_text : sf::Text
+-next_state : GameState
+-orientation : ShipOrientation
+-player : Player &
+-player2 : AiPlayer &
+-result_text : sf::Text
+-ship_representation : sf::RectangleShape
+}
 class "GameGui" as C_0007395642151187698177
 class C_0007395642151187698177 {
 +GameGui() : void
@@ -252,6 +353,74 @@ __
 -prev_state : GameState
 -state : std::unique_ptr<State>
 -window : sf::RenderWindow
+}
+class "SaveLoadState" as C_0014140921539624914491
+class C_0014140921539624914491 {
++SaveLoadState(GameGui & game_gui) : void
+..
++changeState() : GameState
++handleInput(sf::Event & event) : void
+-loadGameHelper() : void
++render(sf::RenderWindow & window) : void
+-saveGameHelper() : void
++update() : void
+__
+-font : sf::Font
+-game : GameGui &
+-instruction_text : sf::Text
+-next_state : GameState
+-result_text : sf::Text
+}
+class "AttackingShipsState" as C_0009763532900440017346
+class C_0009763532900440017346 {
++AttackingShipsState(Player & player, AiPlayer & player2) : void
+..
++changeState() : GameState
+-drawField(sf::RenderWindow & window, Player & player, sf::Vector2f draw_offset, bool show_ships = false) : void
++handleInput(sf::Event & event) : void
+-onAbilityUse() : void
+-onAttackUse() : void
++render(sf::RenderWindow & window) : void
++update() : void
+__
+-ai_player : AiPlayer &
+-cell_size : sf::Vector2f
+-current_x : size_t
+-current_y : size_t
+-draw_offset : sf::Vector2f
+-draw_offset2 : sf::Vector2f
+-font : sf::Font
+-instruction_text : sf::Text
+-next_state : GameState
+-player : Player &
+-result_text : sf::Text
+-selection_box : sf::RectangleShape
+}
+class "exceptions::GameException" as C_0007589199267016446353
+class C_0007589199267016446353 {
++GameException(const std::string & message) : void
+..
++what() const noexcept : const char *
+__
+-msg : std::string
+}
+class "exceptions::NoAbilityAvailableException" as C_0006087931829388500955
+class C_0006087931829388500955 {
++NoAbilityAvailableException() : void
++NoAbilityAvailableException(const std::string & message) : void
+__
+}
+class "exceptions::ShipPlacementConflictException" as C_0014145847858458416793
+class C_0014145847858458416793 {
++ShipPlacementConflictException() : void
++ShipPlacementConflictException(const std::string & message) : void
+__
+}
+class "exceptions::OutOfBoundsAttackException" as C_0000456049838779900119
+class C_0000456049838779900119 {
++OutOfBoundsAttackException() : void
++OutOfBoundsAttackException(const std::string & message) : void
+__
 }
 C_0010668212532447068380 ..> C_0014529657433315016423
 C_0012342435662910727844 ..> C_0017635961848386255115
@@ -297,12 +466,60 @@ C_0003605716991605700936 o-- C_0002235219345516323367 : -ability_manager
 C_0003605716991605700936 o-- C_0005219465313958275113 : -ability_results
 C_0005644868336032600742 --> C_0003605716991605700936 : -controlled_player
 C_0001914138303902600425 ..> C_0004356735495323104445
+C_0003925512848679538817 o-- C_0004356735495323104445 : -next_state
+C_0003925512848679538817 --> C_0003605716991605700936 : -player
+C_0003925512848679538817 --> C_0005644868336032600742 : -player2
+C_0003925512848679538817 o-- C_0009693095778494330448 : -draw_offset
+C_0003925512848679538817 o-- C_0009693095778494330448 : -cell_size
+C_0001914138303902600425 <|-- C_0003925512848679538817
+
+C_0016717855027770416060 o-- C_0004356735495323104445 : -next_state
+C_0016717855027770416060 --> C_0003605716991605700936 : -player
+C_0016717855027770416060 --> C_0005644868336032600742 : -player2
+C_0016717855027770416060 o-- "4" C_0006905555226801011843 : -input_boxes
+C_0016717855027770416060 o-- C_0009693095778494330448 : -draw_offset
+C_0001914138303902600425 <|-- C_0016717855027770416060
+
+C_0013166903766216927070 o-- C_0004356735495323104445 : -next_state
+C_0013166903766216927070 o-- C_0015054090575003110977 : -menu_items
+C_0001914138303902600425 <|-- C_0013166903766216927070
+
+C_0003009358475785535108 o-- C_0004356735495323104445 : -next_state
+C_0003009358475785535108 o-- C_0002579181642537833876 : -orientation
+C_0003009358475785535108 --> C_0003605716991605700936 : -player
+C_0003009358475785535108 --> C_0005644868336032600742 : -player2
+C_0003009358475785535108 o-- C_0009693095778494330448 : -draw_offset
+C_0003009358475785535108 o-- C_0009693095778494330448 : -cell_size
+C_0001914138303902600425 <|-- C_0003009358475785535108
+
 C_0007395642151187698177 o-- C_0003605716991605700936 : -player
 C_0007395642151187698177 o-- C_0003605716991605700936 : -player2
 C_0007395642151187698177 o-- C_0005644868336032600742 : -ai_controller
 C_0007395642151187698177 o-- C_0004356735495323104445 : -current_state
 C_0007395642151187698177 o-- C_0004356735495323104445 : -prev_state
 C_0007395642151187698177 o-- C_0003593355595461115184 : -state
+C_0014140921539624914491 o-- C_0004356735495323104445 : -next_state
+C_0014140921539624914491 --> C_0007395642151187698177 : -game
+C_0001914138303902600425 <|-- C_0014140921539624914491
+
+C_0009763532900440017346 o-- C_0004356735495323104445 : -next_state
+C_0009763532900440017346 --> C_0003605716991605700936 : -player
+C_0009763532900440017346 --> C_0005644868336032600742 : -ai_player
+C_0009763532900440017346 o-- C_0009693095778494330448 : -draw_offset
+C_0009763532900440017346 o-- C_0009693095778494330448 : -draw_offset2
+C_0009763532900440017346 o-- C_0009693095778494330448 : -cell_size
+C_0001914138303902600425 <|-- C_0009763532900440017346
+
+C_0007589199267016446353 o-- C_0001275076681856179721 : -msg
+C_0006087931829388500955 ..> C_0001275076681856179721
+C_0007589199267016446353 <|-- C_0006087931829388500955
+
+C_0014145847858458416793 ..> C_0001275076681856179721
+C_0007589199267016446353 <|-- C_0014145847858458416793
+
+C_0000456049838779900119 ..> C_0001275076681856179721
+C_0007589199267016446353 <|-- C_0000456049838779900119
+
 
 'Generated with clang-uml, version 0.5.5
 'LLVM version clang version 18.1.8

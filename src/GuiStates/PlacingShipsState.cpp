@@ -124,7 +124,7 @@ void PlacingShipsState::placeShipHelper() {
     }
     current_ship_index++;
     if (current_ship_index >= player.getShipCount()) {
-        player2.placeShips();                    // Place ships for the AI player before changing the state
+        player2.placeShipsRandom();              // Place ships for the AI player before changing the state
         next_state = GameState::AttackingShips;  // Change to the next state
     }
 }

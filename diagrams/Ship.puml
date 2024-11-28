@@ -26,6 +26,9 @@ class C_0014529657433315016423 {
 +operator=(const Ship & other) : Ship &
 +operator=(Ship && other) noexcept : Ship &
 ..
++operator!=(const Ship & other) const : bool
++operator==(const Ship & other) const : bool
+..
 +getLength() const : size_t
 +getSegmentHP(size_t index) const : int
 +getSegmentState(size_t index) const : ShipSegmentState

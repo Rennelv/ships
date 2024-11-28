@@ -11,8 +11,8 @@ class AiPlayer {
 
     void createField(int width, int height);
     void createShipManager(size_t count, size_t *lengths);
-    void placeShips();
-    void attack(Player &targetPlayer);
+    void placeShipsRandom();
+    void attackRandom(Player &targetPlayer);
     Player &getPlayer();
     void reset();
 };

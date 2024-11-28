@@ -3,38 +3,33 @@ class "std::vector<Ship>" as C_0010668212532447068380
 class C_0010668212532447068380 {
 __
 }
-class "std::unique_ptr<Ability>" as C_0002593715388203665760
-class C_0002593715388203665760 {
+class "std::pair<int,int>" as C_0006524010458157121833
+class C_0006524010458157121833 {
 __
 }
-class "std::queue<std::unique_ptr<Ability>>" as C_0006911030825501507270
-class C_0006911030825501507270 {
+class "std::basic_istream<char>" as C_0005505409806480479128
+class C_0005505409806480479128 {
 __
 }
-class "std::function<std::unique_ptr<Ability>()>" as C_0006416152866459361376
-class C_0006416152866459361376 {
+class "std::shared_ptr<Ability>" as C_0012342435662910727844
+class C_0012342435662910727844 {
 __
 }
-class "std::vector<std::function<std::unique_ptr<Ability>()>>" as C_0003282825241778546884
-class C_0003282825241778546884 {
+class "std::queue<std::shared_ptr<Ability>>" as C_0008193623610420284737
+class C_0008193623610420284737 {
+__
+}
+class "std::function<std::shared_ptr<Ability>()>" as C_0014703876471129105020
+class C_0014703876471129105020 {
+__
+}
+class "std::vector<std::function<std::shared_ptr<Ability>()>>" as C_0010378818160678026980
+class C_0010378818160678026980 {
 __
 }
 class "std::string" as C_0001275076681856179721
 class C_0001275076681856179721 {
 __
-}
-class "AbilityResults" as C_0005219465313958275113
-class C_0005219465313958275113 {
-__
-+BombardDamageDealt : bool
-+DoubleDamageIsActive : bool
-+ScannerShipFound : bool
-}
-enum "AbilityType" as C_0006740456236575953687
-enum C_0006740456236575953687 {
-DoubleDamage
-Scanner
-Bombard
 }
 enum "ShipSegmentState" as C_0014256742677139282670
 enum C_0014256742677139282670 {
@@ -63,6 +58,9 @@ class C_0014529657433315016423 {
 +operator=(const Ship & other) : Ship &
 +operator=(Ship && other) noexcept : Ship &
 ..
++operator!=(const Ship & other) const : bool
++operator==(const Ship & other) const : bool
+..
 +getLength() const : size_t
 +getSegmentHP(size_t index) const : int
 +getSegmentState(size_t index) const : ShipSegmentState
@@ -79,6 +77,24 @@ __
 +hp : int
 +state : ShipSegmentState
 }
+class "ShipManager" as C_0017499122254539489506
+class C_0017499122254539489506 {
++ShipManager() : void
++ShipManager(size_t count, size_t * lengths) : void
++~ShipManager() constexpr = default : void
+..
++operator!=(const ShipManager & other) const : bool
++operator==(const ShipManager & other) const : bool
+..
++getAliveCount() const : size_t
++getShip(size_t index) : Ship &
++getShip(size_t index) const : const Ship &
++getShipCount() const : size_t
++getShipLength(size_t index) const : size_t
+__
+-ships : std::vector<Ship>
+-ships_count : size_t
+}
 class "ShipField" as C_0003843296779074973901
 class C_0003843296779074973901 {
 +ShipField() : void
@@ -90,6 +106,9 @@ class C_0003843296779074973901 {
 +operator=(const ShipField & other) : ShipField &
 +operator=(ShipField && other) noexcept : ShipField &
 ..
++operator!=(const ShipField & other) const : bool
++operator==(const ShipField & other) const : bool
+..
 +attackShip(int x, int y, bool expose_cell = true, int damage = 1) : bool
 +checkShipCollision(int ship_length, int x, int y, ShipOrientation orientation) const : bool
 +clearField() : void
@@ -97,9 +116,12 @@ class C_0003843296779074973901 {
 +getCellVisibilityState(int x, int y) const : CellVisibilityState
 +getHeight() const : size_t
 +getIsShip(int x, int y) const : bool
++getShipHead(int x, int y) const : std::pair<int,int>
++getShipOrientation(int x, int y) const : ShipOrientation
 +getShipSegmentState(int x, int y) const : ShipSegmentState
 +getWidth() const : size_t
 +placeShip(Ship & ship, int x, int y, ShipOrientation orientation) : void
++restoreShips(std::istream & is, ShipManager & manager) : void
 __
 -field : FieldElement **
 -height : size_t
@@ -112,26 +134,33 @@ __
 +ship_segment_index : size_t
 +state : CellVisibilityState
 }
-class "ShipManager" as C_0017499122254539489506
-class C_0017499122254539489506 {
-+ShipManager() : void
-+ShipManager(size_t count, size_t * lengths) : void
-+~ShipManager() = default : void
-..
-+getAliveCount() const : size_t
-+getShip(size_t index) : Ship &
-+getShipCount() const : size_t
-+getShipLength(size_t index) const : size_t
+class "AbilityResults" as C_0005219465313958275113
+class C_0005219465313958275113 {
 __
--ships : std::vector<Ship>
--ships_count : size_t
++BombardDamageDealt : bool
++DoubleDamageIsActive : bool
++ScannerShipFound : bool
+}
+class "AbilityInput" as C_0006255146489372148425
+class C_0006255146489372148425 {
+__
++target_field : ShipField &
++target_manager : ShipManager &
++x : int
++y : int
+}
+enum "AbilityType" as C_0006740456236575953687
+enum C_0006740456236575953687 {
+DoubleDamage
+Scanner
+Bombard
 }
 abstract "Ability" as C_0017635961848386255115
 abstract C_0017635961848386255115 {
-+~Ability() = default : void
++~Ability() constexpr = default : void
 ..
 {abstract} +getType() const = 0 : AbilityType
-{abstract} +use(ShipField & field, ShipManager & manager, int x, int y, AbilityResults & ret) = 0 : void
+{abstract} +use(AbilityInput & input, AbilityResults & ret) = 0 : void
 __
 }
 class "AbilityManager" as C_0002235219345516323367
@@ -140,28 +169,28 @@ class C_0002235219345516323367 {
 ..
 +addRandomAbility() : void
 +getPendingAbilityType() const : AbilityType
--getRandomAbility() : std::unique_ptr<Ability>
-+useAbility(ShipField & field, ShipManager & manager, int x, int y, AbilityResults & ability_results) : void
+-getRandomAbility() : std::shared_ptr<Ability>
++useAbility(AbilityInput input, AbilityResults & ability_results) : void
 __
--abilities : std::queue<std::unique_ptr<Ability>>
--ability_factory : const std::vector<std::function<std::unique_ptr<Ability> ()>>
+-abilities : std::queue<std::shared_ptr<Ability>>
+-ability_factory : const std::vector<std::function<std::shared_ptr<Ability> ()>>
 }
 class "BombardAbility" as C_0012849869308180511032
 class C_0012849869308180511032 {
 +getType() const : AbilityType
-+use(ShipField & field, ShipManager & manager, int x, int y, AbilityResults & ret) : void
++use(AbilityInput & input, AbilityResults & ret) : void
 __
 }
 class "DoubleDamageAbility" as C_0002469271380474702704
 class C_0002469271380474702704 {
 +getType() const : AbilityType
-+use(ShipField & field, ShipManager & manager, int x, int y, AbilityResults & ret) : void
++use(AbilityInput & input, AbilityResults & ret) : void
 __
 }
 class "ScannerAbility" as C_0005147631956111864072
 class C_0005147631956111864072 {
 +getType() const : AbilityType
-+use(ShipField & field, ShipManager & manager, int x, int y, AbilityResults & ret) : void
++use(AbilityInput & input, AbilityResults & ret) : void
 __
 }
 class "exceptions::GameException" as C_0007589199267016446353
@@ -191,50 +220,50 @@ class C_0000456049838779900119 {
 __
 }
 C_0010668212532447068380 ..> C_0014529657433315016423
-C_0002593715388203665760 ..> C_0017635961848386255115
-C_0006911030825501507270 ..> C_0002593715388203665760
-C_0006416152866459361376 ..> C_0002593715388203665760
-C_0003282825241778546884 ..> C_0006416152866459361376
+C_0012342435662910727844 ..> C_0017635961848386255115
+C_0008193623610420284737 ..> C_0012342435662910727844
+C_0014703876471129105020 ..> C_0012342435662910727844
+C_0010378818160678026980 ..> C_0014703876471129105020
 C_0014529657433315016423 ..> C_0014256742677139282670
 C_0014529657433315016423 --> C_0000674658759292391449 : -segments
 C_0000674658759292391449 --+ C_0014529657433315016423
 C_0000674658759292391449 o-- C_0014256742677139282670 : +state
+C_0017499122254539489506 ..> C_0014529657433315016423
+C_0017499122254539489506 o-- C_0010668212532447068380 : -ships
 C_0003843296779074973901 ..> C_0002579181642537833876
 C_0003843296779074973901 ..> C_0003333043679234439357
 C_0003843296779074973901 ..> C_0014256742677139282670
 C_0003843296779074973901 ..> C_0014529657433315016423
+C_0003843296779074973901 ..> C_0006524010458157121833
+C_0003843296779074973901 ..> C_0005505409806480479128
+C_0003843296779074973901 ..> C_0017499122254539489506
 C_0003843296779074973901 --> C_0000316359785794417378 : -field
 C_0000316359785794417378 --+ C_0003843296779074973901
 C_0000316359785794417378 o-- C_0003333043679234439357 : +state
 C_0000316359785794417378 --> C_0014529657433315016423 : +ship
-C_0017499122254539489506 ..> C_0014529657433315016423
-C_0017499122254539489506 o-- C_0010668212532447068380 : -ships
-C_0017635961848386255115 ..> C_0003843296779074973901
-C_0017635961848386255115 ..> C_0017499122254539489506
+C_0006255146489372148425 --> C_0003843296779074973901 : +target_field
+C_0006255146489372148425 --> C_0017499122254539489506 : +target_manager
+C_0017635961848386255115 ..> C_0006255146489372148425
 C_0017635961848386255115 ..> C_0005219465313958275113
 C_0017635961848386255115 ..> C_0006740456236575953687
-C_0002235219345516323367 ..> C_0002593715388203665760
+C_0002235219345516323367 ..> C_0012342435662910727844
 C_0002235219345516323367 ..> C_0017635961848386255115
-C_0002235219345516323367 ..> C_0003843296779074973901
-C_0002235219345516323367 ..> C_0017499122254539489506
+C_0002235219345516323367 ..> C_0006255146489372148425
 C_0002235219345516323367 ..> C_0005219465313958275113
 C_0002235219345516323367 ..> C_0006740456236575953687
-C_0002235219345516323367 o-- C_0006911030825501507270 : -abilities
-C_0002235219345516323367 o-- C_0003282825241778546884 : -ability_factory
-C_0012849869308180511032 ..> C_0003843296779074973901
-C_0012849869308180511032 ..> C_0017499122254539489506
+C_0002235219345516323367 o-- C_0008193623610420284737 : -abilities
+C_0002235219345516323367 o-- C_0010378818160678026980 : -ability_factory
+C_0012849869308180511032 ..> C_0006255146489372148425
 C_0012849869308180511032 ..> C_0005219465313958275113
 C_0012849869308180511032 ..> C_0006740456236575953687
 C_0017635961848386255115 <|-- C_0012849869308180511032
 
-C_0002469271380474702704 ..> C_0003843296779074973901
-C_0002469271380474702704 ..> C_0017499122254539489506
+C_0002469271380474702704 ..> C_0006255146489372148425
 C_0002469271380474702704 ..> C_0005219465313958275113
 C_0002469271380474702704 ..> C_0006740456236575953687
 C_0017635961848386255115 <|-- C_0002469271380474702704
 
-C_0005147631956111864072 ..> C_0003843296779074973901
-C_0005147631956111864072 ..> C_0017499122254539489506
+C_0005147631956111864072 ..> C_0006255146489372148425
 C_0005147631956111864072 ..> C_0005219465313958275113
 C_0005147631956111864072 ..> C_0006740456236575953687
 C_0017635961848386255115 <|-- C_0005147631956111864072

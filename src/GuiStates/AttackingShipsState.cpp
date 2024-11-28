@@ -210,5 +210,5 @@ void AttackingShipsState::onAttackUse() {
     }
 
     // Second player attacks
-    ai_player.attack(player);
+    ai_player.attackRandom(player);
 };
