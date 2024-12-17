@@ -80,7 +80,7 @@ void AiPlayer::attackRandom(Player &target_player) {
     }
 }
 
-Player &AiPlayer::getPlayer() {
+const Player &AiPlayer::getPlayer() const {
     return controlled_player;
 }
 

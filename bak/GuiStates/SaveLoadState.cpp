@@ -5,11 +5,8 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
-#include <fstream>
 
-#include "GameGui.hpp"
-
-SaveLoadState::SaveLoadState(GameGui& game_gui) : game(game_gui) {
+SaveLoadState::SaveLoadState(Game& game) : game(game) {
     font.loadFromFile("assets/fonts/font.ttf");
 
     instruction_text.setFont(font);
@@ -33,7 +30,7 @@ void SaveLoadState::handleInput(sf::Event& event) {
             saveGameHelper();
         }
         if (event.key.code == sf::Keyboard::Escape) {
-            next_state = game.getPrevState();
+            // next_state = game.getPrevState();
         }
     }
 }
@@ -49,39 +46,24 @@ void SaveLoadState::render(sf::RenderWindow& window) {
     window.display();
 }
 
-GameState SaveLoadState::changeState() {
+GuiStates SaveLoadState::changeState() {
     return next_state;
 }
 
 void SaveLoadState::loadGameHelper() {
-    std::ifstream file("save.txt");
-    if (!file.is_open()) {
-        result_text.setString("Failed to load game");
-        return;
-    }
-
     try {
-        file >> game;
+        game.loadGame();
+        result_text.setString("Game loaded");
     } catch (const std::exception& e) {
-        result_text.setString("Failed to load game");
+        result_text.setString(e.what());
     }
-
-    file.close();
 }
 
 void SaveLoadState::saveGameHelper() {
-    std::ofstream file("save.txt");
-    if (!file.is_open()) {
-        result_text.setString("Failed to save game");
-        return;
-    }
-
     try {
-        file << game;
-        result_text.setString("Game saved successfully");
+        game.saveGame();
+        result_text.setString("Game saved");
     } catch (const std::exception& e) {
-        result_text.setString("Failed to save game");
+        result_text.setString(e.what());
     }
-
-    file.close();
 }

@@ -24,17 +24,17 @@ MenuState::MenuState() : selected_item_index(0) {
     menu_items[selected_item_index].setFillColor(sf::Color::Red);
 }
 
-// void MenuState::handleInput(sf::Event &event) {
-//     if (event.type == sf::Event::KeyPressed) {
-//         if (event.key.code == sf::Keyboard::Up) {
-//             moveUp();
-//         } else if (event.key.code == sf::Keyboard::Down) {
-//             moveDown();
-//         } else if (event.key.code == sf::Keyboard::Enter) {
-//             selectItem();
-//         }
-//     }
-// }
+void MenuState::handleInput(sf::Event &event) {
+    if (event.type == sf::Event::KeyPressed) {
+        if (event.key.code == sf::Keyboard::Up) {
+            moveUp();
+        } else if (event.key.code == sf::Keyboard::Down) {
+            moveDown();
+        } else if (event.key.code == sf::Keyboard::Enter) {
+            selectItem();
+        }
+    }
+}
 
 void MenuState::update() {
     //
@@ -64,14 +64,21 @@ void MenuState::moveDown() {
     }
 }
 
+GuiStates MenuState::changeState() {
+    return next_state;
+}
+
 void MenuState::selectItem() {
     switch (selected_item_index) {
         case 0:
+            next_state = GuiStates::CreateField;
             break;
         case 1:
             // Handle Options
+            next_state = GuiStates::SaveLoadState;
             break;
         case 2:
+            next_state = GuiStates::Exit;
             break;
     }
 }

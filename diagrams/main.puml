@@ -27,9 +27,23 @@ class "std::vector<std::function<std::shared_ptr<Ability>()>>" as C_001037881816
 class C_0010378818160678026980 {
 __
 }
-class "std::unique_ptr<State>" as C_0003593355595461115184
-class C_0003593355595461115184 {
+class "std::vector<int>" as C_0009228492206209329687
+class C_0009228492206209329687 {
 __
+}
+class "std::unique_ptr<RendererState>" as C_0001291546338622865405
+class C_0001291546338622865405 {
+__
+}
+class "std::unordered_map<char,InputCommands>" as C_0014808004694673374516
+class C_0014808004694673374516 {
+__
+}
+enum "AbilityType" as C_0006740456236575953687
+enum C_0006740456236575953687 {
+DoubleDamage
+Scanner
+Bombard
 }
 enum "ShipSegmentState" as C_0014256742677139282670
 enum C_0014256742677139282670 {
@@ -47,6 +61,17 @@ enum C_0003333043679234439357 {
 UNKNOWN
 BLANK
 SHIP
+}
+enum "Stage" as C_0001935036015363084261
+enum C_0001935036015363084261 {
+NOT_STARTED
+CREATING_FIELD
+CREATING_SHIPS
+PLACING_SHIPS
+PLAYER_TURN
+AI_TURN
+GAME_OVER
+EXIT
 }
 class "Ship" as C_0014529657433315016423
 class C_0014529657433315016423 {
@@ -149,12 +174,6 @@ __
 +x : int
 +y : int
 }
-enum "AbilityType" as C_0006740456236575953687
-enum C_0006740456236575953687 {
-DoubleDamage
-Scanner
-Bombard
-}
 abstract "Ability" as C_0017635961848386255115
 abstract C_0017635961848386255115 {
 +~Ability() constexpr = default : void
@@ -182,7 +201,7 @@ class C_0003605716991605700936 {
 +attack(Player & target_player, int x, int y, int damage, bool expose_cell = true) : void
 +createField(int width, int height) : void
 +createShipManager(size_t count, size_t * lengths) : void
-+getAbilityResults() : AbilityResults
++getAbilityResults() const : AbilityResults
 +getAliveCount() const : size_t
 +getField() const : const ShipField &
 +getPendingAbilityType() const : AbilityType
@@ -205,60 +224,143 @@ class C_0005644868336032600742 {
 +attackRandom(Player & targetPlayer) : void
 +createField(int width, int height) : void
 +createShipManager(size_t count, size_t * lengths) : void
-+getPlayer() : Player &
++getPlayer() const : const Player &
 +placeShipsRandom() : void
 +reset() : void
 __
 -controlled_player : Player &
 }
-enum "GameState" as C_0004356735495323104445
-enum C_0004356735495323104445 {
-Menu
+class "GameState" as C_0004356735495323104445
+class C_0004356735495323104445 {
++GameState() : void
+..
++getAiController() : AiPlayer &
++getCurrentStage() : Stage &
++getPlayer() : Player &
++getPlayer2() : Player &
++loadGame() : void
++saveGame() : void
+__
+-ai_controller : AiPlayer
+-current_stage : Stage
+-player : Player
+-player2 : Player
+}
+class "Game" as C_0017470460303031448044
+class C_0017470460303031448044 {
++Game() : void
+..
++attack(int x, int y) : void
++createField(int width, int height) : void
++createShips(size_t count, size_t * lengths) : void
++getAiController() : const AiPlayer &
++getCurrentStage() const : Stage
++getPendingAbilityType() const : AbilityType
++getPlayer() : const Player &
++getPlayer2() : const Player &
++initAiPlayer() : void
++loadGame() : void
++nextStage() : void
++placeShip(int x, int y, ShipOrientation orientation) : void
++placeShipByIndex(size_t index, int x, int y, ShipOrientation orientation) : void
++resetGame() : void
++resetPlayer(const Player & player) : void
++saveGame() : void
++useAbility(int x, int y) : void
+__
+-ai_controller : AiPlayer &
+-current_ship_index : int
+-current_stage : Stage &
+-game_state : GameState
+-player : Player &
+-player2 : Player &
+}
+enum "InputCommands" as C_0015616200877727441448
+enum C_0015616200877727441448 {
+Invalid
 CreateField
 CreateShips
-PlacingShips
-AttackingShips
-SaveLoadState
+PlaceShip
+InitAiPlayer
+Attack
+UseAbility
+ResetGame
+SaveGame
+LoadGame
 Exit
 }
-abstract "State" as C_0001914138303902600425
-abstract C_0001914138303902600425 {
-+~State() constexpr = default : void
+class "InputCommand" as C_0010946465140106035203
+class C_0010946465140106035203 {
+__
++arguments : std::vector<int>
++command : InputCommands
+}
+class "GameController<InputHandler>" as C_0003345951617376883214
+class C_0003345951617376883214 {
++GameController(Game & game, InputHandler & inputHandler) : void
 ..
-{abstract} +changeState() = 0 : GameState
-{abstract} +handleInput(sf::Event & event) = 0 : void
+-executeCommand(InputCommand & command) : void
++processInput() : void
+__
+-game_ : Game &
+-inputHandler_ : InputHandler &
+}
+abstract "RendererState" as C_0007936739686845891522
+abstract C_0007936739686845891522 {
++~RendererState() constexpr = default : void
+..
 {abstract} +render(sf::RenderWindow & window) = 0 : void
 {abstract} +update() = 0 : void
 __
 }
 class "GameGui" as C_0007395642151187698177
 class C_0007395642151187698177 {
-+GameGui() : void
++GameGui(Game & game) : void
 ..
--changeState(GameState new_state) : void
-+getCurrentState() const : GameState
-+getPrevState() const : GameState
+-changeState() : void
 +mainLoop() : void
 -pollEvents() : void
--render() : void
++render() : void
 +run() : void
 -update() : void
 __
--ai_controller : AiPlayer
--current_state : GameState
 -event : sf::Event
--player : Player
--player2 : Player
--prev_state : GameState
--state : std::unique_ptr<State>
+-game : Game &
+-state : std::unique_ptr<RendererState>
 -window : sf::RenderWindow
+}
+class "GameRenderer<Renderer>" as C_0004798759085349793178
+class C_0004798759085349793178 {
++GameRenderer(Renderer & renderer) : void
+..
++onGameStateChanged() : void
++render() : void
+__
+-renderer : Renderer &
+}
+class "TerminalInput" as C_0001203133041956536381
+class C_0001203133041956536381 {
++TerminalInput() : void
+..
++getCommand() : InputCommand &
+-initField() : void
+-initShips() : void
++loadCommandsMapping() : void
+-placeShip() : void
++processInput() : void
++scanArguments() : void
++scanCommand() : void
+__
+-command : InputCommand
+-command_map : std::unordered_map<char,InputCommands>
 }
 C_0010668212532447068380 ..> C_0014529657433315016423
 C_0012342435662910727844 ..> C_0017635961848386255115
 C_0008193623610420284737 ..> C_0012342435662910727844
 C_0014703876471129105020 ..> C_0012342435662910727844
 C_0010378818160678026980 ..> C_0014703876471129105020
-C_0003593355595461115184 ..> C_0001914138303902600425
+C_0001291546338622865405 ..> C_0007936739686845891522
+C_0014808004694673374516 ..> C_0015616200877727441448
 C_0014529657433315016423 ..> C_0014256742677139282670
 C_0014529657433315016423 --> C_0000674658759292391449 : -segments
 C_0000674658759292391449 --+ C_0014529657433315016423
@@ -296,13 +398,25 @@ C_0003605716991605700936 o-- C_0003843296779074973901 : -field
 C_0003605716991605700936 o-- C_0002235219345516323367 : -ability_manager
 C_0003605716991605700936 o-- C_0005219465313958275113 : -ability_results
 C_0005644868336032600742 --> C_0003605716991605700936 : -controlled_player
-C_0001914138303902600425 ..> C_0004356735495323104445
-C_0007395642151187698177 o-- C_0003605716991605700936 : -player
-C_0007395642151187698177 o-- C_0003605716991605700936 : -player2
-C_0007395642151187698177 o-- C_0005644868336032600742 : -ai_controller
-C_0007395642151187698177 o-- C_0004356735495323104445 : -current_state
-C_0007395642151187698177 o-- C_0004356735495323104445 : -prev_state
-C_0007395642151187698177 o-- C_0003593355595461115184 : -state
+C_0004356735495323104445 o-- C_0003605716991605700936 : -player
+C_0004356735495323104445 o-- C_0003605716991605700936 : -player2
+C_0004356735495323104445 o-- C_0005644868336032600742 : -ai_controller
+C_0004356735495323104445 o-- C_0001935036015363084261 : -current_stage
+C_0017470460303031448044 ..> C_0002579181642537833876
+C_0017470460303031448044 ..> C_0006740456236575953687
+C_0017470460303031448044 o-- C_0004356735495323104445 : -game_state
+C_0017470460303031448044 --> C_0003605716991605700936 : -player
+C_0017470460303031448044 --> C_0003605716991605700936 : -player2
+C_0017470460303031448044 --> C_0005644868336032600742 : -ai_controller
+C_0017470460303031448044 --> C_0001935036015363084261 : -current_stage
+C_0010946465140106035203 o-- C_0015616200877727441448 : +command
+C_0010946465140106035203 o-- C_0009228492206209329687 : +arguments
+C_0003345951617376883214 ..> C_0010946465140106035203
+C_0003345951617376883214 --> C_0017470460303031448044 : -game_
+C_0007395642151187698177 --> C_0017470460303031448044 : -game
+C_0007395642151187698177 o-- C_0001291546338622865405 : -state
+C_0001203133041956536381 o-- C_0014808004694673374516 : -command_map
+C_0001203133041956536381 o-- C_0010946465140106035203 : -command
 
 'Generated with clang-uml, version 0.5.5
 'LLVM version clang version 18.1.8

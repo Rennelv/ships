@@ -18,4 +18,15 @@ enum class CellVisibilityState {
     SHIP,
 };
 
+enum class Stage {
+    NOT_STARTED,
+    CREATING_FIELD,
+    CREATING_SHIPS,
+    PLACING_SHIPS,
+    PLAYER_TURN,
+    AI_TURN,
+    GAME_OVER,
+    EXIT,
+};
+
 #endif  // ENUMS_HPP

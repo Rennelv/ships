@@ -34,12 +34,14 @@ class Player {
     size_t getAliveCount() const;
     AbilityType getPendingAbilityType() const;
 
-    AbilityResults getAbilityResults();
+    AbilityResults getAbilityResults() const ;
 
     const ShipField& getField() const;
 
     friend std::ostream& operator<<(std::ostream& os, const Player& player);
     friend std::istream& operator>>(std::istream& is, Player& player);
+
+    void reset();
 };
 
 #endif  // PLAYER_HPP

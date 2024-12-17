@@ -13,7 +13,7 @@ class AiPlayer {
     void createShipManager(size_t count, size_t *lengths);
     void placeShipsRandom();
     void attackRandom(Player &targetPlayer);
-    Player &getPlayer();
+    const Player &getPlayer() const;
     void reset();
 };
 

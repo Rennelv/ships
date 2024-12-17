@@ -1,34 +1,51 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
+#include "Abilities/AbilityType.hpp"
 #include "AiPlayer.hpp"
+#include "Enums.hpp"
+#include "GameState.hpp"
 #include "Player.hpp"
 
 class Game {
-    Player player;
-    Player player2;
-    AiPlayer ai_controller;
+    GameState game_state;
+
+    Player& player;
+    Player& player2;
+    AiPlayer& ai_controller;
+    Stage& current_stage;
+
+    int current_ship_index;
 
    public:
     Game();
+    void exit();
     // init game
-    void createField(Player& player, int width, int height);
-    void createShips(Player& player, size_t count, size_t* lengths);
-    void createShips(AiPlayer& player, size_t count, size_t* lengths);
-    void placeShip(Player& player, size_t index, int x, int y, ShipOrientation orientation);
-    void placeShips(AiPlayer& player);
+    void createField(int width, int height);
+    void createShips(size_t count, size_t* lengths);
+    void placeShipByIndex(size_t index, int x, int y, ShipOrientation orientation);
+    void placeShip(int x, int y, ShipOrientation orientation);
+    void initAiPlayer();
+
+    void nextStage();
+
     // game actions
-    void attack(Player& player, Player& target_player, int x, int y);
-    void attack(AiPlayer& player, Player& target_player);
-    void useAbility(Player& player, Player& target_player, int x, int y);
+    void attack(int x, int y);
+    void useAbility(int x, int y);
     void saveGame();
     void loadGame();
+
     // ???
-    void resetPlayer(Player& player);
     void resetGame();
+    void checkWin();
+
     // getters
-    Player& getPlayer();
-    AiPlayer& getAiController();
+    const Player& getPlayer() const;
+    const Player& getPlayer2() const;
+    const AiPlayer& getAiController() const;
+    AbilityType getPendingAbilityType() const;
+    Stage getCurrentStage() const;
+
 };
 
 #endif  // GAME_HPP

@@ -39,7 +39,7 @@ size_t Player::getAliveCount() const {
     return ship_manager.getAliveCount();
 }
 
-AbilityResults Player::getAbilityResults() {
+AbilityResults Player::getAbilityResults() const {
     return ability_results;
 }
 
@@ -94,4 +94,17 @@ std::istream& operator>>(std::istream& is, Player& player) {
         throw std::invalid_argument("Invalid save file");
     }
     return is;
+}
+
+void Player::reset() {
+    size_t old_width = field.getWidth();
+    size_t old_height = field.getHeight();
+    createField(old_width, old_height);
+
+    std::vector<size_t> old_lengths;
+    for (size_t i = 0; i < getShipCount(); ++i) {
+        old_lengths.push_back(getShipLength(i));
+    }
+
+    createShipManager(old_lengths.size(), old_lengths.data());
 }

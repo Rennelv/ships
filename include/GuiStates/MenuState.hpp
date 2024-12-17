@@ -7,9 +7,7 @@
 
 #include "GuiStates/State.hpp"
 
-class MenuState : public State {
-    GameState next_state = GameState::Menu;
-
+class MenuState : public RendererState {
     std::vector<sf::Text> menu_items;
     size_t selected_item_index;
     sf::Font font;
@@ -20,10 +18,8 @@ class MenuState : public State {
 
    public:
     MenuState();
-    void handleInput(sf::Event &event) override;
     void update() override;
     void render(sf::RenderWindow &window) override;
-    GameState changeState() override;
 };
 
 #endif  // MENUSTATE_HPP
