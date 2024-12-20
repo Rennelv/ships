@@ -1,10 +1,4 @@
 @startuml
-enum "AbilityType" as C_0006740456236575953687
-enum C_0006740456236575953687 {
-DoubleDamage
-Scanner
-Bombard
-}
 class "std::vector<Ship>" as C_0010668212532447068380
 class C_0010668212532447068380 {
 __
@@ -32,6 +26,12 @@ __
 class "std::vector<std::function<std::shared_ptr<Ability>()>>" as C_0010378818160678026980
 class C_0010378818160678026980 {
 __
+}
+enum "AbilityType" as C_0006740456236575953687
+enum C_0006740456236575953687 {
+DoubleDamage
+Scanner
+Bombard
 }
 enum "ShipSegmentState" as C_0014256742677139282670
 enum C_0014256742677139282670 {
@@ -197,6 +197,7 @@ class C_0003605716991605700936 {
 +getShipLength(size_t index) const : size_t
 +placeShip(Ship & ship, int x, int y, ShipOrientation orientation) : void
 +placeShipByIndex(int index, int x, int y, ShipOrientation orientation) : void
++reset() : void
 +useAbility(Player & target_player, int x, int y) : void
 __
 -ability_manager : AbilityManager
@@ -239,25 +240,27 @@ class C_0017470460303031448044 {
 +Game() : void
 ..
 +attack(int x, int y) : void
++checkWin() : void
 +createField(int width, int height) : void
 +createShips(size_t count, size_t * lengths) : void
-+getAiController() : const AiPlayer &
++exit() : void
++getAiController() const : const AiPlayer &
++getCurrShipIndex() const : size_t
 +getCurrentStage() const : Stage
 +getPendingAbilityType() const : AbilityType
-+getPlayer() : const Player &
-+getPlayer2() : const Player &
++getPlayer() const : const Player &
++getPlayer2() const : const Player &
 +initAiPlayer() : void
 +loadGame() : void
 +nextStage() : void
 +placeShip(int x, int y, ShipOrientation orientation) : void
-+placeShipByIndex(size_t index, int x, int y, ShipOrientation orientation) : void
+-placeShipByIndex(size_t index, int x, int y, ShipOrientation orientation) : void
 +resetGame() : void
-+resetPlayer(const Player & player) : void
 +saveGame() : void
 +useAbility(int x, int y) : void
 __
 -ai_controller : AiPlayer &
--current_ship_index : int
+-current_ship_index : size_t
 -current_stage : Stage &
 -game_state : GameState
 -player : Player &

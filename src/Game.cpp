@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include <cstddef>
 
 #include "Abilities/AbilityType.hpp"
 #include "GameState.hpp"
@@ -38,7 +39,7 @@ void Game::placeShip(int x, int y, ShipOrientation orientation) {
     if (current_stage == Stage::PLACING_SHIPS) {
         placeShipByIndex(current_ship_index, x, y, orientation);
         current_ship_index++;
-        if (static_cast<int>(player.getShipCount()) == current_ship_index) {
+        if (player.getShipCount() == current_ship_index) {
             initAiPlayer();
             nextStage();
         }
@@ -147,12 +148,18 @@ void Game::exit() {
 }
 
 void Game::checkWin() {
-    if (player2.getShipCount() == 0) {
-        player2.reset();
-        ai_controller.placeShipsRandom();
+    if (current_stage == Stage::PLAYER_TURN || current_stage == Stage::AI_TURN) {
+        if (player2.getAliveCount() == 0) {
+            player2.reset();
+            ai_controller.placeShipsRandom();
+        }
+        if (player.getAliveCount() == 0) {
+            current_stage = Stage::NOT_STARTED;
+            nextStage();
+        }
     }
-    if (player.getShipCount() == 0) {
-        current_stage = Stage::NOT_STARTED;
-        nextStage();
-    }
+}
+
+size_t Game::getCurrShipIndex() const {
+    return current_ship_index;
 }

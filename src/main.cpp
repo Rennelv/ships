@@ -1,28 +1,29 @@
-#include "GameController.hpp"
-#include "GameGui.hpp"
 #include "Enums.hpp"
 #include "Game.hpp"
+#include "GameController.hpp"
+#include "GameGui.hpp"
 #include "GameRenderer.hpp"
-#include "TerminalInput.hpp"
+#include "Input.hpp"
 
 int main() {
-    // Game game;
-    // GameGui gui(game);
-    // gui.run();
-
-
     Game game;
 
-    TerminalInput input;
-    GameController<TerminalInput> controller(game, input);
+    GameController<StreamInput> controller(game);
 
-    GameGui gui(game);
-    GameRenderer<GameGui> renderer(gui);
-    
+    GameRenderer<Gui> renderer(game);
+
     game.nextStage();
+    renderer.render();
+
     while (game.getCurrentStage() != Stage::EXIT) {
+        try{
+            controller.processInput();
+        } catch (const std::exception& e) {
+            renderer.printErr(e.what());
+        }
+        // controller.processInput();
         renderer.render();
-        controller.processInput();
     }
+
     return 0;
 }

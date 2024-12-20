@@ -1,6 +1,7 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
+#include <cstddef>
 #include "Abilities/AbilityType.hpp"
 #include "AiPlayer.hpp"
 #include "Enums.hpp"
@@ -15,7 +16,8 @@ class Game {
     AiPlayer& ai_controller;
     Stage& current_stage;
 
-    int current_ship_index;
+    size_t current_ship_index;
+    void placeShipByIndex(size_t index, int x, int y, ShipOrientation orientation);
 
    public:
     Game();
@@ -23,8 +25,8 @@ class Game {
     // init game
     void createField(int width, int height);
     void createShips(size_t count, size_t* lengths);
-    void placeShipByIndex(size_t index, int x, int y, ShipOrientation orientation);
     void placeShip(int x, int y, ShipOrientation orientation);
+    size_t getCurrShipIndex() const;
     void initAiPlayer();
 
     void nextStage();

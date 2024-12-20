@@ -1,10 +1,12 @@
 #ifndef GAMERENDERER_HPP
 #define GAMERENDERER_HPP
 
+#include <string>
+#include "Game.hpp"
 template <typename Renderer>
 class GameRenderer {
    public:
-    GameRenderer(Renderer& renderer) : renderer(renderer) {
+    GameRenderer(Game& game) : renderer(game) {
     }
 
     void render() {
@@ -12,12 +14,12 @@ class GameRenderer {
         renderer.render();
     }
 
-    void onGameStateChanged() {
-        render();
+    void printErr(std::string msg) {
+        renderer.printErr(msg);
     }
 
    private:
-    Renderer& renderer;
+    Renderer renderer;
 };
 
 #endif  // GAMERENDERER_HPP

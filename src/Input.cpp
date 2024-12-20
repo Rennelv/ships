@@ -1,4 +1,4 @@
-#include "TerminalInput.hpp"
+#include "Input.hpp"
 
 #include <fstream>
 #include <iostream>
@@ -10,7 +10,7 @@
 #include "InputCommands.hpp"
 
 // TerminalInput::TerminalInput(const Stage& current_stage) : current_stage(current_stage) {
-TerminalInput::TerminalInput() {
+StreamInput::StreamInput(std::istream& input_stream): input_stream(input_stream) {
     try {
         loadCommandsMapping();
     } catch (const std::exception& e) {
@@ -23,68 +23,50 @@ TerminalInput::TerminalInput() {
     }
 }
 
-void TerminalInput::initField() {
-    std::cout << "Enter field size (x y): ";
-    command.command = InputCommands::CreateField;
-    scanArguments();
-}
-
-void TerminalInput::initShips() {
-    std::cout << "Enter number of ships of each length (1-4): ";
-    command.command = InputCommands::CreateShips;
-    scanArguments();
-}
-
-void TerminalInput::placeShip() {
-    std::cout << "Enter ship index, x, y, orientation: ";
-    command.command = InputCommands::PlaceShip;
-    scanArguments();
-}
-
-const InputCommand& TerminalInput::getCommand() const {
+const InputCommand& StreamInput::getCommand() const {
     return command;
 }
 
-void TerminalInput::processInput() {
-    scanCommand();
-    scanArguments();
-}
+void StreamInput::processInput() {
+    // scanCommand();
+    // scanArguments();
 
-void TerminalInput::scanCommand() {
-    char command_char = std::getchar();
-    while (isspace(command_char)) {
-        command_char = std::getchar();
-    }
-    if (command_char == EOF) {
+    command.command = InputCommands::Invalid;
+    command.arguments = {};
+
+    char command_char;
+    input_stream >> command_char;
+    if (input_stream.fail()) {
         command.command = InputCommands::Invalid;
+        input_stream.clear();
+        input_stream.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         return;
     }
+
     if (command_map.find(command_char) == command_map.end()) {
         command.command = InputCommands::Invalid;
         return;
     }
     command.command = command_map.at(command_char);
-}
 
-void TerminalInput::scanArguments() {
     switch (command.command) {
         case InputCommands::CreateField:
         case InputCommands::Attack:
         case InputCommands::UseAbility: {
             int x, y;
-            std::cin >> x >> y;
+            input_stream >> x >> y;
             command.arguments = {x, y};
             break;
         }
         case InputCommands::CreateShips: {
             int arg1, arg2, arg3, arg4;
-            std::cin >> arg1 >> arg2 >> arg3 >> arg4;
+            input_stream >> arg1 >> arg2 >> arg3 >> arg4;
             command.arguments = {arg1, arg2, arg3, arg4};
             break;
         }
         case InputCommands::PlaceShip: {
             int arg1, arg2, arg3;
-            std::cin >> arg1 >> arg2 >> arg3;
+            input_stream >> arg1 >> arg2 >> arg3;
             command.arguments = {arg1, arg2, arg3};
             break;
         }
@@ -92,14 +74,11 @@ void TerminalInput::scanArguments() {
             command.arguments = {};
             break;
     }
-    if (std::cin.fail()) {
-        command.command = InputCommands::Invalid;
-        std::cin.clear();
-        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    }
+
 }
 
-void TerminalInput::loadCommandsMapping() {
+
+void StreamInput::loadCommandsMapping() {
     std::ifstream file("commands_mapping.txt");
     if (!file.is_open()) {
         throw std::runtime_error("Failed to open commands_mapping.txt");

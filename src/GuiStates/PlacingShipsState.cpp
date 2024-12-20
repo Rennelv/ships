@@ -1,14 +1,15 @@
 #include "GuiStates/PlacingShipsState.hpp"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 
 #include "Player.hpp"
 
-PlacingShipsState::PlacingShipsState(const Player& player)
+PlacingShipsState::PlacingShipsState(const Game& game)
     // : current_ship_index(0), orientation(ShipOrientation::VERTICAL), player(player), player2(player2) {
-    : player(player) {
-    draw_offset = {10, 70};
+    : game(game) {
+    draw_offset = {30, 70};
     cell_size = {20, 20};
 
     // current_x = 0;
@@ -19,7 +20,7 @@ PlacingShipsState::PlacingShipsState(const Player& player)
     instruction_text.setCharacterSize(24);
     instruction_text.setFillColor(sf::Color::White);
     instruction_text.setPosition(10, 10);
-    instruction_text.setString("Use arrow keys to move, R to rotate, Enter to place ship");
+    instruction_text.setString("PLACING SHIPS");
 
     result_text.setFont(font);
     result_text.setCharacterSize(24);
@@ -83,15 +84,23 @@ void PlacingShipsState::update() {
 void PlacingShipsState::render(sf::RenderWindow& window) {
     window.clear();
     window.draw(instruction_text);
-    window.draw(result_text);
+    if (err) {
+        window.draw(result_text);
+        err = false;
+    } else {
+        result_text.setString("");
+    }
 
     // Draw the field
     drawField(window);
 
-    // // Draw the current ship
-    // if (current_ship_index < player.getShipCount()) {
-    //     window.draw(ship_representation);
-    // }
+    // Draw the current ship
+    if (game.getCurrShipIndex() < game.getPlayer().getShipCount()) {
+        size_t ship_length = game.getPlayer().getShipLength(game.getCurrShipIndex());
+        ship_representation.setSize(sf::Vector2f(cell_size.x, ship_length * cell_size.y));
+        ship_representation.setPosition(draw_offset.x - 1 * cell_size.x, draw_offset.y + 0 * cell_size.y);
+        window.draw(ship_representation);
+    }
 
     window.display();
 }
@@ -100,10 +109,10 @@ void PlacingShipsState::drawField(sf::RenderWindow& window) {
     sf::RectangleShape cell_shape(cell_size);
     cell_shape.setOutlineColor(sf::Color::White);
     cell_shape.setOutlineThickness(1);
-    for (size_t y = 0; y < player.getField().getHeight(); y++) {
-        for (size_t x = 0; x < player.getField().getWidth(); x++) {
+    for (size_t y = 0; y < game.getPlayer().getField().getHeight(); y++) {
+        for (size_t x = 0; x < game.getPlayer().getField().getWidth(); x++) {
             cell_shape.setPosition(draw_offset.x + x * cell_size.x, draw_offset.y + y * cell_size.y);
-            cell_shape.setFillColor(player.getField().getIsShip(x, y) ? sf::Color::Red : sf::Color::Green);
+            cell_shape.setFillColor(game.getPlayer().getField().getIsShip(x, y) ? sf::Color::Red : sf::Color::Green);
             window.draw(cell_shape);
         }
     }
@@ -121,3 +130,9 @@ void PlacingShipsState::drawField(sf::RenderWindow& window) {
 //         player2.placeShipsRandom();              // Place ships for the AI player before changing the state
 //     }
 // }
+
+void PlacingShipsState::printErr(std::string msg) {
+    result_text.setString(msg);
+    result_text.setFillColor(sf::Color::Red);
+    err = true;
+}

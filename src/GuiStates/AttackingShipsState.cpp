@@ -7,11 +7,11 @@
 #include "Enums.hpp"
 #include "Player.hpp"
 
-AttackingShipsState::AttackingShipsState(const Player &player, const Player &player2) : player(player), player2(player2) {
+AttackingShipsState::AttackingShipsState(const Game &game) : game(game) {
     current_x = 0;
     current_y = 0;
-    draw_offset = {10, 70};
-    draw_offset2 = {400, 70};
+    draw_offset = {10, 150};
+    draw_offset2 = {400, 150};
     cell_size = {20, 20};
 
     font.loadFromFile("assets/fonts/font.ttf");
@@ -74,14 +74,14 @@ AttackingShipsState::AttackingShipsState(const Player &player, const Player &pla
 // }
 
 void AttackingShipsState::update() {
-    selection_box.setPosition(draw_offset2.x + current_x * 20, draw_offset2.y + current_y * 20);
-    if (player.scanner_is_active) {
-        selection_box.setSize(cell_size * 2.f);
-        selection_box.setOutlineColor(sf::Color::Green);
-    } else {
-        selection_box.setSize(cell_size);
-        selection_box.setOutlineColor(sf::Color::Yellow);
-    }
+    // selection_box.setPosition(draw_offset2.x + current_x * 20, draw_offset2.y + current_y * 20);
+    // if (game.getPlayer().scanner_is_active) {
+    //     selection_box.setSize(cell_size * 2.f);
+    //     selection_box.setOutlineColor(sf::Color::Green);
+    // } else {
+    //     selection_box.setSize(cell_size);
+    //     selection_box.setOutlineColor(sf::Color::Yellow);
+    // }
 
     // if (ai_player.getPlayer().getAliveCount() == 0) {
     //     ai_player.reset();
@@ -94,31 +94,36 @@ void AttackingShipsState::update() {
 
 void AttackingShipsState::render(sf::RenderWindow &window) {
     window.clear();
-    std::string ability = "";
-    try {
-        switch (player.getPendingAbilityType()) {
-            case AbilityType::DoubleDamage:
-                ability = "Double Damage";
-                break;
-            case AbilityType::Scanner:
-                ability = "Scanner";
-                break;
-            case AbilityType::Bombard:
-                ability = "Bombard";
-                break;
-        }
-    } catch (const std::exception &e) {
-        ability = "No abilities available";
+    // std::string ability = "";
+    // try {
+    //     switch (game.getPlayer().getPendingAbilityType()) {
+    //         case AbilityType::DoubleDamage:
+    //             ability = "Double Damage";
+    //             break;
+    //         case AbilityType::Scanner:
+    //             ability = "Scanner";
+    //             break;
+    //         case AbilityType::Bombard:
+    //             ability = "Bombard";
+    //             break;
+    //     }
+    // } catch (const std::exception &e) {
+    //     ability = "No abilities available";
+    // }
+
+    if (err) {
+        err = false;
+    } else {
+        result_text.setString("Ship found bool? " + std::to_string(game.getPlayer().getAbilityResults().ScannerShipFound) + "\nDouble Damage bool? " +
+                              std::to_string(game.getPlayer().getAbilityResults().DoubleDamageIsActive));
     }
-    instruction_text.setString(ability);
-    result_text.setString("Ship found? " + std::to_string(player.getAbilityResults().ScannerShipFound));
+    // instruction_text.setString(ability);
     window.draw(instruction_text);
     window.draw(result_text);
-
     // Draw the field
-    drawField(window, player, draw_offset, true);
+    drawField(window, game.getPlayer(), draw_offset, true);
 
-    drawField(window, player2, draw_offset2);
+    drawField(window, game.getPlayer2(), draw_offset2);
 
     // Draw the selection box
     // window.draw(selection_box);
@@ -166,6 +171,11 @@ void AttackingShipsState::drawField(sf::RenderWindow &window, const Player &play
             window.draw(cell_shape);
         }
     }
+}
+
+void AttackingShipsState::printErr(std::string msg) {
+    result_text.setString(msg);
+    err = true;
 }
 
 // void AttackingShipsState::onAbilityUse() {

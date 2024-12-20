@@ -75,3 +75,7 @@ void MenuState::selectItem() {
             break;
     }
 }
+
+void MenuState::printErr(std::string) {
+    //
+}

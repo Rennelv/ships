@@ -3,8 +3,8 @@
 
 #include <SFML/Graphics/Text.hpp>
 
+#include "Game.hpp"
 #include "GuiStates/State.hpp"
-#include "Player.hpp"
 
 struct InputBox {
     sf::RectangleShape box;
@@ -12,7 +12,7 @@ struct InputBox {
 };
 
 class CreateShipState : public RendererState {
-    const Player& player;
+    const Game& game;
 
     InputBox input_boxes[4];
     int active_box_index;
@@ -25,10 +25,14 @@ class CreateShipState : public RendererState {
 
     // void createShips();
 
+    bool err;
+
+
    public:
-    CreateShipState(const Player& player);
+    CreateShipState(const Game& game);
     void update() override;
     void render(sf::RenderWindow& window) override;
+    void printErr(std::string msg) override;
 };
 
 #endif  // CREATESHIPSTATE_HPP

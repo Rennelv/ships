@@ -4,7 +4,9 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
+#include <string>
 
+#include "Game.hpp"
 #include "GuiStates/State.hpp"
 #include "Player.hpp"
 
@@ -12,8 +14,7 @@ class AttackingShipsState : public RendererState {
     size_t current_x;
     size_t current_y;
 
-    const Player &player;
-    const Player &player2;
+    const Game &game;
 
     sf::Font font;
     sf::Text instruction_text;
@@ -27,10 +28,13 @@ class AttackingShipsState : public RendererState {
     // void onAbilityUse();
     // void onAttackUse();
 
+    bool err;
+
    public:
-    AttackingShipsState(const Player &player, const Player &player2);
+    AttackingShipsState(const Game &game);
     void update() override;
     void render(sf::RenderWindow &window) override;
+    void printErr(std::string msg) override;
 };
 
 #endif  // ATTACKINGSHIPSTATE_HPP

@@ -7,8 +7,8 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include "Game.hpp"
 #include "GuiStates/State.hpp"
-#include "Player.hpp"
 
 class PlacingShipsState : public RendererState {
     // size_t current_x;
@@ -16,7 +16,7 @@ class PlacingShipsState : public RendererState {
     // size_t current_ship_index;
     // ShipOrientation orientation = ShipOrientation::VERTICAL;
 
-    const Player& player;
+    const Game& game;
 
     sf::Font font;
     sf::Text instruction_text;
@@ -28,10 +28,14 @@ class PlacingShipsState : public RendererState {
     void drawField(sf::RenderWindow& window);
     // void placeShipHelper();
 
+    bool err;
+
+
    public:
-    PlacingShipsState(const Player& player);
+    PlacingShipsState(const Game& game);
     void update() override;
     void render(sf::RenderWindow& window) override;
+    void printErr(std::string msg) override;
 };
 
 #endif  // PLACINGSHIPSTATE_HPP

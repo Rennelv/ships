@@ -4,11 +4,11 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/Event.hpp>
 
+#include "Game.hpp"
 #include "GuiStates/State.hpp"
-#include "Player.hpp"
 
 class CreateFieldState : public RendererState {
-    const Player &player;
+    const Game& game;
 
     int field_width;
     int field_height;
@@ -18,12 +18,16 @@ class CreateFieldState : public RendererState {
     sf::Vector2f draw_offset;
     sf::Vector2f cell_size;
 
-    void drawField(sf::RenderWindow &window);
+    void drawField(sf::RenderWindow& window);
+
+    bool err;
+
 
    public:
-    CreateFieldState(const Player &player);
+    CreateFieldState(const Game& game);
     void update() override;
-    void render(sf::RenderWindow &window) override;
+    void render(sf::RenderWindow& window) override;
+    void printErr(std::string msg) override;
 };
 
 #endif  // CREATEFIELDSTATE_HPP

@@ -209,6 +209,7 @@ class C_0003605716991605700936 {
 +getShipLength(size_t index) const : size_t
 +placeShip(Ship & ship, int x, int y, ShipOrientation orientation) : void
 +placeShipByIndex(int index, int x, int y, ShipOrientation orientation) : void
++reset() : void
 +useAbility(Player & target_player, int x, int y) : void
 __
 -ability_manager : AbilityManager
@@ -251,25 +252,27 @@ class C_0017470460303031448044 {
 +Game() : void
 ..
 +attack(int x, int y) : void
++checkWin() : void
 +createField(int width, int height) : void
 +createShips(size_t count, size_t * lengths) : void
-+getAiController() : const AiPlayer &
++exit() : void
++getAiController() const : const AiPlayer &
++getCurrShipIndex() const : size_t
 +getCurrentStage() const : Stage
 +getPendingAbilityType() const : AbilityType
-+getPlayer() : const Player &
-+getPlayer2() : const Player &
++getPlayer() const : const Player &
++getPlayer2() const : const Player &
 +initAiPlayer() : void
 +loadGame() : void
 +nextStage() : void
 +placeShip(int x, int y, ShipOrientation orientation) : void
-+placeShipByIndex(size_t index, int x, int y, ShipOrientation orientation) : void
+-placeShipByIndex(size_t index, int x, int y, ShipOrientation orientation) : void
 +resetGame() : void
-+resetPlayer(const Player & player) : void
 +saveGame() : void
 +useAbility(int x, int y) : void
 __
 -ai_controller : AiPlayer &
--current_ship_index : int
+-current_ship_index : size_t
 -current_stage : Stage &
 -game_state : GameState
 -player : Player &
@@ -283,25 +286,23 @@ abstract C_0007936739686845891522 {
 {abstract} +update() = 0 : void
 __
 }
-class "GameGui" as C_0007395642151187698177
-class C_0007395642151187698177 {
-+GameGui(Game & game) : void
+class "Gui" as C_0002504077655750104390
+class C_0002504077655750104390 {
++Gui(const Game & game) : void
 ..
 -changeState() : void
-+mainLoop() : void
 -pollEvents() : void
 +render() : void
-+run() : void
 -update() : void
 __
 -event : sf::Event
--game : Game &
+-game : const Game &
 -state : std::unique_ptr<RendererState>
 -window : sf::RenderWindow
 }
 class "AttackingShipsState" as C_0009763532900440017346
 class C_0009763532900440017346 {
-+AttackingShipsState(const Player & player, const Player & player2) : void
++AttackingShipsState(const Game & game) : void
 ..
 -drawField(sf::RenderWindow & window, const Player & player, sf::Vector2f draw_offset, bool show_ships = false) : void
 +render(sf::RenderWindow & window) : void
@@ -313,15 +314,14 @@ __
 -draw_offset : sf::Vector2f
 -draw_offset2 : sf::Vector2f
 -font : sf::Font
+-game : const Game &
 -instruction_text : sf::Text
--player : const Player &
--player2 : const Player &
 -result_text : sf::Text
 -selection_box : sf::RectangleShape
 }
 class "CreateFieldState" as C_0003925512848679538817
 class C_0003925512848679538817 {
-+CreateFieldState(const Player & player) : void
++CreateFieldState(const Game & game) : void
 ..
 -drawField(sf::RenderWindow & window) : void
 +render(sf::RenderWindow & window) : void
@@ -333,7 +333,7 @@ __
 -field_size_text : sf::Text
 -field_width : int
 -font : sf::Font
--player : const Player &
+-game : const Game &
 }
 class "InputBox" as C_0006905555226801011843
 class C_0006905555226801011843 {
@@ -343,7 +343,7 @@ __
 }
 class "CreateShipState" as C_0016717855027770416060
 class C_0016717855027770416060 {
-+CreateShipState(const Player & player) : void
++CreateShipState(const Game & game) : void
 ..
 +render(sf::RenderWindow & window) : void
 +update() : void
@@ -351,9 +351,9 @@ __
 -active_box_index : int
 -draw_offset : sf::Vector2f
 -font : sf::Font
+-game : const Game &
 -input_boxes : InputBox[4]
 -number_ships_text : sf::Text
--player : const Player &
 -ships_text : sf::Text
 -title_text : sf::Text
 }
@@ -373,7 +373,7 @@ __
 }
 class "PlacingShipsState" as C_0003009358475785535108
 class C_0003009358475785535108 {
-+PlacingShipsState(const Player & player) : void
++PlacingShipsState(const Game & game) : void
 ..
 -drawField(sf::RenderWindow & window) : void
 +render(sf::RenderWindow & window) : void
@@ -382,8 +382,8 @@ __
 -cell_size : sf::Vector2f
 -draw_offset : sf::Vector2f
 -font : sf::Font
+-game : const Game &
 -instruction_text : sf::Text
--player : const Player &
 -result_text : sf::Text
 -ship_representation : sf::RectangleShape
 }
@@ -441,21 +441,21 @@ C_0017470460303031448044 --> C_0003605716991605700936 : -player
 C_0017470460303031448044 --> C_0003605716991605700936 : -player2
 C_0017470460303031448044 --> C_0005644868336032600742 : -ai_controller
 C_0017470460303031448044 --> C_0001935036015363084261 : -current_stage
-C_0007395642151187698177 --> C_0017470460303031448044 : -game
-C_0007395642151187698177 o-- C_0001291546338622865405 : -state
-C_0009763532900440017346 --> C_0003605716991605700936 : -player
-C_0009763532900440017346 --> C_0003605716991605700936 : -player2
+C_0002504077655750104390 --> C_0017470460303031448044 : -game
+C_0002504077655750104390 o-- C_0001291546338622865405 : -state
+C_0009763532900440017346 ..> C_0003605716991605700936
+C_0009763532900440017346 --> C_0017470460303031448044 : -game
 C_0009763532900440017346 o-- C_0009693095778494330448 : -draw_offset
 C_0009763532900440017346 o-- C_0009693095778494330448 : -draw_offset2
 C_0009763532900440017346 o-- C_0009693095778494330448 : -cell_size
 C_0007936739686845891522 <|-- C_0009763532900440017346
 
-C_0003925512848679538817 --> C_0003605716991605700936 : -player
+C_0003925512848679538817 --> C_0017470460303031448044 : -game
 C_0003925512848679538817 o-- C_0009693095778494330448 : -draw_offset
 C_0003925512848679538817 o-- C_0009693095778494330448 : -cell_size
 C_0007936739686845891522 <|-- C_0003925512848679538817
 
-C_0016717855027770416060 --> C_0003605716991605700936 : -player
+C_0016717855027770416060 --> C_0017470460303031448044 : -game
 C_0016717855027770416060 o-- "4" C_0006905555226801011843 : -input_boxes
 C_0016717855027770416060 o-- C_0009693095778494330448 : -draw_offset
 C_0007936739686845891522 <|-- C_0016717855027770416060
@@ -463,7 +463,7 @@ C_0007936739686845891522 <|-- C_0016717855027770416060
 C_0013166903766216927070 o-- C_0015054090575003110977 : -menu_items
 C_0007936739686845891522 <|-- C_0013166903766216927070
 
-C_0003009358475785535108 --> C_0003605716991605700936 : -player
+C_0003009358475785535108 --> C_0017470460303031448044 : -game
 C_0003009358475785535108 o-- C_0009693095778494330448 : -draw_offset
 C_0003009358475785535108 o-- C_0009693095778494330448 : -cell_size
 C_0007936739686845891522 <|-- C_0003009358475785535108

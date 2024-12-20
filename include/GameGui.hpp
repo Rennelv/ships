@@ -4,22 +4,25 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
+#include "Enums.hpp"
 #include "Game.hpp"
 #include "GuiStates/State.hpp"
 
-class GameGui {
+class Gui {
    public:
-    GameGui(const Game& game);
-    void run();
-    void mainLoop();
+    Gui(const Game& game);
+    // void run();
+    // void mainLoop();
     void render();
+    void printErr(std::string msg);
    private:
     const Game &game;
-    void update();
-    void pollEvents();
+    Stage prevStage;
+    // void update();
+    // void pollEvents();
 
     sf::RenderWindow window;
-    sf::Event event;
+    // sf::Event event;
 
     std::unique_ptr<RendererState> state;
 

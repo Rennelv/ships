@@ -20,6 +20,7 @@ class MenuState : public RendererState {
     MenuState();
     void update() override;
     void render(sf::RenderWindow &window) override;
+    void printErr(std::string msg) override;
 };
 
 #endif  // MENUSTATE_HPP
